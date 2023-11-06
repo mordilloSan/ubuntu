@@ -24,6 +24,8 @@ readonly UNAME_U
 
 INSTALLED=true
 
+readonly COCKPIT_PACKAGES=('cockpit' 'cockpit-navigator' 'cockpit-file-sharing' 'realmd' 'tuned' 'udisks2-lvm2' 'samba' 'winbind' 'nfs-kernel-server' 'nfs-client' 'nfs-common')
+
 # COLORS
 readonly COLOUR_RESET='\e[0m'
 readonly aCOLOUR=(
@@ -195,26 +197,24 @@ update_system() {
 	if [[ $? != 0 ]]; then
   		echo "$OUTPUT"
 	fi
-	
-	GreyStart
+		GreyStart
     if [ -x "$(command -v apt-get)" ]; then
         ${sudo_cmd} apt-get update
     fi
     ColorReset
-
     res=$?
-	
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
 		exit $res
 	fi
+	## Upgrade system
 	echo ""
 	Show 2 "Upgrading packages"
 	echo ""
+	GreyStart
 	apt-get upgrade -y
-	
+    ColorReset	
     res=$?
-	
     if [[ $res != 0 ]]; then
 		Show 1 "Package upgrade failed!"
 		exit $res
@@ -298,23 +298,37 @@ install_cockpit() {
 	
     # Add the 45 drives repo
     curl -sSL https://repo.45drives.com/setup | sudo bash
-	
-    # install cockpit and modules
-  	apt-get install -y cockpit cockpit-navigator cockpit-file-sharing realmd tuned udisks2-lvm2 samba winbind nfs-kernel-server nfs-client nfs-common
-    res=$?
-	
-    if [[ $res != 0 ]]; then
-		echo "Instalation  failed!"
-		exit $res
-	fi
+
+    for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
+        cmd=${COCKPIT_PACKAGES[i]}
+        if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
+            packagesNeeded=${COCKPIT_PACKAGES[i]}
+            Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
+            GreyStart
+            if [ -x "$(command -v apt-get)" ]; then
+                ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade
+                res=$?
+                if [[ $res != 0 ]]; then
+		        echo "Instalation  failed!"
+		        exit $res
+	            fi
+            else
+                Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
+            fi
+            ColorReset
+        fi
+    done
 
     #install sensors modules
+    Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
+    GreyStart
     wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
     mv cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
     rm cockpit-sensors.tar.xz
-
+    ColorReset
+    
 	# Enabling Cockpit
 
 	systemctl enable --now cockpit.socket
