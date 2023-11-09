@@ -345,6 +345,7 @@ install_cockpit() {
 	
     Show 2 "INITIALIZING COCKPIT"
 	
+    GreyStart
     # Add the 45 drives repo
     curl -sSL https://repo.45drives.com/setup | sudo bash
 
@@ -353,7 +354,7 @@ install_cockpit() {
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
             packagesNeeded=${COCKPIT_PACKAGES[i]}
             Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
-            GreyStart
+
             if [ -x "$(command -v apt-get)" ]; then
                 ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade
                 res=$?
