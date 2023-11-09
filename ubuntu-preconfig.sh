@@ -240,9 +240,9 @@ init_network() {
 		Show 1 "Installing network manager failed!"
 		exit $res
 	fi
-	
+	GreyStart
 	systemctl enable --now NetworkManager
-	
+    ColorReset	
     res=$?
 	
     if [[ $res != 0 ]]; then
