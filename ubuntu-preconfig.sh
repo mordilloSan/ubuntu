@@ -231,12 +231,13 @@ init_network() {
 		echo ""
 	# Install packages
 	
+	GreyStart
 	apt-get install -y network-manager
-	
+    ColorReset
     res=$?
 	
     if [[ $res != 0 ]]; then
-		echo "Installing network manager failed!"
+		Show 1 "Installing network manager failed!"
 		exit $res
 	fi
 	
@@ -245,7 +246,7 @@ init_network() {
     res=$?
 	
     if [[ $res != 0 ]]; then
-		echo "Enabling network manager failed!"
+		Show 1 "Enabling network manager failed!"
 		exit $res
 	fi
 
@@ -260,6 +261,7 @@ remove_garbage() {
     Show 2 "REMOVING CLOUD-INIT AND SNAPD"
 	# Remove cloud-init	
 	check_installed "cloud-init"
+    GreyStart
 	if [ "$INSTALLED"  = true ]; then
     	apt-get autoremove --purge cloud-init -y
     	rm -rf /etc/cloud/
@@ -267,12 +269,14 @@ remove_garbage() {
 
     	res=$?
 	   	if [[ $res != 0 ]]; then
-			echo "Removing cloud-init failed!"
+			Show 1 "Removing cloud-init failed!"
 			exit $res
 		fi
 	fi
+    ColorReset
 	# Remove snapd
 	check_installed "snapd"
+    GreyStart
 	if [ "$INSTALLED"=true ]; then
 		snap remove--purge lxd
     	snap remove--purge core20
@@ -283,11 +287,55 @@ remove_garbage() {
 	
     	res=$?
 	    if [[ $res != 0 ]]; then
-			echo "Removing snapd failed!"
+			Show 1 "Removing snapd failed!"
 			exit $res
 		fi
 	fi
+    ColorReset
 	Show 0 "Successfully removed cloud-init and snapd."
+}
+
+change_renderer() {
+	local res
+
+	Show 2 "ENABLING NETWORK MANAGER"
+	# Use Network Manager instead of systemd-networkd
+    GreyStart
+	cat > /etc/netplan/00-networkmanager.yaml <<EOF
+network:
+  version: 2
+  renderer: NetworkManager
+EOF
+
+	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
+
+	netplan try
+    ColorReset
+	res=$?
+
+	if [[ $res != 0 ]]; then
+		Show 1 "netplan try failed."
+		exit $res
+	fi
+	GreyStart
+	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+
+	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+	
+	systemctl restart network-manager
+    ColorReset
+	res=$?
+
+	if [[ $res != 0 ]]; then
+		Show 1 "Reloading network-manager failed."
+		exit $res
+	fi
+	
+	Show 2 "Successfully enabled network manager."
+	
+	return 0
 }
 
 install_cockpit() {
@@ -295,7 +343,7 @@ install_cockpit() {
     # Install cockpit and cockpit related things
 	local res
 	
-    echo "INITIALIZING COCKPIT"
+    Show 2 "INITIALIZING COCKPIT"
 	
     # Add the 45 drives repo
     curl -sSL https://repo.45drives.com/setup | sudo bash
@@ -310,7 +358,7 @@ install_cockpit() {
                 ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade
                 res=$?
                 if [[ $res != 0 ]]; then
-		        echo "Instalation  failed!"
+		        Show 1 "Instalation  failed!"
 		        exit $res
 	            fi
             else
@@ -337,11 +385,11 @@ install_cockpit() {
 	  res=$?
 
 	  if [[ $res != 0 ]]; then
-		  echo "Enabling cockpit.socket failed!"
+		  Show 1 "Enabling cockpit.socket failed!"
 		  exit $res
   fi
 	
-	echo "Successfully initialized Cockpit."
+	Show 2 "Successfully initialized Cockpit."
 
 }
 
@@ -423,18 +471,18 @@ Welcome_Banner() {
     echo -e "${COLOUR_RESET}"
 }
 
-
-
 welcome
 
 prepare update_system
 
 prepare init_network
 
-prepare remove_garbage
-
 prepare install_cockpit
 
+prepare change_renderer
+
 prepare Install_Docker
+
+prepare remove_garbage
 
 exit 0
