@@ -233,23 +233,23 @@ init_network() {
 	
 	GreyStart
 	apt-get install -y network-manager
-    ColorReset
+
     res=$?
 	
     if [[ $res != 0 ]]; then
 		Show 1 "Installing network manager failed!"
 		exit $res
 	fi
-	GreyStart
+
 	systemctl enable --now NetworkManager
-    ColorReset	
+
     res=$?
 	
     if [[ $res != 0 ]]; then
 		Show 1 "Enabling network manager failed!"
 		exit $res
 	fi
-
+    ColorReset	
 	echo ""
 	Show 0 "Successfully set up network manager"
 	echo ""
