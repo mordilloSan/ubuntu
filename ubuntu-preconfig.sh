@@ -210,6 +210,7 @@ update_system() {
 		exit $res
 	fi
 	Show 2 "Upgrading packages"
+    echo ""
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt dist-upgrade -y --show-progress
     ColorReset
@@ -336,8 +337,10 @@ install_cockpit() {
     # Install cockpit and cockpit related things
 	local res
 	echo ""
-    Show 2 "INITIALIZING COCKPIT"
-
+    Show 2 "INSTALLING COCKPIT"
+    echo ""
+    Show 2 "Adding the necessary repository sources"
+    echo ""   
     GreyStart
     # Add the 45 drives repo
     #add_45repo
@@ -350,8 +353,9 @@ install_cockpit() {
     cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
             packagesNeeded=${COCKPIT_PACKAGES[i]}
+            echo ""
             Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
-
+            echo ""
             if [ -x "$(command -v apt-get)" ]; then
                 GreyStart
                 DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
@@ -507,6 +511,7 @@ add_45repo(){
 ##################
 #Check Docker Installed and version
 Check_Docker_Install() {
+    Show 2 "INSTALLING DOCKER"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         if [[ $? -ne 0 ]]; then
