@@ -468,16 +468,16 @@ Welcome_Banner() {
 
 welcome
 
-prepare update_system
+#prepare update_system
 
-prepare init_network
+#prepare init_network
 
-prepare install_cockpit
+#prepare install_cockpit
 
-prepare change_renderer
+#prepare change_renderer
 
-prepare Install_Docker
+#prepare Install_Docker
 
-prepare remove_garbage
+#prepare remove_garbage
 
 exit 0
