@@ -517,7 +517,7 @@ Check_Docker_Install() {
             Show 0 "Current Docker verison is ${Docker_Version}."
         fi
     else
-        Show 1 "Docker not installed. Installing."
+        Show 2 "Docker not installed. Installing."
         Install_Docker
     fi
 }
