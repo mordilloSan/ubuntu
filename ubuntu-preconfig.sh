@@ -354,7 +354,7 @@ install_cockpit() {
 
             if [ -x "$(command -v apt-get)" ]; then
                 GreyStart
-                ${sudo_cmd} DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
+                DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
                 res=$?
                 if [[ $res != 0 ]]; then
 		        Show 1 "Instalation  failed!"
