@@ -450,7 +450,7 @@ install_cockpit() {
     #add_45repo
     #curl -sSL https://repo.45drives.com/setup | bash
     wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
-    curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.sources
+    curl -o -s /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.sources 
 
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
 
