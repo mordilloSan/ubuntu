@@ -200,7 +200,7 @@ update_system() {
 	fi
 		GreyStart
     if [ -x "$(command -v apt-get)" ]; then
-        ${sudo_cmd} apt-get update --show-progress
+        ${sudo_cmd} 
     fi
     ColorReset
     res=$?
@@ -213,7 +213,8 @@ update_system() {
 	Show 2 "Upgrading packages"
 	echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --show-progress
+	DEBIAN_FRONTEND=noninteractive apt dist-upgrade -y --show-progress
+    apt dist-upgrade -y --show-progress
     ColorReset
     res=$?
     if [[ $res != 0 ]]; then
