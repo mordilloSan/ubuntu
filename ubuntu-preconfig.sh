@@ -578,7 +578,7 @@ Welcome_Banner() {
     echo -e "${COLOUR_RESET}"
 }
 
-welcome
+#welcome
 
 prepare update_system
 
