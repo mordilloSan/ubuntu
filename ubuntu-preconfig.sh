@@ -357,17 +357,20 @@ install_cockpit() {
                 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $packagesNeeded|grep "install ok installed")
                 echo Checking for $packagesNeeded: $PKG_OK
                 if [ "" = "$PKG_OK" ]; then
-                    echo "No $packagesNeeded. Setting up $packagesNeeded."
+                    Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
                     DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
-                fi
-                res=$?
-                if [[ $res != 0 ]]; then
-		            echo ""
-                    Show 1 "Instalation  failed!"
-		            exit $res
+                    res=$?
+                    if [[ $res != 0 ]]; then
+		                echo ""
+                        Show 1 "Instalation  failed!"
+		                exit $res
+                    else
+                        echo ""
+                        Show 0 "\e[33m$packagesNeeded \e[0m installed"               
+                    fi
 	            else
                     echo ""
-                    Show 0 "\e[33m$packagesNeeded \e[0m Installed"
+                    Show 0 "\e[33m$packagesNeeded \e[0m already installed"
                 fi
             else
                 Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
