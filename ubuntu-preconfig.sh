@@ -476,11 +476,7 @@ prepare Install_Docker
 
 #prepare init_network
 
-
-
 #prepare change_renderer
-
-
 
 #prepare remove_garbage
 
