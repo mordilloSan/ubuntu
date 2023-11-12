@@ -52,7 +52,6 @@ onCtrlC() {
 ##########
 # Colors #
 ##########
-
 Show() {
     # OK
     if (($1 == 0)); then
@@ -78,11 +77,9 @@ GreyStart() {
 ColorReset() {
     echo -e "$COLOUR_RESET\c"
 }
-
 ###################
 # Check Functions #
 ###################
-
 Check_Arch() {
     case $UNAME_M in
     *64*)
@@ -144,11 +141,9 @@ check_installed() {
 		INSTALLED=false
 	fi
 }
-
 ###################
 # Script Functions #
 ###################
-
 prepare() {
 	local response
 	echo ""
@@ -164,7 +159,6 @@ prepare() {
 	esac
 
 }
-
 welcome() {
 
 	clear
@@ -187,7 +181,6 @@ welcome() {
 	Check_Permissions
 
 }
-
 update_system() {
 	local res
 	echo ""
@@ -223,7 +216,6 @@ update_system() {
 	Show 0 "Successfully updated system!"
 	echo ""
 }
-
 init_network() {
 	local res
 	Show 2 "INSTALLING NETWORK MANAGER"
@@ -254,7 +246,6 @@ init_network() {
 	echo ""
 
 }
-
 remove_garbage() {
 	local res
     Show 2 "REMOVING CLOUD-INIT AND SNAPD"
@@ -293,7 +284,6 @@ remove_garbage() {
     ColorReset
 	Show 0 "Successfully removed cloud-init and snapd."
 }
-
 change_renderer() {
 	local res
 
@@ -331,73 +321,9 @@ change_renderer() {
 
 	return 0
 }
-
-install_cockpit() {
-
-    # Install cockpit and cockpit related things
-	local res
-	echo ""
-    Show 2 "INSTALLING COCKPIT"
-    echo ""
-    Show 2 "Adding the necessary repository sources"
-    echo ""   
-    GreyStart
-    # Add the 45 drives repo
-    #add_45repo
-    #curl -sSL https://repo.45drives.com/setup | bash
-    wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
-    curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.sources
-
-    for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
-
-    cmd=${COCKPIT_PACKAGES[i]}
-        if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
-            packagesNeeded=${COCKPIT_PACKAGES[i]}
-            echo ""
-            Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
-            echo ""
-            if [ -x "$(command -v apt-get)" ]; then
-                GreyStart
-                DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
-                res=$?
-                if [[ $res != 0 ]]; then
-		        Show 1 "Instalation  failed!"
-		        exit $res
-	            fi
-            else
-                Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
-            fi
-        fi
-    done
-
-    #install sensors modules
-    Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
-    GreyStart
-    wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz
-    tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
-    mv cockpit-sensors/dist /usr/share/cockpit/sensors
-    rm -r cockpit-sensors
-    rm cockpit-sensors.tar.xz
-    ColorReset
-
-	# Enabling Cockpit
-
-	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
-
-	  res=$?
-
-	  if [[ $res != 0 ]]; then
-		  Show 1 "Enabling cockpit.socket failed!"
-		  exit $res
-  fi
-
-	Show 2 "Successfully initialized Cockpit."
-
-}
-
-################
-# Repo Section #
-################
+###################
+# Cockpit Section #
+###################
 function get_base_distro() {
         local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
 
@@ -505,25 +431,89 @@ add_45repo(){
     Show 0 "Success! Your repo has been updated to our new server!"
 
 }
+install_cockpit() {
 
+    # Install cockpit and cockpit related things
+	local res
+	echo ""
+    Show 2 "INSTALLING COCKPIT"
+    echo ""
+    Show 2 "Adding the necessary repository sources"
+    echo ""   
+    GreyStart
+    # Add the 45 drives repo
+    #add_45repo
+    #curl -sSL https://repo.45drives.com/setup | bash
+    wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
+    curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.sources
+
+    for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
+
+    cmd=${COCKPIT_PACKAGES[i]}
+        if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
+            packagesNeeded=${COCKPIT_PACKAGES[i]}
+            echo ""
+            Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
+            echo ""
+            if [ -x "$(command -v apt-get)" ]; then
+                GreyStart
+                DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
+                res=$?
+                if [[ $res != 0 ]]; then
+		        Show 1 "Instalation  failed!"
+		        exit $res
+	            fi
+            else
+                Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
+            fi
+        fi
+    done
+
+    #install sensors modules
+    Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
+    GreyStart
+    wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz
+    tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
+    mv cockpit-sensors/dist /usr/share/cockpit/sensors
+    rm -r cockpit-sensors
+    rm cockpit-sensors.tar.xz
+    ColorReset
+
+	# Enabling Cockpit
+
+	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
+
+	  res=$?
+
+	  if [[ $res != 0 ]]; then
+		  Show 1 "Enabling cockpit.socket failed!"
+		  exit $res
+  fi
+
+	Show 2 "Successfully initialized Cockpit."
+
+}
 ##################
 # Docker Section #
 ##################
-#Check Docker Installed and version
 Check_Docker_Install() {
     Show 2 "INSTALLING DOCKER"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         if [[ $? -ne 0 ]]; then
+            echo ""
             Show 2 "Docker not installed. Installing."
             Install_Docker
         elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCER_VERSION}" ]]; then
+            echo ""
             Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCER_VERSION}.xx.xx\e[0m,\Current Docker verison is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker."
             exit 1
         else
+            echo ""
             Show 0 "Current Docker verison is ${Docker_Version}."
         fi
     else
+        echo ""
         Show 2 "Docker not installed. Installing."
         Install_Docker
     fi
@@ -533,6 +523,7 @@ Install_Docker() {
         ${sudo_cmd} curl -fsSL https://get.docker.com | bash
     ColorReset
     if [[ $? -ne 0 ]]; then
+        echo ""
         Show 1 "Installation failed, please try again."
         exit 1
     else
@@ -542,8 +533,10 @@ Install_Docker() {
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
+        echo ""
         Show 0 "Current Docker verison is ${Docker_Version}."
     else
+        echo ""
         Show 1 "Installation failed, please uninstall docker"
     fi
 }
