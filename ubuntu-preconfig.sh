@@ -535,11 +535,16 @@ Prepare_Docker() {
 Check_Docker_Running() {
     for ((i = 1; i <= 3; i++)); do
         sleep 3
+        Show 1 "Checking if Docker is installed"
         if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
-            Show 1 "Docker is not running, try to start"
+            Show 1 "Docker is not running, trying to start"
             ${sudo_cmd} systemctl start docker
+            if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]
+                Show 1 "Docker is not installed, installing"
+                Prepare_Docker
+            fi
         else
-            break
+            Show 1 "Docker is already installed"
         fi
     done
 }
@@ -578,13 +583,13 @@ Welcome_Banner() {
     echo -e "${COLOUR_RESET}"
 }
 
-#welcome
+welcome
+Check_Docker_Running
 
-update_system
+#update_system
 
 #install_cockpit
 Prepare_Docker
-Install_Docker
 
 #prepare init_network
 
