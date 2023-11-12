@@ -215,9 +215,11 @@ update_system() {
     ColorReset
     res=$?
     if [[ $res != 0 ]]; then
-		Show 1 "Package upgrade failed!"
+		echo ""
+        Show 1 "Package upgrade failed!"
 		exit $res
 	else
+        echo ""
         Show 0 "System successfully upgraded"
     fi
 }
