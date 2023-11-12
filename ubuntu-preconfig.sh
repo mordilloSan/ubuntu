@@ -190,15 +190,16 @@ welcome() {
 
 update_system() {
 	local res
+	echo ""
 	Show 2 "UPDATING SYSTEM"
-	## Update system
+	echo ""
 	Show 2 "Updating packages"
 	echo ""
+	GreyStart
 	OUTPUT=`apt-get update 2>&1`
 	if [[ $? != 0 ]]; then
   		echo "$OUTPUT"
 	fi
-		GreyStart
     if [ -x "$(command -v apt-get)" ]; then
         ${sudo_cmd} 
     fi
@@ -208,10 +209,7 @@ update_system() {
 		Show 1 "Package update failed!"
 		exit $res
 	fi
-	## Upgrade system
-	echo ""
 	Show 2 "Upgrading packages"
-	echo ""
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt dist-upgrade -y --show-progress
     apt dist-upgrade -y --show-progress
@@ -343,8 +341,11 @@ install_cockpit() {
 
     GreyStart
     # Add the 45 drives repo
-    add_45repo
+    #add_45repo
     #curl -sSL https://repo.45drives.com/setup | bash
+    wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
+    curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.sources
+
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
 
     cmd=${COCKPIT_PACKAGES[i]}
