@@ -342,8 +342,8 @@ install_cockpit() {
 
     GreyStart
     # Add the 45 drives repo
-    add_45repo
-    #curl -sSL https://repo.45drives.com/setup | sudo bash
+    #add_45repo
+    curl -sSL https://repo.45drives.com/setup | bash
 
     for i in "${COCKPIT_PACKAGES[@]}"
     do
