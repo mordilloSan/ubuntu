@@ -209,6 +209,7 @@ update_system() {
 	else
         Show 0 "System successfully updated"
     fi
+    echo ""
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
@@ -408,6 +409,7 @@ install_cockpit() {
 # Docker Section #
 ##################
 Check_Docker_Install() {
+    echo ""
     Show 2 "INSTALLING DOCKER"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
