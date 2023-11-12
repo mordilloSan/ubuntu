@@ -367,10 +367,10 @@ install_cockpit() {
 		                exit $res
                     else
                         echo ""
-                        Show 0 "\e[33m$packagesNeeded \e[0m installed"               
+                        Show 0 "\e[33m$packagesNeeded\e[0m installed"               
                     fi
 	            else
-                    Show 0 "\e[33m$packagesNeeded \e[0m already installed"
+                    Show 0 "\e[33m$packagesNeeded\e[0m already installed"
                 fi
             else
                 Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
