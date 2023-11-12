@@ -308,11 +308,13 @@ change_renderer() {
 ###################
 add_45repo(){
 	Show 2 "Downloading 45Drives Repo Setup Script"
-	curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
+	curl --silent --output /dev/null -sSL https://repo.45drives.com/setup -o setup-repo.sh
 	res=$?
 	if [[ $res != 0 ]]; then
 		Show 1 "Failed to download repo setup script! (https://repo.45drives.com/setup)"
 		exit $res
+    else
+        Show 0 "45 Drives Repository Setup Script sucessfully downloaded!"
 	fi
     echo ""
 	Show 2 "Running 45Drives Repo Setup Script"
@@ -323,7 +325,7 @@ add_45repo(){
 		exit $res
 	fi
     echo ""
-	Show 2 "45 Drives Repository sucessfully added!"
+	Show 0 "45 Drives Repository sucessfully added!"
 }
 install_cockpit() {
 	local res
