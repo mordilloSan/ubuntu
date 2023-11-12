@@ -181,10 +181,10 @@ welcome() {
     echo "" 
 
     Show 2 "Setting Time Zone"
-    
     timedatectl set-timezone Europe/Lisbon
-    tz=cat /etc/timezone
-    Show 0 tz
+    T_Z=$(timedatectl show --va -p Timezone)
+    echo ""
+    Show 0 "Time Zone is ${T_Z}." 
 }
 update_system() {
 	local res
