@@ -181,6 +181,7 @@ update_system() {
 		Show 1 "Package update failed!"
 		exit $res
 	else
+        echo ""
         Show 0 "System successfully updated"
     fi
     echo ""
