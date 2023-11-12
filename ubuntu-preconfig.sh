@@ -504,14 +504,21 @@ add_45repo(){
 ##################
 # Docker Section #
 ##################
+#Check Docker Installed and version
 Check_Docker_Install() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        Show 0 "Current Docker verison is ${Docker_Version}."
-        Check_Docker_Running
+        if [[ $? -ne 0 ]]; then
+            Install_Docker
+        elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCER_VERSION}" ]]; then
+            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCER_VERSION}.xx.xx\e[0m,\Current Docker verison is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker and rerun the CasaOS installation script."
+            exit 1
+        else
+            Show 0 "Current Docker verison is ${Docker_Version}."
+        fi
     else
-        Show 2 "Docker is not found, installing"
-        Prepare_Docker
+        Show 1 "Docker not installed. Installing."
+        Install_Docker
     fi
 }
 Check_Docker_Running() {
@@ -524,6 +531,8 @@ Check_Docker_Running() {
             Show 1 "Failed to start Docker. Trying to reinstall"
             Prepare_Docker
         fi
+    else
+        Show 2 "Docker is running!"
     fi
 }
 Prepare_Docker() {
