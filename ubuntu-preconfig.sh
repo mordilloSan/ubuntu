@@ -475,7 +475,7 @@ install_cockpit() {
     echo ""
     GreyStart
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
-    tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
+    tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist -v
     cp -r cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
     rm cockpit-sensors.tar.xz
@@ -491,8 +491,8 @@ install_cockpit() {
 		  Show 1 "Enabling cockpit.socket failed!"
 		  exit $res
   fi
-
-	Show 2 "Successfully initialized Cockpit."
+    echo ""
+	Show 0 "Successfully initialized Cockpit."
 
 }
 ##################
