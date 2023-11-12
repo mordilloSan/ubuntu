@@ -309,7 +309,7 @@ change_renderer() {
 ###################
 add_45repo(){
 	Show 2 "Adding 45Drives Repo "
-    curl -sSL https://repo.45drives.com/setup | sudo bash
+    curl -sSL https://repo.45drives.com/setup | bash
 	res=$?
 	if [[ $res != 0 ]]; then
 	    echo ""
