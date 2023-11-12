@@ -350,7 +350,7 @@ install_cockpit() {
     Show 2 "Adding the necessary repository sources"
     echo ""   
     GreyStart
-    add_45repo
+    # add_45repo
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
