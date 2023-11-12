@@ -187,7 +187,7 @@ update_system() {
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt --autoremove dist-upgrade -y --show-progress > /dev/null
+	DEBIAN_FRONTEND=noninteractive apt-get --autoremove dist-upgrade -y --show-progress > /dev/null
     res=$?
     if [[ $res != 0 ]]; then
 		echo ""
@@ -340,8 +340,8 @@ install_cockpit() {
                 PKG_OK=$(dpkg-query -W --showformat='${Status}\n'$packagesNeeded|grep "install ok installed")
                 if [ "" = "$PKG_OK" ]; then
                     Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
-                    #DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
-                    DEBIAN_FRONTEND=noninteractive apt -y install "$packagesNeeded" --no-upgrade --show-progress
+                    #DEBIAN_FRONTEND=noninteractive apt-get -y -q install "$packagesNeeded" --no-upgrade --show-progress
+                    DEBIAN_FRONTEND=noninteractive apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
                     res=$?
                     if [[ $res != 0 ]]; then
 		                echo ""
