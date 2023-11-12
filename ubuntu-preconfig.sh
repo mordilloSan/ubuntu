@@ -319,7 +319,8 @@ add_45repo(){
 	fi
     echo ""
 	Show 2 "Running 45Drives Repo Setup Script"
-	bash setup-repo.sh
+	GreyStart
+    bash setup-repo.sh
 	res=$?
 	if [[ $res != 0 ]]; then
 		Show 1 "Failed to add repository"
