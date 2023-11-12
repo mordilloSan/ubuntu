@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 
-###############################################################################
-# GLOBAL VARIABLES                                                            #
-###############################################################################
+####################
+# Global Variables #
+####################
 start (){
-
-    ((EUID)) && sudo_cmd="sudo"
-
-    # shellcheck source=/dev/null
-    source /etc/os-release
-
     # SYSTEM INFO
+    ((EUID)) && sudo_cmd="sudo"
+    source /etc/os-release
     LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
     readonly LSB_DIST
 
@@ -46,14 +42,11 @@ start (){
     trap 'onCtrlC' INT
 
 }
-
 start
-
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
     exit 1
 }
-
 ##########
 # Colors #
 ##########
@@ -149,21 +142,6 @@ check_installed() {
 ###################
 # Script Functions #
 ###################
-prepare() {
-	local response
-	echo ""
-	read -p "Are you sure you want to $*? [y/N]: " response
-
-	case $response in
-		[yY]|[yY][eE][sS])
-			"$*"
-			;;
-		*)
-			echo "Skipping..."
-			;;
-	esac
-
-}
 welcome() {
 
 	clear
@@ -329,18 +307,17 @@ change_renderer() {
 # Cockpit Section #
 ###################
 add_45repo(){
-    #curl -sSL https://repo.45drives.com/setup | bash
-    wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
-    curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.source
-    res=$?
-    if [[ $res != 0 ]]; then
-		echo ""
-        Show 1 "45 Drives repo failed!"
+	Show 2 "Downloading 45Drives Repo Setup Script"
+	curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
+	res=$?
+	if [[ $res != 0 ]]; then
+		Show 1 "Failed to download repo setup script! (https://repo.45drives.com/setup)"
 		exit $res
-	else
-        echo ""
-        Show 0 "45 Drives repo added!"
-    fi
+	fi
+    echo ""
+	Show 2 "Running 45Drives Repo Setup Script"
+
+	bash setup-repo.sh
 }
 install_cockpit() {
 	local res
