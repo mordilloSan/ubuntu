@@ -357,9 +357,11 @@ install_cockpit() {
                 DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
                 res=$?
                 if [[ $res != 0 ]]; then
-		        Show 1 "Instalation  failed!"
-		        exit $res
-	            fi
+		            Show 1 "Instalation  failed!"
+		            exit $res
+	            else
+                    Show 0 "\e[33m$packagesNeeded \e[0m Installed"
+                fi
             else
                 Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
             fi
