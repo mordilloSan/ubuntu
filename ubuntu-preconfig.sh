@@ -212,7 +212,6 @@ update_system() {
 	Show 2 "Upgrading packages"
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt dist-upgrade -y --show-progress
-    apt dist-upgrade -y --show-progress
     ColorReset
     res=$?
     if [[ $res != 0 ]]; then
@@ -355,7 +354,7 @@ install_cockpit() {
 
             if [ -x "$(command -v apt-get)" ]; then
                 GreyStart
-                ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade --show-progress
+                ${sudo_cmd} DEBIAN_FRONTEND=noninteractive apt-get -y -q install "$packagesNeeded" --no-upgrade --show-progress
                 res=$?
                 if [[ $res != 0 ]]; then
 		        Show 1 "Instalation  failed!"
