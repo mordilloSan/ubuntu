@@ -370,7 +370,6 @@ install_cockpit() {
                         Show 0 "\e[33m$packagesNeeded \e[0m installed"               
                     fi
 	            else
-                    echo ""
                     Show 0 "\e[33m$packagesNeeded \e[0m already installed"
                 fi
             else
