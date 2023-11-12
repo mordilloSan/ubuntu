@@ -588,7 +588,7 @@ Check_Docker_Running
 #update_system
 
 #install_cockpit
-Prepare_Docker
+#Prepare_Docker
 
 #prepare init_network
 
