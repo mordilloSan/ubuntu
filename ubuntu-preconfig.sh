@@ -470,11 +470,13 @@ install_cockpit() {
     done
 
     #install sensors modules
+    echo ""
     Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
+    echo ""
     GreyStart
     wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
-    mv cockpit-sensors/dist /usr/share/cockpit/sensors
+    cp cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
     rm cockpit-sensors.tar.xz
     ColorReset
