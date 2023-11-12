@@ -345,9 +345,8 @@ install_cockpit() {
     # Add the 45 drives repo
     #add_45repo
     curl -sSL https://repo.45drives.com/setup | bash
+    for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
 
-    for i in ${COCKPIT_PACKAGES[@]}
-    do
     cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
             packagesNeeded=${COCKPIT_PACKAGES[i]}
