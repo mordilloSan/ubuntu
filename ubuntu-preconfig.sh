@@ -24,7 +24,7 @@ readonly UNAME_U
 
 INSTALLED=true
 
-readonly COCKPIT_PACKAGES=('cockpit' 'cockpit-navigator' 'cockpit-file-sharing' 'realmd' 'tuned' 'udisks2-lvm2' 'samba' 'winbind' 'nfs-kernel-server' 'nfs-client' 'nfs-common')
+readonly COCKPIT_PACKAGES=("cockpit" "cockpit-navigator" "cockpit-file-sharing" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-client" "nfs-common")
 
 # COLORS
 readonly COLOUR_RESET='\e[0m'
@@ -346,7 +346,7 @@ install_cockpit() {
     add_45repo
     #curl -sSL https://repo.45drives.com/setup | bash
 
-    for i in "${COCKPIT_PACKAGES[@]}"
+    for i in ${COCKPIT_PACKAGES[@]}
     do
     cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
