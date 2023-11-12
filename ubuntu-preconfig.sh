@@ -348,7 +348,7 @@ install_cockpit() {
     # Add the 45 drives repo
     #curl -sSL https://repo.45drives.com/setup | bash
     wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
-    curl -o -w /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.source
+    curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.source
     res=$?
     if [[ $res != 0 ]]; then
 		echo ""
@@ -604,10 +604,7 @@ welcome
 Check_Docker_Install
 install_cockpit
 #change_renderer
-#prepare init_network
-
-
-
-#prepare remove_garbage
+# init_network
+# remove_garbage
 
 exit 0
