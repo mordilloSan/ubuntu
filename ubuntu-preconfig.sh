@@ -187,7 +187,7 @@ update_system() {
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade --show-progress
+	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade
     res=$?
     if [[ $res != 0 ]]; then
 		echo ""
