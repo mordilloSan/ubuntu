@@ -174,12 +174,16 @@ welcome() {
  modified and you may be disconnected. Run this script from the console or IPMI
  remote console."
 	echo ""
-
 	Check_Arch
 	Check_OS
 	Check_Distribution
 	Check_Permissions
+    echo "" 
 
+    Show 2 "Setting Time Zone"
+    
+    timedatectl set-timezone Europe/Lisbon
+    Show 0 cat /etc/timezone
 }
 update_system() {
 	local res
