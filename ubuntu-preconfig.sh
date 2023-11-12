@@ -503,18 +503,24 @@ add_45repo(){
 ##################
 # Docker Section #
 ##################
-Install_Docker() {
+Check_Docker_Install() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        if [[ $? -ne 0 ]]; then
-            Prepare_Docker
-        else
-            Show 0 "Current Docker verison is ${Docker_Version}."
-            Check_Docker_Running
-        fi
+        Show 0 "Current Docker verison is ${Docker_Version}."
+        Check_Docker_Running
     else
-        Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash' and rerun the CasaOS installation script."
-        exit 1
+        Show 2 "Docker is not found, installing"
+        Prepare_Docker
+    fi
+}
+Check_Docker_Running() {
+    Show 2 "Checking if Docker is running"
+    if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
+        Show 2 "Docker is not running, trying to start"
+        if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]; then
+            systemctl start docker
+        else
+            Show 1 "Failed to start Docker"
     fi
 }
 Prepare_Docker() {
@@ -532,32 +538,12 @@ Prepare_Docker() {
         Check_Docker_Install_Final
     fi
 }
-Check_Docker_Running() {
-    Show 2 "Checking if Docker is installed"
-    Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        if [[ $? -ne 0 ]]; then
-            Show 2 "Docker is not found, installing"
-            Prepare_Docker
-        else
-            Show 2 "Docker is installed, Checking if it is running"
-            if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
-                Show 2 "Docker is not running, trying to start"
-                if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]; then
-                    systemctl start docker
-                else
-                    Show 1 "Failed to start Docker"
-                fi
-            else
-                Show 0 "Current Docker verison is ${Docker_Version}."
-            fi
-        fi
-}
 
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
         exit 1
     else
-        Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash' and rerun the CasaOS installation script."
+        Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash'"
         exit 1
     fi
 }
