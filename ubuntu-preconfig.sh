@@ -555,7 +555,7 @@ Check_Docker_Running() {
 
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
-
+        exit 1
     else
         Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash' and rerun the CasaOS installation script."
         exit 1
