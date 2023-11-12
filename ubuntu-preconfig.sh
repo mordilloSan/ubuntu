@@ -378,7 +378,7 @@ install_cockpit() {
 
 	# Enabling Cockpit
 
-	systemctl enable --now cockpit.socket
+	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
 
 	  res=$?
 
