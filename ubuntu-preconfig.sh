@@ -175,7 +175,7 @@ update_system() {
 	Show 2 "Updating packages"
 	echo ""
 	GreyStart
-    apt-get update --show-progress
+    apt-get update -q -u 
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
