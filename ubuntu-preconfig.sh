@@ -314,6 +314,7 @@ add_45repo(){
 		Show 1 "Failed to download repo setup script! (https://repo.45drives.com/setup)"
 		exit $res
     else
+        echo ""
         Show 0 "45 Drives Repository Setup Script sucessfully downloaded!"
 	fi
     echo ""
