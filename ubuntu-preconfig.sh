@@ -200,7 +200,7 @@ update_system() {
 	fi
 		GreyStart
     if [ -x "$(command -v apt-get)" ]; then
-        ${sudo_cmd} apt-get update
+        ${sudo_cmd} apt-get update --show-progress
     fi
     ColorReset
     res=$?
@@ -213,7 +213,7 @@ update_system() {
 	Show 2 "Upgrading packages"
 	echo ""
 	GreyStart
-	apt-get upgrade -y
+	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --show-progress
     ColorReset
     res=$?
     if [[ $res != 0 ]]; then
@@ -337,7 +337,7 @@ install_cockpit() {
 
     # Install cockpit and cockpit related things
 	local res
-
+	echo ""
     Show 2 "INITIALIZING COCKPIT"
 
     GreyStart
@@ -354,7 +354,7 @@ install_cockpit() {
 
             if [ -x "$(command -v apt-get)" ]; then
                 GreyStart
-                ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade
+                ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade --show-progress
                 res=$?
                 if [[ $res != 0 ]]; then
 		        Show 1 "Instalation  failed!"
