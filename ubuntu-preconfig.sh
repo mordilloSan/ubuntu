@@ -175,7 +175,7 @@ update_system() {
 	Show 2 "Updating packages"
 	echo ""
 	GreyStart
-    apt-get update > /dev/null
+    apt-get update --show-progress
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
@@ -187,7 +187,7 @@ update_system() {
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get --autoremove dist-upgrade --show-progress
+	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade --show-progress
     res=$?
     if [[ $res != 0 ]]; then
 		echo ""
