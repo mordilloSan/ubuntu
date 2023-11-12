@@ -390,7 +390,9 @@ install_cockpit() {
 
 }
 
-#Repo Aux Functions
+################
+# Repo Section #
+################
 function get_base_distro() {
         local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
 
@@ -410,8 +412,6 @@ function get_version_id() {
 
         echo $version_id
 }
-
-
 add_45repo(){
 
     euid=$(id -u)
@@ -500,6 +500,7 @@ add_45repo(){
     echo "Success! Your repo has been updated to our new server!"
 
 }
+
 ##################
 # Docker Section #
 ##################
@@ -538,7 +539,6 @@ Prepare_Docker() {
         Check_Docker_Install_Final
     fi
 }
-
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
         exit 1
