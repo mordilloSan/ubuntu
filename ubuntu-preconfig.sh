@@ -206,20 +206,21 @@ update_system() {
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
 		exit $res
-	fi
+	else
+        Show 0 "System successfully updated"
+    fi
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt dist-upgrade -y --show-progress
+	DEBIAN_FRONTEND=noninteractive apt -qq dist-upgrade -y --show-progress
     ColorReset
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Package upgrade failed!"
 		exit $res
-	fi
-	echo ""
-	Show 0 "Successfully updated system!"
-	echo ""
+	else
+        Show 0 "System successfully upgraded"
+    fi
 }
 init_network() {
 	local res
