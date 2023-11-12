@@ -309,6 +309,7 @@ change_renderer() {
 ###################
 add_45repo(){
 	Show 2 "Adding 45Drives Repo "
+    echo ""
     GreyStart
     curl -sSL https://repo.45drives.com/setup | bash
 	res=$?
