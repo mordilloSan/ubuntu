@@ -461,7 +461,7 @@ add_45repo(){
     fi
 
 
-wget https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+    wget -qO - https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 
     res=$?
 
