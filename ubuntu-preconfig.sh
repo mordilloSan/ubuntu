@@ -307,24 +307,12 @@ change_renderer() {
 # Cockpit Section #
 ###################
 add_45repo(){
-	Show 2 "Downloading 45Drives Repo Setup Script"
-	curl --silent --output /dev/null -sSL https://repo.45drives.com/setup -o setup-repo.sh
+	Show 2 "Adding 45Drives Repo "
+    curl -sSL https://repo.45drives.com/setup | sudo bash
 	res=$?
 	if [[ $res != 0 ]]; then
-		Show 1 "Failed to download repo setup script! (https://repo.45drives.com/setup)"
-		exit $res
-    else
-        echo ""
-        Show 0 "45 Drives Repository Setup Script sucessfully downloaded!"
-	fi
-    echo ""
-	Show 2 "Running 45Drives Repo Setup Script"
-    echo ""   
-	GreyStart
-    bash setup-repo.sh
-	res=$?
-	if [[ $res != 0 ]]; then
-		Show 1 "Failed to add repository"
+	    echo ""
+        Show 1 "Failed to add repository"
 		exit $res
 	fi
     echo ""
