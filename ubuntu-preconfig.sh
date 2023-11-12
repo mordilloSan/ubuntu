@@ -584,7 +584,7 @@ prepare update_system
 
 #install_cockpit
 
-prepare Install_Docker
+Install_Docker
 
 #prepare init_network
 
