@@ -522,18 +522,15 @@ Check_Docker_Install() {
     fi
 }
 Check_Docker_Running() {
-    Show 2 "Checking if Docker is running"
-    if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
-        Show 2 "Docker is not running, trying to start"
-        if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]; then
-            systemctl start docker
+    for ((i = 1; i <= 3; i++)); do
+        sleep 3
+        if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
+            Show 1 "Docker is not running, try to start"
+            ${sudo_cmd} systemctl start docker
         else
-            Show 1 "Failed to start Docker. Trying to reinstall"
-            Prepare_Docker
+            Show 0 "Docker Running"
         fi
-    else
-        Show 2 "Docker is running!"
-    fi
+    done
 }
 Prepare_Docker() {
     GreyStart
