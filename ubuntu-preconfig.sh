@@ -521,14 +521,12 @@ Check_Docker_Running() {
         if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]; then
             systemctl start docker
         else
-            Show 1 "Failed to start Docker"
+            Show 1 "Failed to start Docker. Trying to reinstall"
+            Prepare_Docker
+        fi
     fi
 }
 Prepare_Docker() {
-    Show 2 "Install the necessary dependencies: \e[33mDocker \e[0m"
-    if [[ ! -d "${PREFIX}/etc/apt/sources.list.d" ]]; then
-        ${sudo_cmd} mkdir -p "${PREFIX}/etc/apt/sources.list.d"
-    fi
     GreyStart
         ${sudo_cmd} curl -fsSL https://get.docker.com | bash
     ColorReset
@@ -541,11 +539,16 @@ Prepare_Docker() {
 }
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
-        exit 1
+        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
+        Show 0 "Current Docker verison is ${Docker_Version}."
     else
-        Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash'"
-        exit 1
+        Show 1 "Installation failed, please uninstall docker"
     fi
+}
+Uninstall_Docker(){
+    sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras -y
+    sudo rm -rf /var/lib/docker
+    sudo rm -rf /var/lib/containerd
 }
 
 Welcome_Banner() {
