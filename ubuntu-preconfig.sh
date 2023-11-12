@@ -485,8 +485,8 @@ add_45repo(){
             Show 1 "Failed to update the new repo file. Please review the above error and try again."
             exit 1
     fi
-
-    Show 2 "The new repo file has been downloaded. Updating your package lists..."
+    echo ""
+    Show 0 "The new repo file has been downloaded. Updating your package lists..."
     GreyStart
 
     apt-get update -y
@@ -569,8 +569,8 @@ Welcome_Banner() {
 }
 
 welcome
-#update_system
-#Check_Docker_Install
+update_system
+Check_Docker_Install
 install_cockpit
 
 #prepare init_network
