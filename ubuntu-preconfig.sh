@@ -511,7 +511,7 @@ Check_Docker_Install() {
         if [[ $? -ne 0 ]]; then
             Install_Docker
         elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCER_VERSION}" ]]; then
-            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCER_VERSION}.xx.xx\e[0m,\Current Docker verison is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker and rerun the CasaOS installation script."
+            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCER_VERSION}.xx.xx\e[0m,\Current Docker verison is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker."
             exit 1
         else
             Show 0 "Current Docker verison is ${Docker_Version}."
@@ -521,18 +521,7 @@ Check_Docker_Install() {
         Install_Docker
     fi
 }
-Check_Docker_Running() {
-    for ((i = 1; i <= 3; i++)); do
-        sleep 3
-        if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
-            Show 1 "Docker is not running, try to start"
-            ${sudo_cmd} systemctl start docker
-        else
-            Show 0 "Docker Running"
-        fi
-    done
-}
-Prepare_Docker() {
+Install_Docker() {
     GreyStart
         ${sudo_cmd} curl -fsSL https://get.docker.com | bash
     ColorReset
@@ -578,7 +567,7 @@ Welcome_Banner() {
 }
 
 welcome
-Check_Docker_Running
+Check_Docker_Install
 
 #update_system
 
