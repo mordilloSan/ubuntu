@@ -583,7 +583,7 @@ Welcome_Banner() {
 update_system
 
 #install_cockpit
-
+Prepare_Docker
 Install_Docker
 
 #prepare init_network
