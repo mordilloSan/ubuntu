@@ -183,7 +183,8 @@ welcome() {
     Show 2 "Setting Time Zone"
     
     timedatectl set-timezone Europe/Lisbon
-    Show 0 cat /etc/timezone
+    tz=cat /etc/timezone
+    Show 0 tz
 }
 update_system() {
 	local res
