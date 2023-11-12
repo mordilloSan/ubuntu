@@ -319,6 +319,7 @@ add_45repo(){
 	fi
     echo ""
 	Show 2 "Running 45Drives Repo Setup Script"
+    echo ""   
 	GreyStart
     bash setup-repo.sh
 	res=$?
