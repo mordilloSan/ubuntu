@@ -197,13 +197,7 @@ update_system() {
 	Show 2 "Updating packages"
 	echo ""
 	GreyStart
-	OUTPUT=`apt update 2>&1`
-	if [[ $? != 0 ]]; then
-  		echo "$OUTPUT"
-	fi
-    if [ -x "$(command -v apt)" ]; then
-        ${sudo_cmd} 
-    fi
+    apt update > /dev/null
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
@@ -215,7 +209,7 @@ update_system() {
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt -qq --autoremove dist-upgrade -y --show-progress 
+	DEBIAN_FRONTEND=noninteractive apt --autoremove dist-upgrade -y --show-progress > /dev/null
     res=$?
     if [[ $res != 0 ]]; then
 		echo ""
