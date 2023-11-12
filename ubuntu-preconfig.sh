@@ -468,7 +468,7 @@ Welcome_Banner() {
 
 welcome
 
-prepare update_system
+update_system
 
 #prepare init_network
 
