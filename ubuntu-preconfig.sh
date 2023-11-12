@@ -580,7 +580,7 @@ Welcome_Banner() {
 
 #welcome
 
-prepare update_system
+update_system
 
 #install_cockpit
 
