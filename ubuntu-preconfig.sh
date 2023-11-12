@@ -24,7 +24,8 @@ readonly UNAME_U
 
 INSTALLED=true
 
-readonly COCKPIT_PACKAGES=('cockpit' 'cockpit-navigator' 'cockpit-file-sharing' 'realmd' 'tuned' 'udisks2-lvm2' 'samba' 'winbind' 'nfs-kernel-server' 'nfs-client' 'nfs-common')
+COCKPIT_PACKAGES=('cockpit' 'cockpit-navigator' 'cockpit-file-sharing' 'realmd' 'tuned' 'udisks2-lvm2' 'samba' 'winbind' 'nfs-kernel-server' 'nfs-client' 'nfs-common')
+readonly COCKPIT_PACKAGES
 
 # COLORS
 readonly COLOUR_RESET='\e[0m'
