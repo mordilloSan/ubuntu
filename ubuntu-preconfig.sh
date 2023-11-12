@@ -568,8 +568,8 @@ Welcome_Banner() {
 }
 
 welcome
-update_system
-Check_Docker_Install
+#update_system
+#Check_Docker_Install
 install_cockpit
 
 #prepare init_network
