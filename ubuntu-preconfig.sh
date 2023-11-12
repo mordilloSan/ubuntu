@@ -3,46 +3,51 @@
 ###############################################################################
 # GLOBAL VARIABLES                                                            #
 ###############################################################################
+start (){
 
-((EUID)) && sudo_cmd="sudo"
+    ((EUID)) && sudo_cmd="sudo"
 
-# shellcheck source=/dev/null
-source /etc/os-release
+    # shellcheck source=/dev/null
+    source /etc/os-release
 
-# SYSTEM INFO
-LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
-readonly LSB_DIST
+    # SYSTEM INFO
+    LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
+    readonly LSB_DIST
 
-DIST=$(echo "${ID}")
-readonly DIST
+    DIST=$(echo "${ID}")
+    readonly DIST
 
-UNAME_M="$(uname -m)"
-readonly UNAME_M
+    UNAME_M="$(uname -m)"
+    readonly UNAME_M
 
-UNAME_U="$(uname -s)"
-readonly UNAME_U
+    UNAME_U="$(uname -s)"
+    readonly UNAME_U
 
-INSTALLED=true
+    INSTALLED=true
 
-readonly COCKPIT_PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-client" "nfs-common" "cockpit-file-sharing")
+    readonly COCKPIT_PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-client" "nfs-common" "cockpit-file-sharing")
 
-# COLORS
-readonly COLOUR_RESET='\e[0m'
-readonly aCOLOUR=(
-    '\e[38;5;154m' # green      | Lines, bullets and separators
-    '\e[1m'        # Bold white | Main descriptions
-    '\e[90m'       # Grey       | Credits
-    '\e[91m'       # Red        | Update notifications Alert
-    '\e[33m'       # Yellow     | Emphasis
-)
+    # COLORS
+    readonly COLOUR_RESET='\e[0m'
+    readonly aCOLOUR=(
+        '\e[38;5;154m' # green      | Lines, bullets and separators
+        '\e[1m'        # Bold white | Main descriptions
+        '\e[90m'       # Grey       | Credits
+        '\e[91m'       # Red        | Update notifications Alert
+        '\e[33m'       # Yellow     | Emphasis
+    )
 
-readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
-readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
-readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
+    readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
+    readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
+    readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
 
-TARGET_ARCH=""
+    TARGET_ARCH=""
 
-trap 'onCtrlC' INT
+    trap 'onCtrlC' INT
+
+}
+
+start
 
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -77,9 +82,9 @@ GreyStart() {
 ColorReset() {
     echo -e "$COLOUR_RESET\c"
 }
-###################
-# Check Functions #
-###################
+#########################
+# Start Check Functions #
+#########################
 Check_Arch() {
     case $UNAME_M in
     *64*)
@@ -398,15 +403,12 @@ install_cockpit() {
     ColorReset
 
 	# Enabling Cockpit
-
 	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
-
-	  res=$?
-
-	  if [[ $res != 0 ]]; then
-		  Show 1 "Enabling cockpit.socket failed!"
-		  exit $res
-  fi
+    res=$?
+    if [[ $res != 0 ]]; then
+        Show 1 "Enabling cockpit.socket failed!"
+        exit $res
+    fi
     echo ""
 	Show 0 "Successfully initialized Cockpit."
 
