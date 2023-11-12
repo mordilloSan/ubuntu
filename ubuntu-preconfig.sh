@@ -412,25 +412,6 @@ install_cockpit() {
 	Show 0 "Successfully initialized Cockpit."
 
 }
-function get_base_distro() {
-        local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
-
-        if [ -z "$distro" ]; then
-                distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
-        fi
-
-        echo $distro
-}
-function get_distro() {
-        local distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
-
-        echo $distro
-}
-function get_version_id() {
-        local version_id=$(cat /etc/os-release | grep '^VERSION_ID=' | head -1 | sed 's/VERSION_ID=//' | sed 's/"//g' | awk '{print $1}' | awk 'BEGIN {FS="."} {print $1}')
-
-        echo $version_id
-}
 ##################
 # Docker Section #
 ##################
