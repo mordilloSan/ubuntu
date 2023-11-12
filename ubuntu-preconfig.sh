@@ -474,7 +474,7 @@ install_cockpit() {
     Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
     echo ""
     GreyStart
-    wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz
+    wget -nv https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
     cp cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
