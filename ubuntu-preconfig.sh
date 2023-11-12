@@ -342,8 +342,8 @@ install_cockpit() {
 
     GreyStart
     # Add the 45 drives repo
-    #add_45repo
-    curl -sSL https://repo.45drives.com/setup | bash
+    add_45repo
+    #curl -sSL https://repo.45drives.com/setup | bash
 
     for i in "${COCKPIT_PACKAGES[@]}"
     do
@@ -353,6 +353,7 @@ install_cockpit() {
             Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
 
             if [ -x "$(command -v apt-get)" ]; then
+                GreyStart
                 ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade
                 res=$?
                 if [[ $res != 0 ]]; then
@@ -413,7 +414,7 @@ function get_version_id() {
         echo $version_id
 }
 add_45repo(){
-
+    GreyStart
     euid=$(id -u)
 
     if [ $euid -ne 0 ]; then
@@ -424,29 +425,29 @@ add_45repo(){
     custom_distro=$(get_distro)
     distro_version=$(get_version_id)
 
-    echo "Detected Debian-based distribution. Continuing..."
+    Show 2 "Detected Debian-based distribution. Continuing..."
 
     items=$(find /etc/apt/sources.list.d -name 45drives.list)
 
     if [[ -z "$items" ]]; then
-        echo "There were no existing 45Drives repos found. Setting up the new repo..."
+        Show 2 "There were no existing 45Drives repos found. Setting up the new repo..."
     else
         count=$(echo "$items" | wc -l)
-        echo "There were $count 45Drives repo(s) found. Archiving..."
-
+        Show 2 "There were $count 45Drives repo(s) found. Archiving..."
+        GreyStart
         mkdir -p /opt/45drives/archives/repos
 
         mv /etc/apt/sources.list.d/45drives.list /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
 
-        echo "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
+        Show 2 "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
     fi
 
     if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
         rm -f /etc/apt/sources.list.d/45drives.sources
     fi
 
-    echo "Updating ca-certificates to ensure certificate validity..."
-
+    Show 2 "Updating ca-certificates to ensure certificate validity..."
+    GreyStart
     apt-get update
     apt-get install ca-certificates -y
 
@@ -455,7 +456,7 @@ add_45repo(){
     res=$?
 
     if [ "$res" -ne "0" ]; then
-        echo "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
+        Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
         exit 1
     fi
 
@@ -464,14 +465,14 @@ add_45repo(){
     res=$?
 
     if [ "$res" -ne "0" ]; then
-        echo "Failed to download the new repo file. Please review the above error and try again."
+        Show 1 "Failed to download the new repo file. Please review the above error and try again."
         exit 1
     fi
 
     lsb_release_cs=$(lsb_release -cs)
 
     if [[ "$lsb_release_cs" == "" ]]; then
-        echo "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
+        Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
         exit 1
     fi
 
@@ -480,24 +481,23 @@ add_45repo(){
     res=$?
 
     if [ "$res" -ne "0" ]; then
-            echo "Failed to update the new repo file. Please review the above error and try again."
+            Show 1 "Failed to update the new repo file. Please review the above error and try again."
             exit 1
     fi
 
-    echo "The new repo file has been downloaded. Updating your package lists..."
+    Show 2 "The new repo file has been downloaded. Updating your package lists..."
+    GreyStart
 
-    pm_bin=apt
-
-    $pm_bin update -y
+    apt-get update -y
 
     res=$?
 
     if [ "$res" -ne "0" ]; then
-            echo "Failed to run '$pm_bin update -y'. Please review the above error and try again."
+            Show 1 "Failed to run '$pm_bin update -y'. Please review the above error and try again."
             exit 1
     fi
 
-    echo "Success! Your repo has been updated to our new server!"
+    Show 0 "Success! Your repo has been updated to our new server!"
 
 }
 
