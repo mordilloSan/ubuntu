@@ -189,8 +189,6 @@ welcome() {
 update_system() {
 	local res
 	echo ""
-	Show 2 "UPDATING SYSTEM"
-	echo ""
 	Show 2 "Updating packages"
 	echo ""
 	GreyStart
@@ -213,7 +211,7 @@ update_system() {
 	Show 2 "Upgrading packages"
     echo ""
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt -qq dist-upgrade -y --show-progress
+	DEBIAN_FRONTEND=noninteractive apt -qq --autoremove dist-upgrade -y --show-progress 
     ColorReset
     res=$?
     if [[ $res != 0 ]]; then
@@ -347,8 +345,7 @@ install_cockpit() {
     curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.sources 
 
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
-
-    cmd=${COCKPIT_PACKAGES[i]}
+        cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
             packagesNeeded=${COCKPIT_PACKAGES[i]}
             echo ""
