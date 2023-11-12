@@ -197,11 +197,11 @@ update_system() {
 	Show 2 "Updating packages"
 	echo ""
 	GreyStart
-	OUTPUT=`apt-get update 2>&1`
+	OUTPUT=`apt update 2>&1`
 	if [[ $? != 0 ]]; then
   		echo "$OUTPUT"
 	fi
-    if [ -x "$(command -v apt-get)" ]; then
+    if [ -x "$(command -v apt)" ]; then
         ${sudo_cmd} 
     fi
     res=$?
