@@ -335,17 +335,7 @@ change_renderer() {
 ###################
 # Cockpit Section #
 ###################
-install_cockpit() {
-
-    # Install cockpit and cockpit related things
-	local res
-	echo ""
-    Show 2 "INSTALLING COCKPIT"
-    echo ""
-    Show 2 "Adding the necessary repository sources"
-    echo ""   
-    GreyStart
-    # Add the 45 drives repo
+add_45repo(){
     #curl -sSL https://repo.45drives.com/setup | bash
     wget -qO - https://repo.45drives.com/key/gpg.asc | apt-key add -
     curl -o /etc/apt/sources.list.d/45drives.sources https://repo.45drives.com/lists/45drives.source
@@ -358,6 +348,17 @@ install_cockpit() {
         echo ""
         Show 0 "45 Drives repo added!"
     fi
+
+}
+install_cockpit() {
+	local res
+	echo ""
+    Show 2 "INSTALLING COCKPIT"
+    echo ""
+    Show 2 "Adding the necessary repository sources"
+    echo ""   
+    GreyStart
+    add_45repo
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
