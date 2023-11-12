@@ -459,25 +459,9 @@ add_45repo(){
         Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
         exit 1
     fi
-echo 'Name: 45Drives Repo - focal Stable
-Enabled: yes
-Types: deb
-URIs: https://repo.45drives.com/debian
-Suites: focal
-Components: main
-Architectures: amd64
-Signed-By: /usr/share/keyrings/45drives-archive-keyring.gpg
 
-Name: 45Drives Repo - focal Testing
-Enabled: no
-Types: deb
-URIs: https://repo.45drives.com/debian
-Suites: focal
-Components: testing
-Architectures: amd64
-Signed-By: /usr/share/keyrings/45drives-archive-keyring.gpg' > /etc/apt/sources.list.d/45drives.sources
 
-    #curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+wget https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 
     res=$?
 
