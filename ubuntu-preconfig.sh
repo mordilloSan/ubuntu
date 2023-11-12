@@ -204,7 +204,6 @@ update_system() {
     if [ -x "$(command -v apt-get)" ]; then
         ${sudo_cmd} 
     fi
-    ColorReset
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
