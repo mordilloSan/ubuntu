@@ -390,7 +390,41 @@ install_cockpit() {
 
 }
 
+#Repo Aux Functions
+function get_base_distro() {
+        local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
+
+        if [ -z "$distro" ]; then
+                distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
+        fi
+
+        echo $distro
+}
+function get_distro() {
+        local distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
+
+        echo $distro
+}
+function get_version_id() {
+        local version_id=$(cat /etc/os-release | grep '^VERSION_ID=' | head -1 | sed 's/VERSION_ID=//' | sed 's/"//g' | awk '{print $1}' | awk 'BEGIN {FS="."} {print $1}')
+
+        echo $version_id
+}
+
+
+
 add_45repo(){
+
+euid=$(id -u)
+
+if [ $euid -ne 0 ]; then
+        echo -e '\nYou must be root to run this utility.\n'
+fi
+
+distro=$(get_base_distro)
+custom_distro=$(get_distro)
+distro_version=$(get_version_id)
+
 
         echo "Detected Debian-based distribution. Continuing..."
 
@@ -482,6 +516,7 @@ add_45repo(){
         fi
 
         echo "Success! Your repo has been updated to our new server!"
+
 }
 ##################
 # Docker Section #
