@@ -518,7 +518,7 @@ Check_Docker_Install() {
             Show 0 "Current Docker verison is ${Docker_Version}."
         fi
     else
-        Show 3 "Docker not installed. Installing."
+        Show 2 "Docker not installed. Installing."
         Install_Docker
     fi
 }
@@ -568,12 +568,9 @@ Welcome_Banner() {
 }
 
 welcome
+update_system
 Check_Docker_Install
-
-#update_system
-
-#install_cockpit
-#Prepare_Docker
+install_cockpit
 
 #prepare init_network
 
