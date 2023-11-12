@@ -216,7 +216,6 @@ update_system() {
     echo ""
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt -qq --autoremove dist-upgrade -y --show-progress 
-    ColorReset
     res=$?
     if [[ $res != 0 ]]; then
 		echo ""
