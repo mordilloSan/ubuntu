@@ -363,7 +363,7 @@ install_cockpit() {
             echo ""
             if [ -x "$(command -v apt-get)" ]; then
                 GreyStart
-                PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $packagesNeeded|grep "install ok installed")
+                PKG_OK=$(dpkg-query -W --showformat='${Status}\n'$packagesNeeded|grep "install ok installed")
                 if [ "" = "$PKG_OK" ]; then
                     Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
                     DEBIAN_FRONTEND=noninteractive apt -y -q install "$packagesNeeded" --no-upgrade --show-progress
