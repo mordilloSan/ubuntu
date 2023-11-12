@@ -470,13 +470,17 @@ welcome
 
 prepare update_system
 
+prepare install_cockpit
+
+prepare Install_Docker
+
 #prepare init_network
 
-#prepare install_cockpit
+
 
 #prepare change_renderer
 
-#prepare Install_Docker
+
 
 #prepare remove_garbage
 
