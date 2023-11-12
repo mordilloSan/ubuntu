@@ -533,21 +533,20 @@ Prepare_Docker() {
     fi
 }
 Check_Docker_Running() {
-    for ((i = 1; i <= 3; i++)); do
-        sleep 3
         Show 1 "Checking if Docker is installed"
-        if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
-            Show 1 "Docker is not running, trying to start"
-            ${sudo_cmd} systemctl start docker
-            if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]
-                Show 1 "Docker is not installed, installing"
+        if [[! $(${sudo_cmd} systemctl start docker) == "Failed to start docker.service: Unit docker.service not found."]]; then
+                Show 1 "Docker is not found, installing"
                 Prepare_Docker
-            fi
         else
-            Show 1 "Docker is already installed"
+            Show 1 "Docker is installed, Checking if it is running"
+            if [[ ! $(${sudo_cmd} systemctl is-active docker) == "active" ]]; then
+                Show 1 "Docker is not running, trying to start"
+            else
+                Show 1 "Docker is installed and running"
+            fi
         fi
-    done
 }
+
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
