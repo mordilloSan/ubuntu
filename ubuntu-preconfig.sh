@@ -127,7 +127,7 @@ Check_Permissions() {
 
 	euid=$(id -u)
 
-	if [[ "$euid" != 0 ]]; then 
+	if [[ "$euid" != 0 ]]; then
 		Show 1 "Please run as root or with sudo."
 		exit 1
 	fi
@@ -214,7 +214,7 @@ update_system() {
 	echo ""
 	GreyStart
 	apt-get upgrade -y
-    ColorReset	
+    ColorReset
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Package upgrade failed!"
@@ -222,7 +222,7 @@ update_system() {
 	fi
 	echo ""
 	Show 0 "Successfully updated system!"
-	echo ""	
+	echo ""
 }
 
 init_network() {
@@ -230,12 +230,12 @@ init_network() {
 	Show 2 "INSTALLING NETWORK MANAGER"
 		echo ""
 	# Install packages
-	
+
 	GreyStart
 	apt-get install -y network-manager
 
     res=$?
-	
+
     if [[ $res != 0 ]]; then
 		Show 1 "Installing network manager failed!"
 		exit $res
@@ -244,12 +244,12 @@ init_network() {
 	systemctl enable --now NetworkManager
 
     res=$?
-	
+
     if [[ $res != 0 ]]; then
 		Show 1 "Enabling network manager failed!"
 		exit $res
 	fi
-    ColorReset	
+    ColorReset
 	echo ""
 	Show 0 "Successfully set up network manager"
 	echo ""
@@ -259,7 +259,7 @@ init_network() {
 remove_garbage() {
 	local res
     Show 2 "REMOVING CLOUD-INIT AND SNAPD"
-	# Remove cloud-init	
+	# Remove cloud-init
 	check_installed "cloud-init"
     GreyStart
 	if [ "$INSTALLED"  = true ]; then
@@ -284,7 +284,7 @@ remove_garbage() {
     	apt-get autoremove --purge snapd -y
     	rm -rf /var/cache/snapd/
     	rm -rf ~/snap
-	
+
     	res=$?
 	    if [[ $res != 0 ]]; then
 			Show 1 "Removing snapd failed!"
@@ -318,7 +318,7 @@ change_renderer() {
 	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
 
 	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	
+
 	systemctl restart network-manager
     ColorReset
 	res=$?
@@ -327,9 +327,9 @@ change_renderer() {
 		Show 1 "Reloading network-manager failed."
 		exit $res
 	fi
-	
+
 	Show 2 "Successfully enabled network manager."
-	
+
 	return 0
 }
 
@@ -337,12 +337,13 @@ install_cockpit() {
 
     # Install cockpit and cockpit related things
 	local res
-	
+
     Show 2 "INITIALIZING COCKPIT"
-	
+
     GreyStart
     # Add the 45 drives repo
-    curl -sSL https://repo.45drives.com/setup | sudo bash
+    add_45repo()
+    #curl -sSL https://repo.45drives.com/setup | sudo bash
 
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         cmd=${COCKPIT_PACKAGES[i]}
@@ -383,11 +384,104 @@ install_cockpit() {
 		  Show 1 "Enabling cockpit.socket failed!"
 		  exit $res
   fi
-	
+
 	Show 2 "Successfully initialized Cockpit."
 
 }
 
+add_45repo(){
+
+        echo "Detected Debian-based distribution. Continuing..."
+
+        items=$(find /etc/apt/sources.list.d -name 45drives.list)
+
+        if [[ -z "$items" ]]; then
+                echo "There were no existing 45Drives repos found. Setting up the new repo..."
+        else
+                count=$(echo "$items" | wc -l)
+                echo "There were $count 45Drives repo(s) found. Archiving..."
+
+                mkdir -p /opt/45drives/archives/repos
+
+                mv /etc/apt/sources.list.d/45drives.list /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
+
+                echo "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
+        fi
+
+        if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
+                rm -f /etc/apt/sources.list.d/45drives.sources
+        fi
+
+        echo "Updating ca-certificates to ensure certificate validity..."
+
+        apt update
+        apt install ca-certificates -y
+
+        wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
+
+        res=$?
+
+        if [ "$res" -ne "0" ]; then
+                echo "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
+                exit 1
+        fi
+
+        curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+
+        res=$?
+
+        if [ "$res" -ne "0" ]; then
+                echo "Failed to download the new repo file. Please review the above error and try again."
+                exit 1
+        fi
+
+        lsb_release_cs=$(lsb_release -cs)
+
+        if [[ "$lsb_release_cs" == "" ]]; then
+                echo "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
+                exit 1
+        fi
+
+        if [[ "$lsb_release_cs" != "focal" ]] && [[ "$lsb_release_cs" != "bionic" ]]; then
+        read -p "You are on an unsupported version of Debian. Would you like to use 'focal' packages? [y/N] " response
+
+                case $response in
+                        [yY]|[yY][eE][sS])
+                                echo
+                                ;;
+                        *)
+                                echo "Exiting..."
+                                exit 1
+                                ;;
+                esac
+
+                lsb_release_cs="focal"
+        fi
+
+        sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
+
+        res=$?
+
+        if [ "$res" -ne "0" ]; then
+                echo "Failed to update the new repo file. Please review the above error and try again."
+                exit 1
+        fi
+
+        echo "The new repo file has been downloaded. Updating your package lists..."
+
+        pm_bin=apt
+
+        $pm_bin update -y
+
+        res=$?
+
+        if [ "$res" -ne "0" ]; then
+                echo "Failed to run '$pm_bin update -y'. Please review the above error and try again."
+                exit 1
+        fi
+
+        echo "Success! Your repo has been updated to our new server!"
+}
 ##################
 # Docker Section #
 ##################
