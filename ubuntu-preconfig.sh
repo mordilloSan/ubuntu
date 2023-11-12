@@ -24,8 +24,7 @@ readonly UNAME_U
 
 INSTALLED=true
 
-COCKPIT_PACKAGES=('cockpit' 'cockpit-navigator' 'cockpit-file-sharing' 'realmd' 'tuned' 'udisks2-lvm2' 'samba' 'winbind' 'nfs-kernel-server' 'nfs-client' 'nfs-common')
-readonly COCKPIT_PACKAGES
+readonly COCKPIT_PACKAGES=('cockpit' 'cockpit-navigator' 'cockpit-file-sharing' 'realmd' 'tuned' 'udisks2-lvm2' 'samba' 'winbind' 'nfs-kernel-server' 'nfs-client' 'nfs-common')
 
 # COLORS
 readonly COLOUR_RESET='\e[0m'
@@ -346,8 +345,9 @@ install_cockpit() {
     add_45repo
     #curl -sSL https://repo.45drives.com/setup | sudo bash
 
-    for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
-        cmd=${COCKPIT_PACKAGES[i]}
+    for i in "${COCKPIT_PACKAGES[@]}"
+    do
+    cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
             packagesNeeded=${COCKPIT_PACKAGES[i]}
             Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
