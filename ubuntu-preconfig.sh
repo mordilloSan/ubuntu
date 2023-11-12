@@ -316,8 +316,14 @@ add_45repo(){
 	fi
     echo ""
 	Show 2 "Running 45Drives Repo Setup Script"
-
 	bash setup-repo.sh
+	res=$?
+	if [[ $res != 0 ]]; then
+		Show 1 "Failed to add repository"
+		exit $res
+	fi
+    echo ""
+	Show 2 "45 Drives Repository sucessfully added!"
 }
 install_cockpit() {
 	local res
@@ -327,7 +333,7 @@ install_cockpit() {
     Show 2 "Adding the necessary repository sources"
     echo ""   
     GreyStart
-    # add_45repo
+    add_45repo
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         cmd=${COCKPIT_PACKAGES[i]}
         if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
