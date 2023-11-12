@@ -470,7 +470,7 @@ welcome
 
 prepare update_system
 
-prepare install_cockpit
+install_cockpit
 
 prepare Install_Docker
 
