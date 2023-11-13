@@ -273,9 +273,7 @@ install_cockpit() {
 	local res
 	echo ""
     Show 2 "Installing \e[33mCockpit\e[0m"
-    echo ""
     Show 2 "Adding the necessary repository sources"
-    echo ""   
     add_45repo
     Show 2 "Installing cockpit modules"
     echo ""
