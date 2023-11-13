@@ -108,10 +108,10 @@ Check_Arch() {
 }
 Check_Distribution() {
     if [[ $DIST == *ubuntu* ]]; then
-    Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
+        Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
     else
-    Show 1 "Aborted, installation is only supported in linux ubuntu."
-    exit 1
+        Show 1 "Aborted, installation is only supported in linux ubuntu."
+        exit 1
     fi
 }
 Check_OS() {
