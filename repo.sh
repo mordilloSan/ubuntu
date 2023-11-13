@@ -55,6 +55,3 @@
 	fi
 	echo "The new repo file has been downloaded."
 	echo "Success! Your repo has been updated to our new server!"
-
-echo -e "\nThis command has been run on a distribution that is not supported by the 45Drives Team.\n\nIf you believe this is a mistake, please contact our team at repo@45drives.com!\n"
-exit 1
