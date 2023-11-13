@@ -378,11 +378,10 @@ install_cockpit() {
         Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
         echo ""
         GreyStart
-        PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $packagesNeeded|grep "install ok installed")
-        if [ "" = "$PKG_OK" ]; then
+
+        if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
-            #DEBIAN_FRONTEND=noninteractive apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
-            apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
+            apt-get install "$packagesNeeded";
             res=$?
             if [[ $res != 0 ]]; then
                 echo ""
@@ -390,11 +389,11 @@ install_cockpit() {
                 exit $res
             else
                 echo ""
-                Show 0 "\e[33m$packagesNeeded\e[0m installed"               
-            fi
+                Show 0 "\e[33m$packagesNeeded\e[0m installed" 
         else
             Show 0 "\e[33m$packagesNeeded\e[0m already installed"
         fi
+
     done
 
     #install sensors modules
