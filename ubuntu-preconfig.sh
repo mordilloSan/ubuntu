@@ -404,7 +404,7 @@ install_cockpit() {
     GreyStart 
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
-    cp cockpit-sensors/dist /usr/share/cockpit/sensors
+    cp -r cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
     rm cockpit-sensors*.*
 	# Enabling Cockpit
