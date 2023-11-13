@@ -386,6 +386,7 @@ install_cockpit() {
                 Show 1 "Instalation  failed!"
                 exit $res
             else
+                echo ""
                 Show 0 "\e[33m$packagesNeeded\e[0m installed" 
             fi
         else
