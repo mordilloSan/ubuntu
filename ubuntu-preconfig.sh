@@ -408,9 +408,7 @@ install_cockpit() {
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
     mv cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
-    rm cockpit-sensors.tar.xz
-    ColorReset
-
+    rm cockpit-sensors*.*
 	# Enabling Cockpit
 	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
     res=$?
