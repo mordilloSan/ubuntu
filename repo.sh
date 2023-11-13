@@ -44,26 +44,19 @@ distro_version=$(get_version_id)
 
 if [ "$distro" == "debian" ]; then
 	echo "Detected Debian-based distribution. Continuing..."
-
-	items=$(find /etc/apt/sources.list.d -name 45drives.list)
-
+	items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
 		echo "There were no existing 45Drives repos found. Setting up the new repo..."
 	else
 		count=$(echo "$items" | wc -l)
 		echo "There were $count 45Drives repo(s) found. Archiving..."
-
 		mkdir -p /opt/45drives/archives/repos
-
-		mv /etc/apt/sources.list.d/45drives.list /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
-	
+		mv /etc/apt/sources.list.d/45drives.sources /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
 		echo "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
+		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
+			rm -f /etc/apt/sources.list.d/45drives.sources
+		fi
 	fi
-
-	if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
-		rm -f /etc/apt/sources.list.d/45drives.sources
-	fi
-
 	echo "Updating ca-certificates to ensure certificate validity..."
 	apt update
 	apt install ca-certificates -y
