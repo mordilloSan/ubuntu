@@ -83,11 +83,11 @@ Check_Arch() {
         TARGET_ARCH="amd64"
         ;;
     *)
-        Show 1 "Aborted, unsupported or unknown architecture: $UNAME_M"
+        Show 1 "Aborted, unsupported or unknown architecture: \e[33m$UNAME_M\e[0m"
         exit 1
         ;;
     esac
-    Show 0 "Your hardware architecture is : $UNAME_M"
+    Show 0 "Your hardware architecture is : \e[33m$UNAME_M\e[0m"
 }
 Check_Distribution() {
     sType=0
@@ -102,9 +102,10 @@ Check_Distribution() {
     esac
     Show ${sType} "Your Linux Distribution is : ${DIST} ${notice}"
 }
+
 Check_OS() {
     if [[ $UNAME_U == *Linux* ]]; then
-        Show 0 "Your System is : $UNAME_U"
+        Show 0 "Your System is : \e[33m$UNAME_U\e[0m"
     else
         Show 1 "This script is only for Linux."
         exit 1
@@ -115,7 +116,7 @@ Check_Permissions() {
 
 	if [ "$interpreter" != "bash" ]; then
 		Show 1 "Please run with bash. (\`./ubuntu-preconfig.sh\` or \`bash ubuntu-preconfig.sh\`)"
-		Show 1 "Current interpreter: $interpreter"
+		Show 1 "Current interpreter: \e[33m$interpreter\e[0m"
 		exit 1
 	fi
 
@@ -125,7 +126,7 @@ Check_Permissions() {
 		Show 1 "Please run as root or with sudo."
 		exit 1
 	fi
-	Show 0 "Current interpreter: $interpreter"
+	Show 0 "Current interpreter: \e[33m$interpreter\e[0m"
 }
 check_installed() {
 
@@ -202,7 +203,7 @@ update_system() {
 init_network() {
 	local res
 	echo ""
-	Show 2 "INSTALLING NETWORK MANAGER"
+	Show 2 "Installing \e[33mNetworkManager\e[0m"
 	echo ""
 	# Install packages
 	GreyStart
@@ -337,7 +338,7 @@ install_cockpit() {
 
     #install sensors modules
     echo ""
-    Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
+    Show 2 "Install the necessary dependencies: \e[33mSensors\e[0m"
     echo ""
     GreyStart 
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
