@@ -32,18 +32,16 @@ function get_version_id() {
 	echo $version_id
 }
 
-euid=$(id -u)
-
-if [ $euid -ne 0 ]; then
-	echo -e '\nYou must be root to run this utility.\n'
-fi
+#euid=$(id -u)
+#
+#if [ $euid -ne 0 ]; then
+#	echo -e '\nYou must be root to run this utility.\n'
+#fi
 
 distro=$(get_base_distro)
 custom_distro=$(get_distro)
 distro_version=$(get_version_id)
 
-if [ "$distro" == "debian" ]; then
-	echo "Detected Debian-based distribution. Continuing..."
 	items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
 		echo "There were no existing 45Drives repos found. Setting up the new repo..."
@@ -105,8 +103,6 @@ if [ "$distro" == "debian" ]; then
 	echo "The new repo file has been downloaded."
 
 	echo "Success! Your repo has been updated to our new server!"
-
-fi
 
 echo -e "\nThis command has been run on a distribution that is not supported by the 45Drives Team.\n\nIf you believe this is a mistake, please contact our team at repo@45drives.com!\n"
 exit 1
