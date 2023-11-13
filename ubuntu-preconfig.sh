@@ -258,55 +258,7 @@ remove_garbage() {
     ColorReset
 	Show 0 "Successfully removed cloud-init and snapd."
 }
-change_renderer() {
-	local res
-    echo ""
-	Show 2 "ENABLING NETWORK MANAGER"
-    GreyStart
-    yourfilename=$(`ls /etc/netplan/*.yaml`)
-    #If there is no config file create one. If there is more than one file it can break
-    if [[ -z ${yourfilename} ]]; then
-		Show 1 "There isn't a network config file. Creating.."
-    else
-        rendline=grep -c -i "renderer: networkd" "$yourfilename"
-    	if [[ $rendline = 0 ]]; then
-        #if networkd string exist in config file, replace it
-            sed -i 's@networkd@NetworkManager@g' "$yourfilename"
-	    else
-        #if networkd string doesnt exist in config file, add it
-            sed -i '2i   renderer: NetworkManager' "$yourfilename"
-    fi
-	res=$?
-	if [[ $res != 0 ]]; then
-		echo ""
-        Show 1 "Changing renderer failed."
-		exit $res
-	else
-        Show 0 "Changing renderer sucessful."        
-    fi
-    #change permissions of file 
-    chmod 600 /etc/netplan/*.yaml
-    #Test config
-	netplan try
-	res=$?
-	if [[ $res != 0 ]]; then
-		Show 1 "netplan try failed."
-		exit $res
-	fi
-    netplan apply
 
-	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	systemctl restart network-manager
-	res=$?
-	if [[ $res != 0 ]]; then
-		Show 1 "Reloading network-manager failed."
-		exit $res
-	fi
-	Show 2 "Successfully enabled network manager."
-	sleep 5
-}
 ###################
 # Cockpit Section #
 ###################
