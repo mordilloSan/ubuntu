@@ -318,7 +318,6 @@ install_cockpit() {
         packagesNeeded=${COCKPIT_PACKAGES[i]}
         echo ""
         Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
-        echo ""
         lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
