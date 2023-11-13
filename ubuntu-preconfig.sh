@@ -309,7 +309,7 @@ add_45repo(){
 install_cockpit() {
 	local res
 	echo ""
-    Show 2 "INSTALLING COCKPIT"
+    Show 2 "Installing \e[Cockpit\e[0m"
     echo ""
     Show 2 "Adding the necessary repository sources"
     echo ""   
@@ -318,7 +318,7 @@ install_cockpit() {
     echo ""
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         packagesNeeded=${COCKPIT_PACKAGES[i]}
-        Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
+        Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
