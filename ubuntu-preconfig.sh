@@ -335,11 +335,8 @@ install_cockpit() {
             Show 0 "$packagesNeeded already installed"
         fi
     done
-
     #install sensors modules
-    echo ""
     Show 2 "Install the necessary dependencies: \e[33mSensors\e[0m"
-    echo ""
     GreyStart 
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
@@ -353,9 +350,7 @@ install_cockpit() {
         Show 1 "Enabling cockpit.socket failed!"
         exit $res
     fi
-    echo ""
 	Show 0 "Successfully initialized Cockpit."
-
 }
 ##################
 # Docker Section #
