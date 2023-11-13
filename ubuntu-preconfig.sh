@@ -107,17 +107,11 @@ Check_Arch() {
     Show 0 "Your hardware architecture is : \e[33m$UNAME_M\e[0m"
 }
 Check_Distribution() {
-    sType=0
-    notice=""
-    case $DIST in
-    *ubuntu*) ;;
-
-    *)
-        Show 1 "Aborted, installation is only supported in linux ubuntu."
-        exit 1
-        ;;
-    esac
-    Show ${sType} "Your Linux Distribution is : ${DIST} ${notice}"
+    if [[ $DIST == *ubuntu* ]]; then
+    Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
+    else
+    Show 1 "Aborted, installation is only supported in linux ubuntu."
+    exit 1
 }
 Check_OS() {
     if [[ $UNAME_U == *Linux* ]]; then
