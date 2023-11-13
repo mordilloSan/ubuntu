@@ -483,10 +483,11 @@ Welcome_Banner() {
 
 welcome
 update_system
+init_network
 Check_Docker_Install
 install_cockpit
-change_renderer
-# init_network
+# change_renderer
+
 # remove_garbage
 
 exit 0
