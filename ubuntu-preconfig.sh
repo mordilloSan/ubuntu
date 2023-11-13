@@ -198,6 +198,7 @@ update_system() {
         echo ""
         Show 0 "System successfully upgraded"
     fi
+    DEBIAN_FRONTEND=noninteractive needrestart -q -r a
 }
 init_network() {
 	local res
