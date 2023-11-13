@@ -131,7 +131,6 @@ check_installed() {
 # Start Functions #
 ###################
 welcome() {
-
 	clear
 	echo -e "\e[0m\c"
 	set -e
@@ -189,7 +188,7 @@ update_system() {
     fi
 }
 #####################
-# Netowrk Functions #
+# Network Functions #
 #####################
 init_network() {
 	local res
@@ -359,7 +358,7 @@ Uninstall_Docker(){
 ##################
 # Finish Section #
 ##################
-Welcome_Banner() {
+welcome_Banner() {
     CASA_TAG=$(casaos -v)
 
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
@@ -388,10 +387,9 @@ trap 'onCtrlC' INT
 welcome
 update_system
 init_network
+# change_renderer
 Check_Docker_Install
 install_cockpit
-# change_renderer
-
 # remove_garbage
-
+# Welcome_Banner
 exit 0
