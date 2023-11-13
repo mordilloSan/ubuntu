@@ -361,7 +361,7 @@ add_45repo(){
 		Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
 		exit 1
 	fi
-    ${sudo_cmd} curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+    curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
 		Show 1 "Failed to download the new repo file. Please review the above error and try again."
@@ -371,19 +371,6 @@ add_45repo(){
 	if [[ "$lsb_release_cs" == "" ]]; then
 		Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
 		exit 1
-	fi
-	if [[ "$lsb_release_cs" != "focal" ]] && [[ "$lsb_release_cs" != "bionic" ]]; then
-	read -p "You are on an unsupported version of Debian. Would you like to use 'focal' packages? [y/N] " response
-		case $response in
-			[yY]|[yY][eE][sS])
-				echo
-				;;
-			*)
-				Show 1 "Exiting..."
-				exit 1
-				;;
-		esac
-		lsb_release_cs="focal"
 	fi
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
 	res=$?
