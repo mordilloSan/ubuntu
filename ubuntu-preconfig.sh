@@ -267,11 +267,6 @@ change_renderer() {
     #If there is no config file create one. If there is more than one file it can break
     if [[ -z ${yourfilename} ]]; then
 		Show 1 "There isn't a network config file. Creating.."
-    cat > /etc/netplan/00-networkmanager.yaml <<EOF
-network:
-    version: 2
-    renderer: NetworkManager
-EOF
     else
         rendline=grep -c -i "renderer: networkd" "$yourfilename"
     	if [[ $rendline = 0 ]]; then
@@ -310,7 +305,7 @@ EOF
 		exit $res
 	fi
 	Show 2 "Successfully enabled network manager."
-	return 0
+	sleep 5
 }
 ###################
 # Cockpit Section #
