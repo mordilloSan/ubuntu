@@ -171,14 +171,12 @@ welcome() {
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
     T_Z=$(timedatectl show --va -p Timezone)
-    echo ""
-    Show 0 "Time Zone is ${T_Z}." 
+     Show 0 "Time Zone is ${T_Z}." 
     #setting a standard working Directory
     cd /home
 }
 update_system() {
 	local res
-	echo ""
 	Show 2 "Updating packages"
 	GreyStart
     apt-get update -q -u 
