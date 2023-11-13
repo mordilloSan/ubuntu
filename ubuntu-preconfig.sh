@@ -340,6 +340,7 @@ add_45repo(){
 		Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
 		exit 1
 	fi
+    Show 0 "gpg key added"
 	#Downloading the repo
 	curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 	res=$?
@@ -347,6 +348,7 @@ add_45repo(){
 		Show 1 "Failed to download the new repo file. Please review the above error and try again."
 		exit 1
 	fi
+    Show 0 "repo added"
 	#Updating the repo
 	lsb_release_cs=$(lsb_release -cs)
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
@@ -355,6 +357,7 @@ add_45repo(){
 		Show 1 "Failed to update the new repo file. Please review the above error and try again."
 		exit 1
 	fi
+    Show 0 "repo updated"
 	#Updating system
 	echo "The new repo file has been downloaded. Updating your package lists..."
     apt-get update -q -u 
