@@ -329,10 +329,10 @@ install_cockpit() {
                 Show 1 "Instalation  failed!"
                 exit $res
             else
-                Show 0 "\e[33m$packagesNeeded\e[0m installed" 
+                Show 0 "$packagesNeeded installed" 
             fi
         else
-            Show 0 "\e[33m$packagesNeeded\e[0m already installed"
+            Show 0 "$packagesNeeded already installed"
         fi
     done
 
