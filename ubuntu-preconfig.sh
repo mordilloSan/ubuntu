@@ -289,7 +289,7 @@ install_cockpit() {
     echo ""
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         packagesNeeded=${COCKPIT_PACKAGES[i]}
-        Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded\e[0m"
+        Show 2 "Prepare the necessary dependencies: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
@@ -307,9 +307,9 @@ install_cockpit() {
         fi
     done
     #install sensors modules
-    Show 2 "Install the necessary dependencies: \e[33mSensors\e[0m"
+    Show 2 "Prepare the necessary dependencies: \e[33mSensors\e[0m"
     GreyStart 
-    wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
+    wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz #--show-progress
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
     cp -r cockpit-sensors/dist /usr/share/cockpit/sensors
     rm -r cockpit-sensors
