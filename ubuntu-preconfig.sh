@@ -380,7 +380,7 @@ install_cockpit() {
         GreyStart
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
-            apt-get install "$packagesNeeded";
+            apt-get install -y "$packagesNeeded";
             res=$?
             if [[ $res != 0 ]]; then
                 echo ""
