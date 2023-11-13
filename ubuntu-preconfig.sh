@@ -316,6 +316,9 @@ EOF
 ###################
 # Cockpit Section #
 ###################
+teste(){
+curl -sSL https://repo.45drives.com/setup | sudo bash
+}
 add_45repo(){
 	#Setting the repo
     items=$(find /etc/apt/sources.list.d -name 45drives.list)
@@ -376,7 +379,7 @@ install_cockpit() {
     Show 2 "Adding the necessary repository sources"
     echo ""   
     GreyStart
-    add_45repo
+    teste
     echo ""
     Show 2 "Installing cockpit modules"
     echo ""   
