@@ -3,8 +3,6 @@
 ####################
 # Global Variables #
 ####################
-start
-trap 'onCtrlC' INT
 start (){
     # SYSTEM INFO
     ((EUID)) && sudo_cmd="sudo"
@@ -392,7 +390,9 @@ Uninstall_Docker(){
     sudo rm -rf /var/lib/docker
     sudo rm -rf /var/lib/containerd
 }
-
+##################
+# Finish Section #
+##################
 Welcome_Banner() {
     CASA_TAG=$(casaos -v)
 
@@ -412,7 +412,11 @@ Welcome_Banner() {
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: casaos-uninstall"
     echo -e "${COLOUR_RESET}"
 }
+Remove_repo_backup(){
+}
 
+start
+trap 'onCtrlC' INT
 welcome
 update_system
 init_network
