@@ -379,7 +379,6 @@ install_cockpit() {
             Show 2 "$packagesNeeded not installed. Installing..."
             echo ""
             GreyStart
-            Show 1 " DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded""
             DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
             res=$?
             if [[ $res != 0 ]]; then
