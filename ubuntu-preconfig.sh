@@ -360,6 +360,7 @@ add_45repo(){
 	fi
 	Show 0 "The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
+    echo ""
 }
 install_cockpit() {
 	local res
@@ -370,7 +371,6 @@ install_cockpit() {
     echo ""   
     add_45repo
     Show 2 "Installing cockpit modules"
-    echo ""   
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         packagesNeeded=${COCKPIT_PACKAGES[i]}
         echo ""
