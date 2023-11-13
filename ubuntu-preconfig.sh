@@ -204,10 +204,9 @@ init_network() {
 	local res
 	echo ""
 	Show 2 "Installing \e[33mNetworkManager\e[0m"
-	echo ""
 	# Install packages
 	GreyStart
-	apt-get install -y network-manager
+	apt-get install -y -q network-manager
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Installing network manager failed!"
@@ -219,7 +218,6 @@ init_network() {
 		Show 1 "Enabling network manager failed!"
 		exit $res
 	fi
-	echo ""
 	Show 0 "Successfully set up network manager"
 }
 remove_garbage() {
