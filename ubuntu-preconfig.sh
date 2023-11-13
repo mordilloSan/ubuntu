@@ -260,6 +260,7 @@ remove_garbage() {
 }
 change_renderer() {
 	local res
+    echo ""
 	Show 2 "ENABLING NETWORK MANAGER"
     GreyStart
     yourfilename=`ls /etc/netplan/*.yaml`
