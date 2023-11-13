@@ -316,9 +316,6 @@ EOF
 ###################
 # Cockpit Section #
 ###################
-teste(){
-    ${sudo_cmd} curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash 
-}
 add_45repo(){
 	items=$(find /etc/apt/sources.list.d -name 45drives.list)
 	if [[ -z "$items" ]]; then
