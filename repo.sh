@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function get_base_distro() {
 	local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
 
