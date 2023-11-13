@@ -357,7 +357,7 @@ install_cockpit() {
 ##################
 Check_Docker_Install() {
     echo ""
-    Show 2 "Installing \e[33m$Docker\e[0m"
+    Show 2 "Installing \e[33mDocker\e[0m"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         if [[ $? -ne 0 ]]; then
