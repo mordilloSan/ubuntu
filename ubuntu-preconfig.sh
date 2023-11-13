@@ -317,7 +317,7 @@ EOF
 # Cockpit Section #
 ###################
 teste(){
-curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash | GreyStart
 }
 add_45repo(){
 	#Setting the repo
