@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# 2021 Dawson Della Valle <ddellavalle@45drives.com>
+
+# curl -sSL https://repo.45drives.com/setup -o setup-repo.sh &&
+#     sudo bash setup-repo.sh &&
+#     rm setup-repo.sh
+
+# curl -sSL https://repo.45drives.com/setup -o setup-repo.sh && sudo bash setup-repo.sh && rm setup-repo.sh
+
+# curl -sSL https://repo.45drives.com/setup | sudo bash
+
 function get_base_distro() {
 	local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
 
