@@ -333,7 +333,7 @@ add_45repo(){
 		fi
 	fi
 	Show 2 "Updating ca-certificates to ensure certificate validity..."
-	apt-get install ca-certificates -y -q
+	apt-get install ca-certificates -y -q=2
 	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
 	res=$?
 	if [ "$res" -ne "0" ]; then
