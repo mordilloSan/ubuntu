@@ -124,15 +124,12 @@ Check_OS() {
 }
 Check_Permissions() {
 	interpreter=$(ps -p $$ | awk '$1 != "PID" {print $(NF)}' | tr -d '()')
-
 	if [ "$interpreter" != "bash" ]; then
 		Show 1 "Please run with bash. (\`./ubuntu-preconfig.sh\` or \`bash ubuntu-preconfig.sh\`)"
 		Show 1 "Current interpreter: \e[33m$interpreter\e[0m"
 		exit 1
 	fi
-
 	euid=$(id -u)
-
 	if [[ "$euid" != 0 ]]; then
 		Show 1 "Please run as root or with sudo."
 		exit 1
@@ -140,7 +137,6 @@ Check_Permissions() {
 	Show 0 "Current interpreter: \e[33m$interpreter\e[0m"
 }
 check_installed() {
-
 	if dpkg-query -W -f'${db:Status-Abbrev}\n' $* 2>/dev/null \
  | grep -q '^.i $'; then
     	Show 2 "$* is Installed"
