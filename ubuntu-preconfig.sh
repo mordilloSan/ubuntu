@@ -168,6 +168,9 @@ welcome() {
     T_Z=$(timedatectl show --va -p Timezone)
     echo ""
     Show 0 "Time Zone is ${T_Z}." 
+    #setting a standard working Directory
+    cd /home
+
 }
 update_system() {
 	local res
@@ -198,7 +201,7 @@ update_system() {
         echo ""
         Show 0 "System successfully upgraded"
     fi
-    echo ""
+#    echo ""
 #    needrestart -q -r a
 }
 init_network() {
@@ -400,16 +403,12 @@ install_cockpit() {
     echo ""
     Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
     echo ""
-    GreyStart
-
-
-
-
-    
+    GreyStart 
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
-    tar -xf cockpit-sensors.tar.xz /usr/share/cockpit/sensors
-    #cp -r cockpit-sensors/dist /usr/share/cockpit/sensors
-    rm -r cockpit-sensors*.*
+    tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
+    mv cockpit-sensors/dist /usr/share/cockpit/sensors
+    rm -r cockpit-sensors
+    rm cockpit-sensors.tar.xz
     ColorReset
 
 	# Enabling Cockpit
