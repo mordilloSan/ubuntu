@@ -332,7 +332,8 @@ get_version_id() {
 	echo $version_id
 }
 teste(){
-curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash 
+    
+${sudo_cmd} curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash 
 }
 add_45repo(){
 	distro=$(get_base_distro)
@@ -360,7 +361,7 @@ add_45repo(){
 		Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
 		exit 1
 	fi
-	curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+    ${sudo_cmd} curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
 		Show 1 "Failed to download the new repo file. Please review the above error and try again."
