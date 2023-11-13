@@ -193,18 +193,7 @@ if [ "$distro" == "debian" ]; then
 		exit 1
 	fi
 
-	echo "The new repo file has been downloaded. Updating your package lists..."
-
-	pm_bin=apt
-
-	$pm_bin update -y
-
-	res=$?
-
-	if [ "$res" -ne "0" ]; then
-		echo "Failed to run '$pm_bin update -y'. Please review the above error and try again."
-		exit 1
-	fi
+	echo "The new repo file has been downloaded."
 
 	echo "Success! Your repo has been updated to our new server!"
 
