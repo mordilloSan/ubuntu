@@ -334,7 +334,6 @@ add_45repo(){
 	Show 2 "Updating ca-certificates to ensure certificate validity..."
     echo ""    
     GreyStart
-	apt-get update -q
 	apt-get install ca-certificates -y
 	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
 	res=$?
@@ -365,7 +364,7 @@ add_45repo(){
 		Show 1 "Failed to update the new repo file. Please review the above error and try again."
 		exit 1
 	else
-        Show 0 "repo file updated fetched"
+        Show 0 "repo file updated"
 	fi
 	echo ""
     Show 0 "Success! Your repo has been updated to our new server!"
