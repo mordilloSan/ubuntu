@@ -316,29 +316,10 @@ EOF
 ###################
 # Cockpit Section #
 ###################
-get_base_distro() {
-	local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
-	if [ -z "$distro" ]; then
-		distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
-	fi
-	echo $distro
-}
-get_distro() {
-	local distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
-	echo $distro
-}
-get_version_id() {
-	local version_id=$(cat /etc/os-release | grep '^VERSION_ID=' | head -1 | sed 's/VERSION_ID=//' | sed 's/"//g' | awk '{print $1}' | awk 'BEGIN {FS="."} {print $1}')
-	echo $version_id
-}
 teste(){
-    
-${sudo_cmd} curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash 
+    ${sudo_cmd} curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash 
 }
 add_45repo(){
-	distro=$(get_base_distro)
-    custom_distro=$(get_distro)
-    distro_version=$(get_version_id)
 	items=$(find /etc/apt/sources.list.d -name 45drives.list)
 	if [[ -z "$items" ]]; then
 		Show 2 "There were no existing 45Drives repos found. Setting up the new repo..."
@@ -353,6 +334,7 @@ add_45repo(){
 		rm -f /etc/apt/sources.list.d/45drives.sources
 	fi
 	Show 2 "Updating ca-certificates to ensure certificate validity..."
+    GreyStart
 	apt-get update -q
 	apt-get install ca-certificates -y
 	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
@@ -378,7 +360,8 @@ add_45repo(){
 		Show 1 "Failed to update the new repo file. Please review the above error and try again."
 		exit 1
 	fi
-	Show 0 "Success! Your repo has been updated to our new server!"
+	echo ""
+    Show 0 "Success! Your repo has been updated to our new server!"
 }
 install_cockpit() {
 	local res
