@@ -448,6 +448,7 @@ Check_Docker_Install() {
     else
         echo ""
         Show 2 "Docker not installed. Installing."
+        echo ""
         Install_Docker
     fi
 }
@@ -466,10 +467,8 @@ Install_Docker() {
 Check_Docker_Install_Final() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        echo ""
         Show 0 "Current Docker verison is ${Docker_Version}."
     else
-        echo ""
         Show 1 "Installation failed, please uninstall docker"
     fi
 }
