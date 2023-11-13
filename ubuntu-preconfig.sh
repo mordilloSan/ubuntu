@@ -199,7 +199,7 @@ update_system() {
         Show 0 "System successfully upgraded"
     fi
     echo ""
-    needrestart -q -r a
+#    needrestart -q -r a
 }
 init_network() {
 	local res
