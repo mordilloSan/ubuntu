@@ -341,23 +341,31 @@ add_45repo(){
 	if [ "$res" -ne "0" ]; then
 		Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
 		exit 1
-	fi
+	else
+        Show 0 "gpg key added"
+    fi
     curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
 		Show 1 "Failed to download the new repo file. Please review the above error and try again."
 		exit 1
+	else
+        Show 0 "repo file downloaded"
 	fi
 	lsb_release_cs=$(lsb_release -cs)
 	if [[ "$lsb_release_cs" == "" ]]; then
 		Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
 		exit 1
+	else
+        Show 0 "distribution codename fetched"
 	fi
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
 		Show 1 "Failed to update the new repo file. Please review the above error and try again."
 		exit 1
+	else
+        Show 0 "repo file updated fetched"
 	fi
 	echo ""
     Show 0 "Success! Your repo has been updated to our new server!"
