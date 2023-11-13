@@ -263,7 +263,7 @@ change_renderer() {
     echo ""
 	Show 2 "ENABLING NETWORK MANAGER"
     GreyStart
-    yourfilename=`ls /etc/netplan/*.yaml`
+    yourfilename=$(`ls /etc/netplan/*.yaml`)
     #If there is no config file create one. If there is more than one file it can break
     if [[ -z ${yourfilename} ]]; then
 		Show 1 "There isn't a network config file. Creating.."
@@ -273,14 +273,13 @@ network:
     renderer: NetworkManager
 EOF
     else
-        rendline=`grep -c -i renderer: networkd`
+        rendline=grep -c -i "renderer: networkd" "$yourfilename"
     	if [[ $rendline = 0 ]]; then
         #if networkd string exist in config file, replace it
-            sed -i 's@networkd@NetworkManager@g' /etc/netplan/$yourfilename.yaml
+            sed -i 's@networkd@NetworkManager@g' "$yourfilename"
 	    else
         #if networkd string doesnt exist in config file, add it
-            sed -i '2i   renderer: NetworkManager' /etc/netplan/$yourfilename.yaml
-	    fi
+            sed -i '2i   renderer: NetworkManager' "$yourfilename"
     fi
 	res=$?
 	if [[ $res != 0 ]]; then
