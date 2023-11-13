@@ -269,7 +269,7 @@ install_cockpit() {
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
-            DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -q=2 -t "$lsb_release_cs"-backports "$packagesNeeded"
             res=$?
             if [[ $res != 0 ]]; then
                 Show 1 "Instalation  failed!"
