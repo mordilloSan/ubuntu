@@ -35,6 +35,31 @@ onCtrlC() {
     echo -e "${COLOUR_RESET}"
     exit 1
 }
+Check_Service_status() {
+    for SERVICE in "${CASA_SERVICES[@]}"; do
+        Show 2 "Checking ${SERVICE}..."
+        if [[ $(${sudo_cmd} systemctl is-active "${SERVICE}") == "active" ]]; then
+            Show 0 "${SERVICE} is running."
+        else
+            Show 1 "${SERVICE} is not running, Please reinstall."
+            exit 1
+        fi
+    done
+}
+Get_IPs() {
+    PORT=$(${sudo_cmd} cat ${CASA_CONF_PATH} | grep port | sed 's/port=//')
+    ALL_NIC=$($sudo_cmd ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
+    for NIC in ${ALL_NIC}; do
+        IP=$($sudo_cmd ifconfig "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+        if [[ -n $IP ]]; then
+            if [[ "$PORT" -eq "80" ]]; then
+                echo -e "${GREEN_BULLET} http://$IP (${NIC})"
+            else
+                echo -e "${GREEN_BULLET} http://$IP:$PORT (${NIC})"
+            fi
+        fi
+    done
+}
 ##########
 # Colors #
 ##########
@@ -349,10 +374,8 @@ Uninstall_Docker(){
 # Finish Section #
 ##################
 wrapup_banner() {
-    CASA_TAG=$(casaos -v)
-
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-    echo -e " Cockpit ${CASA_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
+    echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     Get_IPs
     echo -e " Open your browser and visit the above address."
@@ -381,5 +404,5 @@ init_network
 Check_Docker_Install
 install_cockpit
 # remove_garbage
-# wrapup_banner
+wrapup_banner
 exit 0
