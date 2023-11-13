@@ -112,6 +112,7 @@ Check_Distribution() {
     else
     Show 1 "Aborted, installation is only supported in linux ubuntu."
     exit 1
+    fi
 }
 Check_OS() {
     if [[ $UNAME_U == *Linux* ]]; then
