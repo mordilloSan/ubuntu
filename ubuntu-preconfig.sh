@@ -77,8 +77,7 @@ Show() {
     # NOTICE
     elif (($1 == 3)); then
         echo -e "${aCOLOUR[2]}[$COLOUR_RESET${aCOLOUR[4]}NOTICE$COLOUR_RESET${aCOLOUR[2]}]$COLOUR_RESET $2"
-    fi
-    # NOTICE
+    # PROGRESS
     elif (($1 == 4)); then
         echo -e "${aCOLOUR[2]}[$COLOUR_RESET${aCOLOUR[4]}      $COLOUR_RESET${aCOLOUR[3]}]$COLOUR_RESET $2"
     fi
