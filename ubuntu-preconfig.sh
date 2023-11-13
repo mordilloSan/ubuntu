@@ -378,7 +378,7 @@ install_cockpit() {
         Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
         echo ""
         GreyStart
-        PKG_OK=$(dpkg-query -W --showformat='${Status}\n'$packagesNeeded|grep "install ok installed")
+        PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $packagesNeeded|grep "install ok installed")
         if [ "" = "$PKG_OK" ]; then
             Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
             #DEBIAN_FRONTEND=noninteractive apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
