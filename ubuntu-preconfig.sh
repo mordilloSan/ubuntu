@@ -316,12 +316,29 @@ EOF
 ###################
 # Cockpit Section #
 ###################
+function get_base_distro() {
+	local distro=$(cat /etc/os-release | grep '^ID_LIKE=' | head -1 | sed 's/ID_LIKE=//' | sed 's/"//g' | awk '{print $1}')
+	if [ -z "$distro" ]; then
+		distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
+	fi
+	echo $distro
+}
+function get_distro() {
+	local distro=$(cat /etc/os-release | grep '^ID=' | head -1 | sed 's/ID=//' | sed 's/"//g' | awk '{print $1}')
+	echo $distro
+}
+function get_version_id() {
+	local version_id=$(cat /etc/os-release | grep '^VERSION_ID=' | head -1 | sed 's/VERSION_ID=//' | sed 's/"//g' | awk '{print $1}' | awk 'BEGIN {FS="."} {print $1}')
+	echo $version_id
+}
 teste(){
-curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash | GreyStart
+curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | bash 
 }
 add_45repo(){
-	#Setting the repo
-    items=$(find /etc/apt/sources.list.d -name 45drives.list)
+	distro=$(get_base_distro)
+    custom_distro=$(get_distro)
+    distro_version=$(get_version_id)
+	items=$(find /etc/apt/sources.list.d -name 45drives.list)
 	if [[ -z "$items" ]]; then
 		echo "There were no existing 45Drives repos found. Setting up the new repo..."
 	else
@@ -329,47 +346,52 @@ add_45repo(){
 		echo "There were $count 45Drives repo(s) found. Archiving..."
 		mkdir -p /opt/45drives/archives/repos
 		mv /etc/apt/sources.list.d/45drives.list /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
-		Show 3 "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
+		echo "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
 	fi
 	if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 		rm -f /etc/apt/sources.list.d/45drives.sources
 	fi
-	#Setting the certificates
 	echo "Updating ca-certificates to ensure certificate validity..."
+	apt update
 	apt-get install ca-certificates -y
 	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
 	res=$?
 	if [ "$res" -ne "0" ]; then
-		Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
+		echo "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
 		exit 1
 	fi
-    Show 0 "gpg key added"
-	#Downloading the repo
 	curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
-		Show 1 "Failed to download the new repo file. Please review the above error and try again."
+		echo "Failed to download the new repo file. Please review the above error and try again."
 		exit 1
 	fi
-    Show 0 "repo added"
-	#Updating the repo
 	lsb_release_cs=$(lsb_release -cs)
+	if [[ "$lsb_release_cs" == "" ]]; then
+		echo "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
+		exit 1
+	fi
+	if [[ "$lsb_release_cs" != "focal" ]] && [[ "$lsb_release_cs" != "bionic" ]]; then
+	read -p "You are on an unsupported version of Debian. Would you like to use 'focal' packages? [y/N] " response
+		case $response in
+			[yY]|[yY][eE][sS])
+				echo
+				;;
+			*)
+				echo "Exiting..."
+				exit 1
+				;;
+		esac
+		lsb_release_cs="focal"
+	fi
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
-		Show 1 "Failed to update the new repo file. Please review the above error and try again."
+		echo "Failed to update the new repo file. Please review the above error and try again."
 		exit 1
 	fi
-    Show 0 "repo updated"
-	#Updating system
-	echo "The new repo file has been downloaded. Updating your package lists..."
-    apt-get update -q -u 
-    res=$?
-    if [[ $res != 0 ]]; then
-		Show 1 "Package update failed!"
-		exit $res
-    fi
-	Show 0 "Success! Your repo has been updated to our new server!"
+	echo "The new repo file has been downloaded."
+	echo "Success! Your repo has been updated to our new server!"
 }
 install_cockpit() {
 	local res
@@ -379,7 +401,8 @@ install_cockpit() {
     Show 2 "Adding the necessary repository sources"
     echo ""   
     GreyStart
-    teste
+    #teste
+    add_45repo
     echo ""
     Show 2 "Installing cockpit modules"
     echo ""   
