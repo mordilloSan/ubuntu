@@ -201,6 +201,7 @@ update_system() {
 }
 init_network() {
 	local res
+	echo ""
 	Show 2 "INSTALLING NETWORK MANAGER"
 	echo ""
 	# Install packages
@@ -219,7 +220,6 @@ init_network() {
 	fi
 	echo ""
 	Show 0 "Successfully set up network manager"
-	echo ""
 }
 remove_garbage() {
 	local res
@@ -258,7 +258,6 @@ remove_garbage() {
     ColorReset
 	Show 0 "Successfully removed cloud-init and snapd."
 }
-
 ###################
 # Cockpit Section #
 ###################
@@ -365,7 +364,7 @@ install_cockpit() {
 ##################
 Check_Docker_Install() {
     echo ""
-    Show 2 "INSTALLING DOCKER"
+    Show 2 "Installing \e[33m$Docker\e[0m"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         if [[ $? -ne 0 ]]; then
