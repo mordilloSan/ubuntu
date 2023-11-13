@@ -161,7 +161,6 @@ update_system() {
 	local res
 	echo ""
 	Show 2 "Updating packages"
-	echo ""
 	GreyStart
     apt-get update -q -u 
     res=$?
@@ -169,21 +168,17 @@ update_system() {
 		Show 1 "Package update failed!"
 		exit $res
 	else
-        echo ""
         Show 0 "System successfully updated"
     fi
     echo ""
 	Show 2 "Upgrading packages"
-    echo ""
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade
     res=$?
     if [[ $res != 0 ]]; then
-		echo ""
         Show 1 "Package upgrade failed!"
 		exit $res
 	else
-        echo ""
         Show 0 "System successfully upgraded"
     fi
 }
@@ -196,19 +191,19 @@ init_network() {
 	Show 2 "Installing \e[33mNetworkManager\e[0m"
 	# Install packages
 	GreyStart
-	apt-get install -y -q network-manager
+	apt-get install -y -q=2 network-manager
     res=$?
     if [[ $res != 0 ]]; then
-		Show 1 "Installing network manager failed!"
+		Show 1 "Installing NetworkManager failed!"
 		exit $res
 	fi
 	systemctl enable --now NetworkManager
     res=$?
     if [[ $res != 0 ]]; then
-		Show 1 "Enabling network manager failed!"
+		Show 1 "Enabling NetworkManager failed!"
 		exit $res
 	fi
-	Show 0 "Successfully set up network manager"
+	Show 0 "Successfully set up NetworkManager"
 }
 ###################
 # Cockpit Section #
@@ -260,7 +255,7 @@ add_45repo(){
 install_cockpit() {
 	local res
 	echo ""
-    Show 2 "Installing \e[Cockpit\e[0m"
+    Show 2 "Installing \e[33mCockpit\e[0m"
     echo ""
     Show 2 "Adding the necessary repository sources"
     echo ""   
@@ -312,21 +307,16 @@ Check_Docker_Install() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         if [[ $? -ne 0 ]]; then
-            echo ""
             Show 2 "Docker not installed. Installing."
             Install_Docker
         elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCER_VERSION}" ]]; then
-            echo ""
             Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCER_VERSION}.xx.xx\e[0m,\Current Docker verison is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker."
             exit 1
         else
-            echo ""
             Show 0 "Current Docker verison is ${Docker_Version}."
         fi
     else
-        echo ""
         Show 2 "Docker not installed. Installing."
-        echo ""
         Install_Docker
     fi
 }
@@ -358,11 +348,11 @@ Uninstall_Docker(){
 ##################
 # Finish Section #
 ##################
-welcome_Banner() {
+wrapup_banner() {
     CASA_TAG=$(casaos -v)
 
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-    echo -e " CasaOS ${CASA_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
+    echo -e " Cockpit ${CASA_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     Get_IPs
     echo -e " Open your browser and visit the above address."
@@ -391,5 +381,5 @@ init_network
 Check_Docker_Install
 install_cockpit
 # remove_garbage
-# Welcome_Banner
+# wrapup_banner
 exit 0
