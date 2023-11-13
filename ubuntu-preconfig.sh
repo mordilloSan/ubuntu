@@ -38,7 +38,6 @@ start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
 
     TARGET_ARCH=""
-
     trap 'onCtrlC' INT
 
 }
@@ -374,11 +373,12 @@ install_cockpit() {
         echo ""
         Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
         echo ""
+        lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
             echo ""
             GreyStart
-            DEBIAN_FRONTEND=noninteractive apt-get install -y -q "$packagesNeeded";
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded";
             res=$?
             if [[ $res != 0 ]]; then
                 Show 1 "Instalation  failed!"
