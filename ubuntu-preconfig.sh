@@ -198,6 +198,7 @@ update_system() {
         echo ""
         Show 0 "System successfully upgraded"
     fi
+    echo ""
     needrestart -q -r a
 }
 init_network() {
