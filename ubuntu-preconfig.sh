@@ -3,24 +3,20 @@
 ####################
 # Global Variables #
 ####################
+start
+trap 'onCtrlC' INT
 start (){
     # SYSTEM INFO
     ((EUID)) && sudo_cmd="sudo"
     source /etc/os-release
     LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
     readonly LSB_DIST
-
     DIST=$(echo "${ID}")
     readonly DIST
-
     UNAME_M="$(uname -m)"
     readonly UNAME_M
-
     UNAME_U="$(uname -s)"
     readonly UNAME_U
-
-    INSTALLED=true
-
     readonly COCKPIT_PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-client" "nfs-common" "cockpit-file-sharing")
 
     # COLORS
@@ -32,16 +28,11 @@ start (){
         '\e[91m'       # Red        | Update notifications Alert
         '\e[33m'       # Yellow     | Emphasis
     )
-
     readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
-
     TARGET_ARCH=""
-    trap 'onCtrlC' INT
-
 }
-start
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
     exit 1
@@ -74,9 +65,9 @@ GreyStart() {
 ColorReset() {
     echo -e "$COLOUR_RESET\c"
 }
-#########################
-# Start Check Functions #
-#########################
+###################
+# Check Functions #
+###################
 Check_Arch() {
     case $UNAME_M in
     *64*)
@@ -102,7 +93,6 @@ Check_Distribution() {
     esac
     Show ${sType} "Your Linux Distribution is : ${DIST} ${notice}"
 }
-
 Check_OS() {
     if [[ $UNAME_U == *Linux* ]]; then
         Show 0 "Your System is : \e[33m$UNAME_U\e[0m"
@@ -140,7 +130,7 @@ check_installed() {
 	fi
 }
 ###################
-# Script Functions #
+# Start Functions #
 ###################
 welcome() {
 
