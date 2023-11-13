@@ -378,7 +378,6 @@ install_cockpit() {
         Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
         echo ""
         GreyStart
-
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
             apt-get install "$packagesNeeded";
@@ -393,7 +392,6 @@ install_cockpit() {
         else
             Show 0 "\e[33m$packagesNeeded\e[0m already installed"
         fi
-
     done
 
     #install sensors modules
