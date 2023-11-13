@@ -330,7 +330,9 @@ add_45repo(){
 	if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 		rm -f /etc/apt/sources.list.d/45drives.sources
 	fi
+    echo ""
 	Show 2 "Updating ca-certificates to ensure certificate validity..."
+    echo ""    
     GreyStart
 	apt-get update -q
 	apt-get install ca-certificates -y
@@ -367,10 +369,7 @@ install_cockpit() {
     echo ""
     Show 2 "Adding the necessary repository sources"
     echo ""   
-    GreyStart
-    #teste
     add_45repo
-    echo ""
     Show 2 "Installing cockpit modules"
     echo ""   
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
