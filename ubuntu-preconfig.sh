@@ -317,7 +317,7 @@ EOF
 # Cockpit Section #
 ###################
 teste(){
-curl -sSL https://repo.45drives.com/setup | sudo bash
+curl -sSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/repo.sh | sudo bash
 }
 add_45repo(){
 	#Setting the repo
