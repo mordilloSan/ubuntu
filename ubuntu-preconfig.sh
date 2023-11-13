@@ -359,6 +359,7 @@ add_45repo(){
 	else
         Show 0 "distribution codename fetched"
 	fi
+	lsb_release_cs="focal"
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
