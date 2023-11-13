@@ -199,8 +199,6 @@ update_system() {
         echo ""
         Show 0 "System successfully upgraded"
     fi
-#    echo ""
-#    needrestart -q -r a
 }
 init_network() {
 	local res
@@ -492,7 +490,7 @@ welcome
 update_system
 Check_Docker_Install
 install_cockpit
-#change_renderer
+change_renderer
 # init_network
 # remove_garbage
 
