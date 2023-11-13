@@ -380,8 +380,8 @@ install_cockpit() {
         PKG_OK=$(dpkg-query -W --showformat='${Status}\n'$packagesNeeded|grep "install ok installed")
         if [ "" = "$PKG_OK" ]; then
             Show 2 "No $packagesNeeded. Setting up $packagesNeeded."
-            #DEBIAN_FRONTEND=noninteractive apt-get -y -q install "$packagesNeeded" --no-upgrade --show-progress
-            DEBIAN_FRONTEND=noninteractive apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
+            #DEBIAN_FRONTEND=noninteractive apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
+            apt-get -y install "$packagesNeeded" --no-upgrade --show-progress
             res=$?
             if [[ $res != 0 ]]; then
                 echo ""
@@ -401,6 +401,11 @@ install_cockpit() {
     Show 2 "Install the necessary dependencies: \e[33mSensors \e[0m"
     echo ""
     GreyStart
+
+
+
+
+    
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
     tar -xf cockpit-sensors.tar.xz /usr/share/cockpit/sensors
     #cp -r cockpit-sensors/dist /usr/share/cockpit/sensors
