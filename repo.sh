@@ -33,21 +33,6 @@
 		exit 1
 	fi
 	lsb_release_cs="focal"
-#	if [[ "$lsb_release_cs" != "focal" ]] && [[ "$lsb_release_cs" != "bionic" ]]; then
-#	read -p "You are on an unsupported version of Debian. Would you like to use 'focal' packages? [y/N] " response
-#
-#		case $response in
-#			[yY]|[yY][eE][sS])
-#				echo
-#				;;
-#			*)
-#				echo "Exiting..."
-#				exit 1
-#				;;
-#		esac
-#
-#		
-#	fi
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
 	res=$?
 	if [ "$res" -ne "0" ]; then
