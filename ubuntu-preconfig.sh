@@ -401,13 +401,18 @@ Remove_snap(){
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 2 "snap not installed"
     else
-        #Getting List of snaps installed
-        SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
+        #Getting List of snaps installed - Ip no snap exists??
+        #stop have to stop snap.service?
         GreyStart
+        SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
             if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core20" ]; then
                 snap remove --purge $(echo $i)
             fi
+        done
+        SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
+        for i in $SNAP_LIST; do
+                snap remove --purge $(echo $i)
         done
         snap remove --purge core
         snap remove --purge core20
