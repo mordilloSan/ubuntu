@@ -394,6 +394,8 @@ Remove_cloudinit(){
 Remove_snap(){
     Show 2 "Removing snap"
     local res
+    local SNAP_LIST
+    local teste
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 2 "snap not installed"
     else
@@ -407,8 +409,9 @@ Remove_snap(){
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         GreyStart
+        TESTE="core"
         for i in $SNAP_LIST; do
-            if [ "${i}" != "core"* ] && [ "${i}" != "snapd" ]; then
+            if [ "${i}" != "$(TESTE)"* ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
@@ -455,9 +458,9 @@ Wrapup_Banner
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
 #possibility of rebooting and then resuming the install
-
 #summarize software installed
 #detect ports used by services
 #resolve pihole port conflict
 #change defaults behaviour of "ls" to "ls -l"
+
 exit 0
