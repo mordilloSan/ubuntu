@@ -375,13 +375,13 @@ Remove_cloudinit(){
     check_installed "cloud-init"
     if [ "$INSTALLED"  = true ]; then
         apt-get autoremove --purge cloud-init -y
-    	rm -rf /etc/cloud/
-   	    rm -rf /var/lib/cloud/
     	res=$?
 	    if [[ $res != 0 ]]; then
-    	Show 1 "Removing cloud-init failed!"
-			exit $res
+            Show 1 "Removing cloud-init failed!"
+            exit $res
 		fi
+    	rm -rf /etc/cloud/
+   	    rm -rf /var/lib/cloud/
 	fi
 }
 Remove_snap(){
@@ -404,6 +404,7 @@ Remove_snap(){
     if    
 	Show 0 "Successfully removed cloud-init and snapd."
 }
+
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
@@ -430,7 +431,7 @@ init_network
 Check_Docker_Install
 Install_Cockpit
 Remove_cloudinit
-Remove_snap
+#Remove_snap
 Wrapup_Banner
 
 #Ideas
