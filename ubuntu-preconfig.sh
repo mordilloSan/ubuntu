@@ -372,7 +372,7 @@ Remove_cloudinit(){
     if [ "$INSTALLED"  = true ]; then
         apt-get autoremove --purge cloud-init -y
     	rm -rf /etc/cloud/
-   	rm -rf /var/lib/cloud/
+   	    rm -rf /var/lib/cloud/
     	res=$?
 	    if [[ $res != 0 ]]; then
     	Show 1 "Removing cloud-init failed!"
