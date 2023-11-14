@@ -3,7 +3,7 @@
 ####################
 # Global Variables #
 ####################
-start (){
+Start (){
     # SYSTEM INFO
     ((EUID)) && sudo_cmd="sudo"
     source /etc/os-release
@@ -146,10 +146,14 @@ check_installed() {
 		INSTALLED=false
 	fi
 }
+Check_Connection(){
+    curl -Is  https://www.google.com | head -n 1
+    #returns 200 if success!
+}
 ###################
 # Start Functions #
 ###################
-welcome() {
+Welcome_Banner() {
 	clear
 	echo -e "\e[0m\c"
 	set -e
@@ -175,7 +179,7 @@ welcome() {
     #setting a standard working Directory
     cd /home
 }
-update_system() {
+Update_System() {
 	local res
 	Show 2 "Updating packages"
 	GreyStart
@@ -223,7 +227,7 @@ init_network() {
 ###################
 # Cockpit Section #
 ###################
-add_45repo(){
+Add_45repo(){
 	items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
         echo -e "${aCOLOUR[2]}There were no existing 45Drives repos found. Setting up the new repo..."
@@ -266,11 +270,11 @@ add_45repo(){
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
 }
-install_cockpit() {
+Install_Cockpit() {
 	local res
     Show 2 "Installing \e[33mCockpit\e[0m"
     Show 2 "Adding the necessary repository sources"
-    add_45repo
+    Add_45repo
     Show 2 "Installing cockpit modules"
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         packagesNeeded=${COCKPIT_PACKAGES[i]}
@@ -380,7 +384,6 @@ Remove_cloudinit(){
 		fi
 	fi
 }
-
 Remove_snap(){
     local res
     Show 2 "Removing snap"
@@ -401,8 +404,7 @@ Remove_snap(){
     if    
 	Show 0 "Successfully removed cloud-init and snapd."
 }
-
-wrapup_banner() {
+Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
@@ -419,17 +421,17 @@ Remove_repo_backup(){
     return 0
 }
 
-start
+Start
 trap 'onCtrlC' INT
-welcome
-update_system
+Welcome_Banner
+Update_System
 init_network
 # change_renderer
 Check_Docker_Install
-install_cockpit
+Install_Cockpit
 Remove_cloudinit
 Remove_snap
-wrapup_banner
+Wrapup_Banner
 
 #Ideas
 #Script running in full auto or with a grafical checkbox for selection of functions
