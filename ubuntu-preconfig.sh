@@ -187,7 +187,6 @@ update_system() {
 	else
         Show 0 "System successfully updated"
     fi
-    echo ""
 	Show 2 "Upgrading packages"
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade
@@ -204,7 +203,6 @@ update_system() {
 #####################
 init_network() {
 	local res
-	echo ""
 	Show 2 "Installing \e[33mNetworkManager\e[0m"
 	# Install packages
 	GreyStart
@@ -271,12 +269,10 @@ add_45repo(){
 }
 install_cockpit() {
 	local res
-	echo ""
     Show 2 "Installing \e[33mCockpit\e[0m"
     Show 2 "Adding the necessary repository sources"
     add_45repo
     Show 2 "Installing cockpit modules"
-    echo ""
     for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
         packagesNeeded=${COCKPIT_PACKAGES[i]}
         Show 2 "Prepare the necessary dependencies: \e[33m$packagesNeeded\e[0m"
@@ -326,7 +322,6 @@ install_cockpit() {
 # Docker Section #
 ##################
 Check_Docker_Install() {
-    echo ""
     Show 2 "Installing \e[33mDocker\e[0m"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
@@ -349,7 +344,6 @@ Install_Docker() {
         ${sudo_cmd} curl -fsSL https://get.docker.com | bash
     ColorReset
     if [[ $? -ne 0 ]]; then
-        echo ""
         Show 1 "Installation failed, please try again."
         exit 1
     else
