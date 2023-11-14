@@ -266,7 +266,6 @@ add_45repo(){
 	fi
 	Show 4 "The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
-    echo ""
 }
 install_cockpit() {
 	local res
