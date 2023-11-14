@@ -297,11 +297,21 @@ install_cockpit() {
         fi
     done
     #install sensors modules
-    Show 2 "Prepare the necessary dependencies: \e[33mSensors\e[0m"
+    Show 2 "Prepare the necessary dependencies: \e[33msensors\e[0m"
     GreyStart 
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz #--show-progress
+    res1=$?
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
+    res2=$?
     cp -r cockpit-sensors/dist /usr/share/cockpit/sensors
+    res3=$?
+    if [ $res1 = 0 ] && [ $res2 = 0 ] && [ $res3 = 0 ]; then
+        Show 0 "sensors installed"
+    else
+        Show 1 "Instalation  failed!"
+        exit $res
+    fi
+	Show 0 "Successfully initialized Cockpit."
     rm -r cockpit-sensors
     rm cockpit-sensors*.*
 	# Enabling Cockpit
