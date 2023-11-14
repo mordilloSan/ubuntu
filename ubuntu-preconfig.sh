@@ -376,19 +376,10 @@ wrapup_banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
-#    sed -n '/^ListenStream=/p' /lib/systemd/system/cockpit.socket > test
-#    sed -e s/ListenStream=//g -i test
     Get_IPs
-    echo -e "${GREEN_LINE}"
-    systemctl status cockpit.socket
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
-    echo -e ""
-    echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
-    echo -e " ${aCOLOUR[2]}CasaOS Team     : https://github.com/IceWhaleTech/CasaOS#maintainers"
-    echo -e " ${aCOLOUR[2]}CasaOS Discord  : https://discord.gg/knqAbbBbeX"
-    echo -e " ${aCOLOUR[2]}Website         : https://www.casaos.io"
-    echo -e " ${aCOLOUR[2]}Online Demo     : http://demo.casaos.io"
+    systemctl status cockpit.socket
     echo -e ""
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: casaos-uninstall"
     echo -e "${COLOUR_RESET}"
