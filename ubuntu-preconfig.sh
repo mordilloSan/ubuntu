@@ -407,7 +407,7 @@ Remove_snap(){
         Show 2 "$SNAP_LIST"
         for i in $SNAP_LIST
         do 
-            if [!$i="core20"] && [!$i="snapd"]
+            if [!$i="core20"] && [!$i="snapd"]; then
                 snap remove --purge $(echo $i)
             fi
         done
