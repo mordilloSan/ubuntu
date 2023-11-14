@@ -394,14 +394,23 @@ Remove_cloudinit(){
 Remove_snap(){
     Show 2 "Removing snap"
     local res
-    #Getting List of snaps installed
-    SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
-    #SNAP_LIST= tail -n +2 $SNAP_LIST
-    Show 2 "$SNAP_LIST"
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "snap not installed."
     else
-        Show 1 "snap need to be removed"
+        #Disabling Snap service
+        systemctl disable snapd.service
+        systemctl disable snapd.socket
+        systemctl disable snapd.seeded.service
+        #Getting List of snaps installed
+        SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
+        Show 2 "$SNAP_LIST"
+        for i in $SNAP_LIST
+        do 
+            snap remove --purge $(echo $i)
+        done
+        rm -rf /var/cache/snapd/
+        apt autoremove --purge snapd 
+        rm -rf ~/snap
     fi
 }
 Wrapup_Banner() {
