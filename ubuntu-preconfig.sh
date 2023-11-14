@@ -409,9 +409,8 @@ Remove_snap(){
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         GreyStart
-        TESTE="core"
         for i in $SNAP_LIST; do
-            if [ "${i}" != "${TESTE}*" ] && [ "${i}" != "snapd" ]; then
+            if [ "${i}*" != "core" ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
