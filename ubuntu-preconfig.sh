@@ -391,6 +391,10 @@ Remove_cloudinit(){
         rm -rf /var/lib/cloud/
     fi
 }
+Remove_snap(){
+    local res
+    Show 2 "Removing snap"
+}
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
@@ -417,7 +421,7 @@ init_network
 Check_Docker_Install
 Install_Cockpit
 Remove_cloudinit
-#Remove_snap
+Remove_snap
 Wrapup_Banner
 
 #Ideas
