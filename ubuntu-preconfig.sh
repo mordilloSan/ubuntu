@@ -287,7 +287,7 @@ Install_Cockpit() {
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
-            DEBIAN_FRONTEND=noninteractive apt-get install -y -q=2 -t "$lsb_release_cs"-backports "$packagesNeeded"
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
             res=$?
             if [[ $res != 0 ]]; then
                 Show 1 "Instalation  failed!"
@@ -379,12 +379,13 @@ Remove_cloudinit(){
     if [ $(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 2 "cloud-init not installed."
     else
-        apt-get autoremove --purge cloud-init -y
+        DEBIAN_FRONTEND=noninteractive apt-get autoremove -q -y --purge cloud-init 
     	res=$?
 	    if [[ $res != 0 ]]; then
             Show 1 "Removing cloud-init failed!"
             exit $res
 		fi
+        Show 2 "cloud-init removed"
     	rm -rf /etc/cloud/
    	    rm -rf /var/lib/cloud/
     fi
