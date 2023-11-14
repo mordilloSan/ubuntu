@@ -16,7 +16,6 @@ Start (){
     UNAME_U="$(uname -s)"
     readonly UNAME_U
     readonly COCKPIT_PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-client" "nfs-common" "cockpit-file-sharing")
-
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -148,7 +147,7 @@ check_installed() {
 }
 Check_Connection(){
     internet=$(wget -q --spider http://google.com ; echo $?)
-    if [[ "$internet" != 0]]; then
+    if [ "$internet" != 0 ]; then
 		Show 1 "Can not reach the internet"
 		exit 1
     fi
