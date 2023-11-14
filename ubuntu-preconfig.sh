@@ -408,7 +408,7 @@ Remove_snap(){
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
-            if {[ ! "$(echo $i)" == "core20"] && [ ! "$(echo $i)" == "snapd"]}; then
+            if [ "${i}" != "core20" ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
