@@ -399,11 +399,11 @@ Remove_snap(){
         Show 2 "snap not installed"
     else
         #Disabling Snap service - we can be more elegant
-        Show 1 "Stopping snap.service"
+        Show 2 "Stopping snap.service"
         systemctl disable snapd.service 2> /dev/null
-        Show 1 "Stopping snap.socket"
+        Show 2 "Stopping snap.socket"
         systemctl disable snapd.socket 2> /dev/null
-        Show 1 "Stopping snap.seeded.service"
+        Show 2 "Stopping snap.seeded.service"
         systemctl disable snapd.seeded.service 2> /dev/null
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
