@@ -15,7 +15,7 @@ Start (){
     readonly UNAME_M
     UNAME_U="$(uname -s)"
     readonly UNAME_U
-    readonly COCKPIT_PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-client" "nfs-common" "cockpit-file-sharing")
+    readonly PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -273,7 +273,8 @@ Add_45repo(){
 	fi
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
-    Update_System    
+    apt-get update -q=2
+    DEBIAN_FRONTEND=noninteractive apt-get -q=2 -y --autoremove dist-upgrade 
 }
 Install_Cockpit() {
 	local res
@@ -281,8 +282,8 @@ Install_Cockpit() {
     Show 2 "Adding the necessary repository sources"
     Add_45repo
     Show 2 "Installing cockpit modules"
-    for ((i = 0; i < ${#COCKPIT_PACKAGES[@]}; i++)); do
-        packagesNeeded=${COCKPIT_PACKAGES[i]}
+    for ((i = 0; i < ${#PACKAGES[@]}; i++)); do
+        packagesNeeded=${PACKAGES[i]}
         Show 2 "Prepare the necessary dependencies: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
