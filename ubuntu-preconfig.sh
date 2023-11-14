@@ -273,6 +273,7 @@ Add_45repo(){
 	fi
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
+    Update_System    
 }
 Install_Cockpit() {
 	local res
