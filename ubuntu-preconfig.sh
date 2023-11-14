@@ -227,21 +227,17 @@ add_45repo(){
 	items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
         echo -e "${aCOLOUR[2]}There were no existing 45Drives repos found. Setting up the new repo..."
-        echo -e "${aCOLOUR[2]}$COLOUR_RESET $2"
-        echo -e "There were no existing 45Drives repos found. Setting up the new repo..."
-#		Show 4 "There were no existing 45Drives repos found. Setting up the new repo..."
 	else
-		count=$(echo "$items" | wc -l)
+        count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
-		Show 4 "There were $count 45Drives repo(s) found. Archiving..."
 		mkdir -p /opt/45drives/archives/repos
 		mv /etc/apt/sources.list.d/45drives.sources /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
-		Show 4 "The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
+		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
 		fi
 	fi
-	Show 4 "Updating ca-certificates to ensure certificate validity..."
+	echo -e "${aCOLOUR[2]}Updating ca-certificates to ensure certificate validity..."
 	apt-get install ca-certificates -y -q=2
 	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
 	res=$?
@@ -267,7 +263,7 @@ add_45repo(){
 		Show 1 "Failed to update the new repo file. Please review the above error and try again."
 		exit $res
 	fi
-	Show 4 "The new repo file has been downloaded."
+	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
 }
 install_cockpit() {
