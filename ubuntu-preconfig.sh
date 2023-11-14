@@ -396,7 +396,7 @@ Remove_snap(){
     local res
     #Getting List of snaps installed
     #Retrieve first word of each line
-    SNAP_LIST=$(awk '{print $1}' $"snap list" | sed '1d')
+    SNAP_LIST=$(awk '{print $1}' "$[snap list]" | sed '1d')
     #SNAP_LIST=$(snap list | sed '1d')
     Show 2 "$SNAP_LIST"
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
