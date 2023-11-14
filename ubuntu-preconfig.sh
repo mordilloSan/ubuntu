@@ -434,6 +434,9 @@ Wrapup_Banner() {
     echo -e "${GREEN_LINE}"
     systemctl status cockpit.socket
     echo -e ""
+    echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
+    echo -e " ${aCOLOUR[2]}45Drives GitH   : https://github.com/45Drives"
+    echo -e ""
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: casaos-uninstall"
     echo -e "${COLOUR_RESET}"
 }
