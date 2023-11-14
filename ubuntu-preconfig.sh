@@ -406,4 +406,12 @@ Check_Docker_Install
 install_cockpit
 # remove_garbage
 wrapup_banner
+
+#Ideas
+#Script running in full auto or with a grafical checkbox for selection of functions
+#installing everyday tools - htop (saving preferences)
+#possibility of rebooting and then resuming the install
+#detecting if internet connection is available
+#detecting ethernet interfaces
+#summarize software installed
 exit 0
