@@ -232,6 +232,7 @@ add_45repo(){
 #		Show 4 "There were no existing 45Drives repos found. Setting up the new repo..."
 	else
 		count=$(echo "$items" | wc -l)
+        echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
 		Show 4 "There were $count 45Drives repo(s) found. Archiving..."
 		mkdir -p /opt/45drives/archives/repos
 		mv /etc/apt/sources.list.d/45drives.sources /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
