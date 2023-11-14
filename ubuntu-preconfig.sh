@@ -393,12 +393,12 @@ Remove_cloudinit(){
 }
 Remove_snap(){
     Show 2 "Removing snap"
-    GreyStart
     local res
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 2 "snap not installed"
     else
         #Disabling Snap service - we can be more elegant
+        GreyStart
         Show 2 "Stopping snap.service"
         systemctl disable snapd.service 2> /dev/null
         Show 2 "Stopping snap.socket"
@@ -407,10 +407,9 @@ Remove_snap(){
         systemctl disable snapd.seeded.service 2> /dev/null
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
-        Show 2 "$SNAP_LIST"
         for i in $SNAP_LIST
         do 
-            if [!$i="core20"] && [!$i="snapd"]; then
+            if [$i!="core20"] && [$i!="snapd"]; then
                 snap remove --purge $(echo $i)
             fi
         done
