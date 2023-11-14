@@ -375,19 +375,20 @@ Uninstall_Docker(){
 ##################
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
+    GreyStart
     local res
     if [ $(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        Show 2 "cloud-init not installed."
+        Show 0 "cloud-init not installed."
     else
         DEBIAN_FRONTEND=noninteractive apt-get autoremove -q -y --purge cloud-init 
     	res=$?
 	    if [[ $res != 0 ]]; then
             Show 1 "Removing cloud-init failed!"
             exit $res
-		fi
-        Show 2 "cloud-init removed"
-    	rm -rf /etc/cloud/
-   	    rm -rf /var/lib/cloud/
+        fi
+        Show 0 "cloud-init removed"
+        rm -rf /etc/cloud/
+        rm -rf /var/lib/cloud/
     fi
 }
 Wrapup_Banner() {
