@@ -395,7 +395,7 @@ Remove_snap(){
     Show 2 "Removing snap"
     local res
     #Getting List of snaps installed
-    SNAP_LIST=$(snap list | sed -1d)
+    SNAP_LIST=$(snap list | sed '1d')
     Show 2 "$SNAP_LIST"
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "snap not installed."
