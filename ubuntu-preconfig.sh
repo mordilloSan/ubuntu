@@ -393,9 +393,10 @@ Remove_cloudinit(){
 }
 Remove_snap(){
     Show 2 "Removing snap"
+    GreyStart
     local res
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        Show 0 "snap not installed."
+        Show 2 "snap not installed"
     else
         #Disabling Snap service
         systemctl disable snapd.service
@@ -406,12 +407,18 @@ Remove_snap(){
         Show 2 "$SNAP_LIST"
         for i in $SNAP_LIST
         do 
-            snap remove --purge $(echo $i)
+            if [!$i="core20"] && [!$i="snapd"]
+                snap remove --purge $(echo $i)
+            fi
         done
+        snap remove --purge core20
+        snap remove --purge snapd
         rm -rf /var/cache/snapd/
         apt autoremove --purge snapd 
         rm -rf ~/snap
+        Show 0 "snap removed"
     fi
+
 }
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
