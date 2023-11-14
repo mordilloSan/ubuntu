@@ -311,7 +311,6 @@ install_cockpit() {
         Show 1 "Instalation  failed!"
         exit $res
     fi
-	Show 0 "Successfully initialized Cockpit."
     rm -r cockpit-sensors
     rm cockpit-sensors*.*
 	# Enabling Cockpit
@@ -378,7 +377,7 @@ wrapup_banner() {
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     vara1 = $(cat /run/cockpit/active.motd)
-    echo $vara1
+    echo "$vara1"
     systemctl status cockpit.socket
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
