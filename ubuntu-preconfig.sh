@@ -47,7 +47,7 @@ Check_Service_status() {
     done
 }
 Get_IPs() {
-    PORT=$(${sudo_cmd} cat ${/lib/systemd/system/cockpit.socket} | grep port | sed 's/port=//')
+    PORT=$(${sudo_cmd} cat ${/usr/lib/systemd/system/cockpit.socket} | grep port | sed 's/port=//')
     ALL_NIC=$($sudo_cmd ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
     for NIC in ${ALL_NIC}; do
         IP=$($sudo_cmd ifconfig "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
@@ -377,7 +377,8 @@ wrapup_banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
-    Get_IPs
+    vara1 = $(cat /run/cockpit/active.motd)
+    echo $vara1
     systemctl status cockpit.socket
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
@@ -416,4 +417,5 @@ wrapup_banner
 #summarize software installed
 #detect ports used by services
 #resolve pihole port conflict
+#change defaults behaviour of "ls" to "ls -l"
 exit 0
