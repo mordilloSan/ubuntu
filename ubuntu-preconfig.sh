@@ -273,6 +273,7 @@ Add_45repo(){
 	fi
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
+    #can be removed if this function is done in th beginning
     apt-get update -q=2
     DEBIAN_FRONTEND=noninteractive apt-get -q=2 -y --autoremove dist-upgrade 
 }
@@ -414,9 +415,6 @@ Remove_snap(){
         for i in $SNAP_LIST; do
                 snap remove --purge $(echo $i)
         done
-        snap remove --purge core
-        snap remove --purge core20
-        snap remove --purge snapd
         rm -rf /var/cache/snapd/
         DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
         rm -rf ~/snap
