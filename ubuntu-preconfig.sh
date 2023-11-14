@@ -367,25 +367,24 @@ Uninstall_Docker(){
 ##################
 remove_garbage() {
 	local res
-    Show 2 "REMOVING CLOUD-INIT AND SNAPD"
-	# Remove cloud-init
-	check_installed "cloud-init"
     GreyStart
-	if [ "$INSTALLED"  = true ]; then
-    	apt-get autoremove --purge cloud-init -y
-    	rm -rf /etc/cloud/
-    	rm -rf /var/lib/cloud/
-    	res=$?
-	   	if [[ $res != 0 ]]; then
-			Show 1 "Removing cloud-init failed!"
-			exit $res
-		fi
-	fi
-    ColorReset
+    Show 2 "Removing cloud-init"
+#   check_installed "cloud-init"
+#	if [ "$INSTALLED"  = true ]; then
+#    	apt-get autoremove --purge cloud-init -y
+#    	rm -rf /etc/cloud/
+#   	rm -rf /var/lib/cloud/
+#    	res=$?
+#	    if [[ $res != 0 ]]; then
+#    	Show 1 "Removing cloud-init failed!"
+#			exit $res
+#		fi
+#	fi
 	# Remove snapd
-	check_installed "snapd"
-    GreyStart
-	if [ "$INSTALLED"=true ]; then
+    Show 2 "Removing snap"
+    if [ $(dpkg-query -W -f='${Status}' "snap" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        Show 0 "snap not installed."
+    else
 		snap remove--purge lxd
     	snap remove--purge core20
     	snap remove--purge snapd
@@ -397,8 +396,6 @@ remove_garbage() {
 			Show 1 "Removing snapd failed!"
 			exit $res
 		fi
-	fi
-    ColorReset
 	Show 0 "Successfully removed cloud-init and snapd."
 }
 wrapup_banner() {
@@ -426,7 +423,7 @@ init_network
 # change_renderer
 Check_Docker_Install
 install_cockpit
-# remove_garbage
+remove_garbage
 wrapup_banner
 
 #Ideas
