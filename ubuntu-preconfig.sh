@@ -377,11 +377,10 @@ wrapup_banner() {
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     TESTE="$(sed -n '/^ListenStream=/p' /lib/systemd/system/cockpit.socket)"
-    set TESTE=%TESTE:ListenStream=%
-    sed -e s/ListenStream=//g -i $TESTE
-    echo "$TESTE"
-    sed -n '/^ListenStream=/p' /lib/systemd/system/cockpit.socket > test
-    sed -e s/ListenStream=//g -i test
+    echo $TEST | sed s/"ListenStream="//
+#    sed -n '/^ListenStream=/p' /lib/systemd/system/cockpit.socket > test
+#    sed -e s/ListenStream=//g -i test
+    echo -e "${GREEN_LINE}"
     systemctl status cockpit.socket
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
