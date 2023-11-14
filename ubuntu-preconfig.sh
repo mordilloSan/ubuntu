@@ -147,8 +147,12 @@ check_installed() {
 	fi
 }
 Check_Connection(){
-    curl -Is  https://www.google.com | head -n 1
-    #returns 200 if success!
+    internet=$(wget -q --spider http://google.com ; echo $?)
+    if [[ "$internet" != 0]]; then
+		Show 1 "Can not reach the internet"
+		exit 1
+    fi
+    Show 0 "Internet Online"
 }
 ###################
 # Start Functions #
@@ -171,6 +175,7 @@ Welcome_Banner() {
 	Check_OS
 	Check_Distribution
 	Check_Permissions
+    Check_Connection
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
@@ -404,7 +409,6 @@ Remove_snap(){
     if    
 	Show 0 "Successfully removed cloud-init and snapd."
 }
-
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
@@ -438,7 +442,6 @@ Wrapup_Banner
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
 #possibility of rebooting and then resuming the install
-#detecting if internet connection is available
 #detecting ethernet interfaces
 #summarize software installed
 #detect ports used by services
