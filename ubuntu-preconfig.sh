@@ -398,10 +398,13 @@ Remove_snap(){
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 2 "snap not installed"
     else
-        #Disabling Snap service
-        systemctl disable snapd.service
-        systemctl disable snapd.socket
-        systemctl disable snapd.seeded.service
+        #Disabling Snap service - we can be more elegant
+        Show 1 "Stopping snap.service"
+        systemctl disable snapd.service 2> /dev/null
+        Show 1 "Stopping snap.socket"
+        systemctl disable snapd.socket 2> /dev/null
+        Show 1 "Stopping snap.seeded.service"
+        systemctl disable snapd.seeded.service 2> /dev/null
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         Show 2 "$SNAP_LIST"
