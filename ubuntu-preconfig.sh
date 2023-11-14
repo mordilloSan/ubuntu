@@ -388,7 +388,6 @@ Remove_cloudinit(){
    	    rm -rf /var/lib/cloud/
 	fi
 }
-
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
