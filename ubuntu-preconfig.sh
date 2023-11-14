@@ -388,26 +388,7 @@ Remove_cloudinit(){
    	    rm -rf /var/lib/cloud/
 	fi
 }
-Remove_snap(){
-    local res
-    Show 2 "Removing snap"
-    if [ $(dpkg-query -W -f='${Status}' "snap" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        Show 0 "snap not installed."
-    else
-		snap remove--purge lxd
-    	snap remove--purge core20
-    	snap remove--purge snapd
-    	apt-get autoremove --purge snapd -y
-    	rm -rf /var/cache/snapd/
-    	rm -rf ~/snap
-    	res=$?
-	    if [[ $res != 0 ]]; then
-			Show 1 "Removing snapd failed!"
-			exit $res
-		fi
-    if    
-	Show 0 "Successfully removed cloud-init and snapd."
-}
+
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
