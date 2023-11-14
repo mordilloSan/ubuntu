@@ -376,7 +376,8 @@ wrapup_banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
-    VARA1=$(echo "${cat /lib/systemd/system/cockpit.socket}")
+    UNAME_U="$(uname -s)"
+    VARA1="$(echo "${cat /lib/systemd/system/cockpit.socket})"
     echo "$VARA1"
     systemctl status cockpit.socket
     echo -e " Open your browser and visit the above address."
