@@ -382,6 +382,7 @@ Remove_cloudinit(){
 }
 
 Remove_snap(){
+    local res
     Show 2 "Removing snap"
     if [ $(dpkg-query -W -f='${Status}' "snap" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "snap not installed."
