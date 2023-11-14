@@ -411,11 +411,10 @@ Remove_snap(){
         GreyStart
         TESTE="core"
         for i in $SNAP_LIST; do
-            if [ "${i}" != "$TESTE"* ] && [ "${i}" != "snapd" ]; then
+            if [ "${i}" != "$TESTE*" ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
-        "{"core"*}"
         snap remove --purge core20
         snap remove --purge snapd
         rm -rf /var/cache/snapd/
