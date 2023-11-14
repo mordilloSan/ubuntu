@@ -392,8 +392,13 @@ Remove_cloudinit(){
     fi
 }
 Remove_snap(){
-    local res
     Show 2 "Removing snap"
+    local res
+    if [ $(dpkg-query -W -f='${Status}' "snap" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        Show 0 "snap not installed."
+    else
+        Show 1 "snap need to be removed"
+    fi
 }
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
