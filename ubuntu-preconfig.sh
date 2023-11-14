@@ -419,7 +419,6 @@ Remove_snap(){
         rm -rf ~/snap
         Show 0 "snap removed"
     fi
-
 }
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
@@ -454,7 +453,6 @@ Wrapup_Banner
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
 #possibility of rebooting and then resuming the install
-#detecting ethernet interfaces
 #summarize software installed
 #detect ports used by services
 #resolve pihole port conflict
