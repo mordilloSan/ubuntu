@@ -226,7 +226,8 @@ init_network() {
 add_45repo(){
 	items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
-        echo -e "${aCOLOUR[2]}There were no existing 45Drives repos found. Setting up the new repo..."
+        echo -e "${aCOLOUR[2]}"
+        echo -e "There were no existing 45Drives repos found. Setting up the new repo..."
 #		Show 4 "There were no existing 45Drives repos found. Setting up the new repo..."
 	else
 		count=$(echo "$items" | wc -l)
