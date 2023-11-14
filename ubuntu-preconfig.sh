@@ -410,10 +410,11 @@ Remove_snap(){
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         GreyStart
         for i in $SNAP_LIST; do
-            if [ "${i}*" != "core" ] && [ "${i}" != "snapd" ]; then
+            if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core20" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
+        snap remove --purge core
         snap remove --purge core20
         snap remove --purge snapd
         rm -rf /var/cache/snapd/
