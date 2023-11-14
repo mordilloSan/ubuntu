@@ -398,15 +398,15 @@ Remove_snap(){
         Show 2 "snap not installed"
     else
         #Disabling Snap service - we can be more elegant
-        GreyStart
         Show 2 "Stopping snap.service"
-        systemctl disable snapd.service 2> /dev/null
+        DEBIAN_FRONTEND=noninteractive systemctl disable snapd.service 2> /dev/null
         Show 2 "Stopping snap.socket"
-        systemctl disable snapd.socket 2> /dev/null
+        DEBIAN_FRONTEND=noninteractive systemctl disable snapd.socket 2> /dev/null
         Show 2 "Stopping snap.seeded.service"
-        systemctl disable snapd.seeded.service 2> /dev/null
+        DEBIAN_FRONTEND=noninteractive systemctl disable snapd.seeded.service 2> /dev/null
         #Getting List of snaps installed
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
+        GreyStart
         for i in $SNAP_LIST; do
             if [ "${i}" != "core20" ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
@@ -415,7 +415,7 @@ Remove_snap(){
         snap remove --purge core20
         snap remove --purge snapd
         rm -rf /var/cache/snapd/
-        apt autoremove --purge snapd 
+        DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
         rm -rf ~/snap
         Show 0 "snap removed"
     fi
