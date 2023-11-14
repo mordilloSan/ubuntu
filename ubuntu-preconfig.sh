@@ -408,10 +408,11 @@ Remove_snap(){
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         GreyStart
         for i in $SNAP_LIST; do
-            if [ "${i}" != "${"core"}*" ] && [ "${i}" != "snapd" ]; then
+            if [ "${i}" != "core"* ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
+        "{"core"*}"
         snap remove --purge core20
         snap remove --purge snapd
         rm -rf /var/cache/snapd/
@@ -419,6 +420,7 @@ Remove_snap(){
         rm -rf ~/snap
         Show 0 "snap removed"
     fi
+
 }
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
@@ -453,6 +455,7 @@ Wrapup_Banner
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
 #possibility of rebooting and then resuming the install
+
 #summarize software installed
 #detect ports used by services
 #resolve pihole port conflict
