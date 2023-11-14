@@ -151,7 +151,7 @@ Check_Connection(){
 		Show 1 "Can not reach the internet"
 		exit 1
     fi
-    Show 0 "Internet Online"
+    Show 0 "Internet \e[33mOnline\e[0m"
 }
 ###################
 # Start Functions #
@@ -374,10 +374,11 @@ Uninstall_Docker(){
 # Finish Section #
 ##################
 Remove_cloudinit(){
-    local res
     Show 2 "Removing cloud-init"
-    check_installed "cloud-init"
-    if [ "$INSTALLED"  = true ]; then
+    local res
+    if [ $(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        Show 2 "cloud-init not installed."
+    else
         apt-get autoremove --purge cloud-init -y
     	res=$?
 	    if [[ $res != 0 ]]; then
@@ -386,7 +387,7 @@ Remove_cloudinit(){
 		fi
     	rm -rf /etc/cloud/
    	    rm -rf /var/lib/cloud/
-	fi
+    fi
 }
 Wrapup_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
