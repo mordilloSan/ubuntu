@@ -411,7 +411,7 @@ Remove_snap(){
         GreyStart
         TESTE="core"
         for i in $SNAP_LIST; do
-            if [ "${i}" != "$(TESTE)"* ] && [ "${i}" != "snapd" ]; then
+            if [ "${i}" != "$TESTE"* ] && [ "${i}" != "snapd" ]; then
                 snap remove --purge $(echo $i)
             fi
         done
