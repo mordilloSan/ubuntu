@@ -208,7 +208,7 @@ init_network() {
 	Show 2 "Installing \e[33mNetworkManager\e[0m"
 	# Install packages
 	GreyStart
-	apt-get install -y -q=2 network-manager
+	DEBIAN_FRONTEND=noninteractive apt-get install -y -q=2 network-manager
     res=$?
     if [[ $res != 0 ]]; then
 		Show 1 "Installing NetworkManager failed!"
@@ -414,4 +414,6 @@ wrapup_banner
 #detecting if internet connection is available
 #detecting ethernet interfaces
 #summarize software installed
+#detect ports used by services
+#resolve pihole port conflict
 exit 0
