@@ -258,8 +258,8 @@ change_renderer() {
     local config=""
     #setting proper permissions in netplan
     sudo chmod 600 /etc/netplan/*.yaml 
-	#backup current file --> what is the file name?????
-    mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
+	#backup current file --> what is the file name????? It changes!!!!
+    #mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
     # Changing the renderer
     config="$(netplan get)"
     if echo "$config" | grep -q "renderer: networkd"; then
