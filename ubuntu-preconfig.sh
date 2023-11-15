@@ -211,14 +211,12 @@ Update_System() {
 #####################
 change_renderer() {
 	local res
+    local config=""
     sudo chmod 600 /etc/netplan/*.yaml #setting proper permissions in netplan
+    # Create the file
+    netplan get > config
 
-	# Use Network Manager instead of systemd-networkd
-	cat > /etc/netplan/00-networkmanager.yaml <<EOF
-network:
-  version: 2
-  renderer: NetworkManager
-EOF
+
 	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
 	netplan try
 	res=$?
@@ -284,8 +282,6 @@ Add_repos(){
 	fi
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
-    #can be removed if this function is done in th beginning
-    apt-get update -q=2
     DEBIAN_FRONTEND=noninteractive apt-get -q=2 -y --autoremove dist-upgrade 
 }
 Install_Packages() {
@@ -411,7 +407,7 @@ Remove_snap(){
         Show 0 "snap not installed"
     else
         #Getting List of snaps installed - Ip no snap exists??
-        #Have to stop snap.service?
+        systemctl disable 
         GreyStart
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
@@ -423,8 +419,8 @@ Remove_snap(){
         for i in $SNAP_LIST; do
                 snap remove --purge $(echo $i)
         done
-        rm -rf /var/cache/snapd/
         DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
+        rm -rf /var/cache/snapd/
         rm -rf ~/snap
         Show 0 "snap removed"
     fi
