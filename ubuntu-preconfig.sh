@@ -407,12 +407,12 @@ Remove_snap(){
     Show 2 "Removing snap"
     local res
     local SNAP_LIST
-    local teste
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "snap not installed"
     else
-        systemctl disable snapd.socket
         GreyStart
+        systemctl disable snapd.socket
+        systemctl disable snap.service
         #Getting List of snaps installed - If no snap exists??
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
