@@ -412,7 +412,7 @@ Remove_snap(){
     else
         GreyStart
         systemctl disable snapd.socket
-        systemctl disable snap.service
+        systemctl disable snapd.service
         #Getting List of snaps installed - If no snap exists??
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
