@@ -157,7 +157,6 @@ Check_Connection(){
 # Start Functions #
 ###################
 Welcome_Banner() {
-    local response
 	clear
 	echo -e "\e[0m\c"
 	set -e
@@ -176,16 +175,6 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
-	read -p "Are you sure you want to continue? [y/N]: " response
-	case $response in
-		[yY]|[yY][eE][sS])
-			echo
-			;;
-		*)
-			echo "Exiting..."
-			exit 0
-			;;
-	esac
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
