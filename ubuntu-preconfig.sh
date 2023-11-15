@@ -157,6 +157,7 @@ Check_Connection(){
 # Start Functions #
 ###################
 Welcome_Banner() {
+    local response
 	clear
 	echo -e "\e[0m\c"
 	set -e
