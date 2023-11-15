@@ -185,7 +185,6 @@ Welcome_Banner() {
 			exit 0
 			;;
 	esac
-	return 0
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
