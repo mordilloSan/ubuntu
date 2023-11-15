@@ -209,16 +209,6 @@ Update_System() {
 #####################
 # Network Functions #
 #####################
-init_network() {
-	local res
-	systemctl enable --now NetworkManager
-    res=$?
-    if [[ $res != 0 ]]; then
-		Show 1 "Enabling NetworkManager failed!"
-		exit $res
-	fi
-	Show 0 "Successfully set up NetworkManager"
-}
 change_renderer() {
 	local res
 	echo "ENABLING NETWORK MANAGER"
@@ -336,6 +326,10 @@ Install_Packages() {
     fi
     rm -r cockpit-sensors
     rm cockpit-sensors*.*
+}
+Initiate_Services(){
+    local res
+    echo ""
 	# Enabling Cockpit
 	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
     res=$?
@@ -344,7 +338,15 @@ Install_Packages() {
         exit $res
     fi
 	Show 0 "Successfully initialized Cockpit."
-}
+
+	DEBIAN_FRONTEND=noninteractive systemctl enable --now NetworkManager
+    res=$?
+    if [[ $res != 0 ]]; then
+		Show 1 "Enabling NetworkManager failed!"
+		exit $res
+	fi
+	Show 0 "Successfully set up NetworkManager"
+} 
 ##################
 # Docker Section #
 ##################
@@ -469,11 +471,11 @@ Update_System
 Add_45repo
 Install_Docker
 Install_Packages
-init_network
 # change_renderer 
 Remove_cloudinit
 Remove_snap
 Remove_repo_backup
+Initiate_Services
 Wrap_up_Banner
 setup_done
 exit 0
