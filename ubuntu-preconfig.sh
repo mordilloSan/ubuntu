@@ -15,7 +15,7 @@ Start (){
     readonly UNAME_M
     UNAME_U="$(uname -s)"
     readonly UNAME_U
-    readonly PACKAGES=("net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
+    readonly PACKAGES=("network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -211,15 +211,6 @@ Update_System() {
 #####################
 init_network() {
 	local res
-	Show 2 "Installing \e[33mNetworkManager\e[0m"
-	# Install packages
-	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get install -y -q=2 network-manager
-    res=$?
-    if [[ $res != 0 ]]; then
-		Show 1 "Installing NetworkManager failed!"
-		exit $res
-	fi
 	systemctl enable --now NetworkManager
     res=$?
     if [[ $res != 0 ]]; then
@@ -277,11 +268,9 @@ Add_45repo(){
     apt-get update -q=2
     DEBIAN_FRONTEND=noninteractive apt-get -q=2 -y --autoremove dist-upgrade 
 }
-Install_Cockpit() {
+Install_Packages() {
 	local res
-    Show 2 "Installing \e[33mCockpit\e[0m"
     Show 2 "Adding the necessary repository sources"
-    Add_45repo
     Show 2 "Installing cockpit modules"
     for ((i = 0; i < ${#PACKAGES[@]}; i++)); do
         packagesNeeded=${PACKAGES[i]}
@@ -422,7 +411,7 @@ Remove_snap(){
     fi
 
 }
-Wrapup_Banner() {
+Wrap_up_Banner() {
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
@@ -447,14 +436,15 @@ Start
 trap 'onCtrlC' INT
 Welcome_Banner
 Update_System
-init_network
-# change_renderer
+Add_45repo
 Check_Docker_Install
-Install_Cockpit
+Install_Packages
+init_network # change_renderer
 Remove_cloudinit
 Remove_snap
-Wrapup_Banner
-
+Remove_repo_backup
+Wrap_up_Banner
+exit 0
 #Ideas
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
@@ -463,5 +453,3 @@ Wrapup_Banner
 #detect ports used by services
 #resolve pihole port conflict
 #change defaults behaviour of "ls" to "ls -l"
-
-exit 0
