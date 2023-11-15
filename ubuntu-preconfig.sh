@@ -449,11 +449,8 @@ Remove_repo_backup(){
 }
 setup_done() {
 	local response=""
-
 	echo "SETUP COMPLETE"
-
 	read -p "Reboot system now? [y/N]: " response
-
 	case $response in
 		[yY]|[yY][eE][sS])
 			reboot now
@@ -462,7 +459,6 @@ setup_done() {
 			echo "Reboot soon to finish configuration."
 			;;
 	esac
-
 	return 0
 }
 
@@ -481,6 +477,7 @@ Remove_repo_backup
 Wrap_up_Banner
 setup_done
 exit 0
+
 #Ideas
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
