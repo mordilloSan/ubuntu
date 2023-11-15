@@ -34,17 +34,6 @@ onCtrlC() {
     echo -e "${COLOUR_RESET}"
     exit 1
 }
-Check_Service_status() {
-    for SERVICE in "${CASA_SERVICES[@]}"; do
-        Show 2 "Checking ${SERVICE}..."
-        if [[ $(${sudo_cmd} systemctl is-active "${SERVICE}") == "active" ]]; then
-            Show 0 "${SERVICE} is running."
-        else
-            Show 1 "${SERVICE} is not running, Please reinstall."
-            exit 1
-        fi
-    done
-}
 Get_IPs() {
     PORT=$(${sudo_cmd} cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
     ALL_NIC=$($sudo_cmd ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
@@ -153,6 +142,17 @@ Check_Connection(){
     fi
     Show 0 "Internet \e[33mOnline\e[0m"
 }
+Check_Service_status() {
+    for SERVICE in "${CASA_SERVICES[@]}"; do
+        Show 2 "Checking ${SERVICE}..."
+        if [[ $(${sudo_cmd} systemctl is-active "${SERVICE}") == "active" ]]; then
+            Show 0 "${SERVICE} is running."
+        else
+            Show 1 "${SERVICE} is not running, Please reinstall."
+            exit 1
+        fi
+    done
+}
 ###################
 # Start Functions #
 ###################
@@ -183,67 +183,6 @@ Welcome_Banner() {
     #setting a standard working Directory
     cd /home
 }
-Update_System() {
-	local res
-	Show 2 "Updating packages"
-	GreyStart
-    apt-get update -q -u 
-    res=$?
-    if [[ $res != 0 ]]; then
-		Show 1 "Package update failed!"
-		exit $res
-	else
-        Show 0 "System successfully updated"
-    fi
-	Show 2 "Upgrading packages"
-	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade
-    res=$?
-    if [[ $res != 0 ]]; then
-        Show 1 "Package upgrade failed!"
-		exit $res
-	else
-        Show 0 "System successfully upgraded"
-    fi
-}
-#####################
-# Network Functions #
-#####################
-change_renderer() {
-	local res
-    local config=""
-    sudo chmod 600 /etc/netplan/*.yaml #setting proper permissions in netplan
-    # Create the file
-    config="$(netplan get)"
-    if [ $(grep -Fxq "renderer: networkd" config) !=0]; then
-        sed "2i renderer: NetworkManager" config
-    else
-        sed -i 's/renderer: networkd/renderer: NetworkManager/g' config
-    fi
-    Show 2 "$(config)"
-    sleep 60
-	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
-	netplan try
-	res=$?
-	if [[ $res != 0 ]]; then
-		echo "netplan try failed."
-		exit $res
-	fi
-	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	systemctl restart network-manager
-	res=$?
-	if [[ $res != 0 ]]; then
-		echo "Reloading network-manager failed."
-		exit $res
-	fi
-	echo "Successfully enabled network manager."
-    sleep 60
-}
-###################
-# Cockpit Section #
-###################
 Add_repos(){
     Show 2 "Adding the necessary repository sources"
     items=$(find /etc/apt/sources.list.d -name 45drives.sources)
@@ -287,8 +226,70 @@ Add_repos(){
 	fi
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
-    DEBIAN_FRONTEND=noninteractive apt-get -q=2 -y --autoremove dist-upgrade 
 }
+Update_System() {
+	local res
+	Show 2 "Updating packages"
+	GreyStart
+    apt-get update -q -u 
+    res=$?
+    if [[ $res != 0 ]]; then
+		Show 1 "Package update failed!"
+		exit $res
+	else
+        Show 0 "System successfully updated"
+    fi
+	Show 2 "Upgrading packages"
+	GreyStart
+	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade
+    res=$?
+    if [[ $res != 0 ]]; then
+        Show 1 "Package upgrade failed!"
+		exit $res
+	else
+        Show 0 "System successfully upgraded"
+    fi
+}
+#####################
+# Network Functions #
+#####################
+change_renderer() {
+	local res
+    local config=""
+    #setting proper permissions in netplan
+    sudo chmod 600 /etc/netplan/*.yaml 
+    # Changing the renderer
+    config="$(netplan get)"
+    if [ $(grep -Fxq "renderer: networkd" config) !=0]; then
+        sed "2i renderer: NetworkManager" config
+    else
+        sed -i 's/renderer: networkd/renderer: NetworkManager/g' config
+    fi
+    Show 2 "$(config)"
+    sleep 60
+	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
+	netplan try
+	res=$?
+	if [[ $res != 0 ]]; then
+		echo "netplan try failed."
+		exit $res
+	fi
+    # Cleaning up
+	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+	systemctl restart network-manager
+	res=$?
+	if [[ $res != 0 ]]; then
+		echo "Reloading network-manager failed."
+		exit $res
+	fi
+	echo "Successfully enabled network manager."
+    sleep 60
+}
+###################
+# Package Section #
+###################
 Install_Packages() {
 	local res
     Show 2 "Installing Packages"
@@ -431,6 +432,10 @@ Remove_snap(){
     fi
 
 }
+Remove_repo_backup(){
+    Show 2 "Just a test Funcion"
+    return 0
+}
 Wrap_up_Banner() {
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
@@ -446,10 +451,6 @@ Wrap_up_Banner() {
     echo -e ""
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: uninstall"
     echo -e "${COLOUR_RESET}"
-}
-Remove_repo_backup(){
-    Show 2 "Just a test Funcion"
-    return 0
 }
 setup_done() {
 	local response=""
@@ -473,7 +474,7 @@ Add_repos
 Update_System
 Install_Docker
 Install_Packages
-# change_renderer 
+change_renderer 
 Remove_cloudinit
 Remove_snap
 Remove_repo_backup
