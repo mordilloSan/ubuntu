@@ -217,7 +217,11 @@ change_renderer() {
     config="$(netplan get)"
     if [ $(grep -Fxq "renderer: networkd" config) !=0]; then
         sed "2i renderer: NetworkManager" config
+    else
+        sed -i 's/renderer: networkd/renderer: NetworkManager/g' config
     fi
+    Show 2 "$(config)"
+    sleep 60
 	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
 	netplan try
 	res=$?
