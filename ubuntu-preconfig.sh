@@ -359,36 +359,24 @@ Install_Packages() {
 ##################
 # Docker Section #
 ##################
-Check_Docker_Install() {
+Install_Docker() {
     Show 2 "Installing \e[33mDocker\e[0m"
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        if [[ $? -ne 0 ]]; then
-            Show 2 "Docker not installed. Installing."
-            Install_Docker
-        elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCER_VERSION}" ]]; then
-            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCER_VERSION}.xx.xx\e[0m,\Current Docker verison is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker."
-            exit 1
-        else
-            Show 0 "Current Docker verison is ${Docker_Version}."
-        fi
+        Show 0 "Current Docker verison is ${Docker_Version}."
     else
         Show 2 "Docker not installed. Installing."
-        Install_Docker
-    fi
-}
-Install_Docker() {
-    GreyStart
+        GreyStart
         ${sudo_cmd} curl -fsSL https://get.docker.com | bash
-    ColorReset
-    if [[ $? -ne 0 ]]; then
-        Show 1 "Installation failed, please try again."
-        exit 1
-    else
-        Check_Docker_Install_Final
+        if [[ $? -ne 0 ]]; then
+            Show 1 "Installation failed, please try again."
+            exit 1
+        else
+            Check_Docker_Install
+        fi
     fi
 }
-Check_Docker_Install_Final() {
+Check_Docker_Install() {
     if [[ -x "$(command -v docker)" ]]; then
         Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         Show 0 "Current Docker verison is ${Docker_Version}."
@@ -494,7 +482,7 @@ trap 'onCtrlC' INT
 Welcome_Banner
 Update_System
 Add_45repo
-Check_Docker_Install
+Install_Docker
 Install_Packages
 init_network
 # change_renderer 
