@@ -423,6 +423,7 @@ Remove_snap(){
 
 }
 Wrapup_Banner() {
+    echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
@@ -432,7 +433,7 @@ Wrapup_Banner() {
     #systemctl status cockpit.socket
     echo -e ""
     echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
-    echo -e " ${aCOLOUR[2]}45Drives GitH   : https://github.com/45Drives"
+    echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e ""
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: uninstall"
     echo -e "${COLOUR_RESET}"
