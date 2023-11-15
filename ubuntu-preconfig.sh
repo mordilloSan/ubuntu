@@ -15,7 +15,7 @@ Start (){
     readonly UNAME_M
     UNAME_U="$(uname -s)"
     readonly UNAME_U
-    readonly PACKAGES=("cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
+    readonly PACKAGES=("net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
