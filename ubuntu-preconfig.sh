@@ -265,7 +265,7 @@ change_renderer() {
     if echo "$config" | grep -q "renderer: networkd"; then
         echo "$config" | sed '2i renderer: NetworkManager'
     else
-        echo "$config" | sed -i "s/renderer: networkd/renderer: NetworkManager/g"
+        echo ${config/renderer: networkd/renderer: NetworkManager}
     fi
     Show 2 "$(config)"
     sleep 60
