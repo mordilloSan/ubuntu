@@ -211,7 +211,8 @@ Update_System() {
 #####################
 change_renderer() {
 	local res
-	echo "ENABLING NETWORK MANAGER"
+    sudo chmod 600 /etc/netplan/*.yaml #setting proper permissions in netplan
+
 	# Use Network Manager instead of systemd-networkd
 	cat > /etc/netplan/00-networkmanager.yaml <<EOF
 network:
@@ -240,7 +241,7 @@ EOF
 ###################
 # Cockpit Section #
 ###################
-Add_45repo(){
+Add_repos(){
     Show 2 "Adding the necessary repository sources"
     items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
@@ -467,8 +468,8 @@ setup_done() {
 Start
 trap 'onCtrlC' INT
 Welcome_Banner
+Add_repos
 Update_System
-Add_45repo
 Install_Docker
 Install_Packages
 # change_renderer 
