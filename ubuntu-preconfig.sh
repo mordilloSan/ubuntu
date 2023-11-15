@@ -260,10 +260,10 @@ change_renderer() {
     sudo chmod 600 /etc/netplan/*.yaml 
     # Changing the renderer
     config="$(netplan get)"
-    if [[ $(grep -Fxq "renderer: networkd" config) != 0 ]]; then
-        sed "2i renderer: NetworkManager" config
+    if [[ $(grep -Fxq "renderer: networkd" $config) != 0 ]]; then
+        sed "2i renderer: NetworkManager" $config
     else
-        sed -i 's/renderer: networkd/renderer: NetworkManager/g' config
+        sed -i 's/renderer: networkd/renderer: NetworkManager/g' $config
     fi
     Show 2 "$(config)"
     sleep 60
