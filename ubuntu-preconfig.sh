@@ -267,7 +267,7 @@ change_renderer() {
     else
         echo ${config/renderer: networkd/renderer: NetworkManager}
     fi
-    Show 2 "$(config)"
+    Show 2 "$config"
     sleep 60
 	netplan try
 	res=$?
