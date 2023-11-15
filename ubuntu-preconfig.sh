@@ -214,9 +214,10 @@ change_renderer() {
     local config=""
     sudo chmod 600 /etc/netplan/*.yaml #setting proper permissions in netplan
     # Create the file
-    netplan get > config
-
-
+    config="$(netplan get)"
+    if [ $(grep -Fxq "renderer: networkd" config) !=0]; then
+        sed "2i renderer: NetworkManager" config
+    fi
 	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
 	netplan try
 	res=$?
@@ -406,9 +407,9 @@ Remove_snap(){
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "snap not installed"
     else
-        #Getting List of snaps installed - Ip no snap exists??
-        systemctl disable 
+        systemctl disable snap.socket
         GreyStart
+        #Getting List of snaps installed - If no snap exists??
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
             if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core20" ]; then
