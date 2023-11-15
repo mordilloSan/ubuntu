@@ -175,6 +175,17 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
+	read -p "Are you sure you want to continue? [y/N]: " response
+	case $response in
+		[yY]|[yY][eE][sS])
+			echo
+			;;
+		*)
+			echo "Exiting..."
+			exit 0
+			;;
+	esac
+	return 0
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
@@ -218,6 +229,34 @@ init_network() {
 		exit $res
 	fi
 	Show 0 "Successfully set up NetworkManager"
+}
+change_renderer() {
+	local res
+	echo "ENABLING NETWORK MANAGER"
+	# Use Network Manager instead of systemd-networkd
+	cat > /etc/netplan/00-networkmanager.yaml <<EOF
+network:
+  version: 2
+  renderer: NetworkManager
+EOF
+	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
+	netplan try
+	res=$?
+	if [[ $res != 0 ]]; then
+		echo "netplan try failed."
+		exit $res
+	fi
+	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+	systemctl restart network-manager
+	res=$?
+	if [[ $res != 0 ]]; then
+		echo "Reloading network-manager failed."
+		exit $res
+	fi
+	echo "Successfully enabled network manager."
+	return 0
 }
 ###################
 # Cockpit Section #
@@ -431,6 +470,24 @@ Remove_repo_backup(){
     Show 2 "Just a test Funcion"
     return 0
 }
+setup_done() {
+	local response=""
+
+	echo "SETUP COMPLETE"
+
+	read -p "Reboot system now? [y/N]: " response
+
+	case $response in
+		[yY]|[yY][eE][sS])
+			reboot now
+			;;
+		*)
+			echo "Reboot soon to finish configuration."
+			;;
+	esac
+
+	return 0
+}
 
 Start
 trap 'onCtrlC' INT
@@ -439,17 +496,20 @@ Update_System
 Add_45repo
 Check_Docker_Install
 Install_Packages
-init_network # change_renderer
+init_network
+# change_renderer 
 Remove_cloudinit
 Remove_snap
 Remove_repo_backup
 Wrap_up_Banner
+setup_done
 exit 0
 #Ideas
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
 #possibility of rebooting and then resuming the install
 #summarize software installed
+#progress in script
 #detect ports used by services
 #resolve pihole port conflict
 #change defaults behaviour of "ls" to "ls -l"
