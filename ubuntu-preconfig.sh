@@ -239,7 +239,7 @@ change_renderer() {
 		exit $res
 	fi
 	echo "Successfully enabled network manager."
-	return 0
+    sleep 60
 }
 ###################
 # Cockpit Section #
