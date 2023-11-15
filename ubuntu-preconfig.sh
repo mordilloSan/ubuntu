@@ -263,7 +263,7 @@ change_renderer() {
 #  echo "It's there."
 #fi
     config="$(netplan get)"
-    if [[ $(grep -Fxq "renderer: networkd" "$config") != 0 ]]; then
+    if echo "$config" | grep -q "renderer: networkd"; then
         sed "2i renderer: NetworkManager" "$config"
     else
         sed -i 's/renderer: networkd/renderer: NetworkManager/g' "$config"
