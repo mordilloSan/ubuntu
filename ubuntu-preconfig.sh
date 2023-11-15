@@ -162,11 +162,11 @@ Welcome_Banner() {
 	set -e
 	printf "\033[1mWelcome to the Ubuntu Preconfiguration Script.\033[0m\n"
 	echo ""
-	echo "This will update the system, remove cloud-init and snapd,
+	echo " This will update the system, remove cloud-init and snapd,
  replace systemd-networkd with network-manager, install cockpit,
  add 45Drives repository, remove cloud-init and snapd, install docker and portainer."
 	echo ""
-    echo "This script should *not* be run in an SSH session, as the network will be
+    echo " This script should *not* be run in an SSH session, as the network will be
  modified and you may be disconnected. Run this script from the console or IPMI
  remote console."
 	echo ""
@@ -223,7 +223,8 @@ init_network() {
 # Cockpit Section #
 ###################
 Add_45repo(){
-	items=$(find /etc/apt/sources.list.d -name 45drives.sources)
+    Show 2 "Adding the necessary repository sources"
+    items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
         echo -e "${aCOLOUR[2]}There were no existing 45Drives repos found. Setting up the new repo..."
 	else
@@ -270,11 +271,10 @@ Add_45repo(){
 }
 Install_Packages() {
 	local res
-    Show 2 "Adding the necessary repository sources"
-    Show 2 "Installing cockpit modules"
+    Show 2 "Installing Packages"
     for ((i = 0; i < ${#PACKAGES[@]}; i++)); do
         packagesNeeded=${PACKAGES[i]}
-        Show 2 "Prepare the necessary dependencies: \e[33m$packagesNeeded\e[0m"
+        Show 2 "Prepare the necessary dependencie: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
@@ -292,7 +292,7 @@ Install_Packages() {
         fi
     done
     #install sensors modules
-    Show 2 "Prepare the necessary dependencies: \e[33msensors\e[0m"
+    Show 2 "Prepare the necessary dependencie: \e[33msensors\e[0m"
     GreyStart 
     wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz #--show-progress
     res1=$?
@@ -389,10 +389,10 @@ Remove_snap(){
     local SNAP_LIST
     local teste
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        Show 2 "snap not installed"
+        Show 0 "snap not installed"
     else
         #Getting List of snaps installed - Ip no snap exists??
-        #stop have to stop snap.service?
+        #Have to stop snap.service?
         GreyStart
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
