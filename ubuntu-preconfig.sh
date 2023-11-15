@@ -259,9 +259,6 @@ change_renderer() {
     #setting proper permissions in netplan
     sudo chmod 600 /etc/netplan/*.yaml 
     # Changing the renderer
-#if [[ "$STR" == *"$SUB"* ]]; then
-#  echo "It's there."
-#fi
     config="$(netplan get)"
     if echo "$config" | grep -q "renderer: networkd"; then
         sed "2i renderer: NetworkManager" "$config"
