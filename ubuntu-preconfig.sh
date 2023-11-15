@@ -258,6 +258,8 @@ change_renderer() {
     local config=""
     #setting proper permissions in netplan
     sudo chmod 600 /etc/netplan/*.yaml 
+	#backup current file --> what is the file name?????
+    mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
     # Changing the renderer
     config="$(netplan get)"
     if echo "$config" | grep -q "renderer: networkd"; then
@@ -267,11 +269,11 @@ change_renderer() {
     fi
     Show 2 "$(config)"
     sleep 60
-	[[ -f /etc/netplan/00-installer-config.yaml ]] && mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
 	netplan try
 	res=$?
 	if [[ $res != 0 ]]; then
 		echo "netplan try failed."
+        #we should restore the old file then and retry netplan!!!!
 		exit $res
 	fi
     # Cleaning up
