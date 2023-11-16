@@ -289,8 +289,8 @@ change_renderer() {
 	echo "Successfully enabled network manager."
     sleep 60
 }
-
 check_for_kernel_update(){
+    echo ""
     #cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}';
 }
 ###################
