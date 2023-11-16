@@ -269,7 +269,6 @@ change_renderer() {
     fi
     echo $config>>test.txt
     Show 2 "$config"
-    sleep 60
 	netplan try
 	res=$?
 	if [[ $res != 0 ]]; then
