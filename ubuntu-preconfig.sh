@@ -28,7 +28,9 @@ Start (){
     readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
-    TARGET_ARCH=""
+#    TARGET_ARCH=""
+    #setting a standard working Directory
+    cd /home
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -85,7 +87,7 @@ ColorReset() {
 Check_Arch() {
     case $UNAME_M in
     *64*)
-        TARGET_ARCH="amd64"
+#        TARGET_ARCH="amd64"
         ;;
     *)
         Show 1 "Aborted, unsupported or unknown architecture: \e[33m$UNAME_M\e[0m"
@@ -180,8 +182,6 @@ Welcome_Banner() {
     timedatectl set-timezone Europe/Lisbon
     T_Z=$(timedatectl show --va -p Timezone)
      Show 0 "Time Zone is ${T_Z}." 
-    #setting a standard working Directory
-    cd /home
 }
 Add_repos(){
     Show 2 "Adding the necessary repository sources"
@@ -263,7 +263,10 @@ change_renderer() {
     # Changing the renderer
     config="$(netplan get)"
     if echo "$config" | grep -q "renderer: networkd"; then
-        echo "$config" | sed '2a\renderer: NetworkManager'
+        echo "$config" | sed '2a renderer: NetworkManager'
+
+        echo "$(netplan get)" | sed '2a renderer: NetworkManager'
+
     else
         echo ${config/renderer: networkd/renderer: NetworkManager}
     fi
