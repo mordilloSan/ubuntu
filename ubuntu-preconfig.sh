@@ -29,10 +29,7 @@ Start (){
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #setting the working Directory to the user home folder
-#    DIR=$(echo "${whoami}")
-#    cd /home/$DIR
-    cd /home/$(echo "${whoami}")
-    sleep 60
+    cd ~
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -182,7 +179,7 @@ Welcome_Banner() {
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
     T_Z=$(timedatectl show --va -p Timezone)
-     Show 0 "Time Zone is ${T_Z}." 
+    Show 0 "Time Zone is ${T_Z}." 
 }
 Add_repos(){
     Show 2 "Adding the necessary repository sources"
