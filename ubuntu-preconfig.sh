@@ -123,7 +123,7 @@ Check_Permissions() {
 		Show 1 "Please run as root or with sudo."
 		exit 1
 	fi
-	Show 0 "Current interpreter: \e[33m$interpreter\e[0m"
+	Show 0 "Current interpreter : \e[33m$interpreter\e[0m"
 }
 check_installed() {
 	if dpkg-query -W -f'${db:Status-Abbrev}\n' $* 2>/dev/null \
@@ -141,7 +141,7 @@ Check_Connection(){
 		Show 1 "Can not reach the internet"
 		exit 1
     fi
-    Show 0 "Internet \e[33mOnline\e[0m"
+    Show 0 "Internet : \e[33mOnline\e[0m"
 }
 
 Check_Service_status() {
@@ -177,8 +177,7 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
-    
-    Show 0 "Current Working Directory - \e[33m$pwd\e[0m"
+    Show 0 "Current Working Directory - \e[33m\e[0m" | pwd
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
