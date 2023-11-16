@@ -29,9 +29,9 @@ Start (){
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #setting the working Directory to the user home folder
-    DIR=$(echo "${whoami}")
-    cd /home/$DIR
-    cd home/$(echo "${whoami}")
+#    DIR=$(echo "${whoami}")
+#    cd /home/$DIR
+    cd /home/$(echo "${whoami}")
     sleep 60
 }
 onCtrlC() {
