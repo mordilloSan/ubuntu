@@ -28,6 +28,10 @@ Start (){
     readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
+    echo "$USER"
+    cd /home/$(echo "$USER")
+    pwd
+    sleep 30
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
