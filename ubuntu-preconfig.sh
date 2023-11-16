@@ -177,8 +177,8 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
-    W_D= pwd
-    Show 0 "Current Working Directory - \e[33m$T_Z\e[0m"
+    W_D=$( pwd )
+    Show 0 "Current Working Directory - \e[33m$W_D\e[0m"
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
