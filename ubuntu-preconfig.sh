@@ -267,6 +267,7 @@ change_renderer() {
     else
         echo ${config/renderer: networkd/renderer: NetworkManager}
     fi
+    echo $config>>test.txt
     Show 2 "$config"
     sleep 60
 	netplan try
@@ -288,6 +289,10 @@ change_renderer() {
 	fi
 	echo "Successfully enabled network manager."
     sleep 60
+}
+
+check_for_kernel_update(){
+    #cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}';
 }
 ###################
 # Package Section #
