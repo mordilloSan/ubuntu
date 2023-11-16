@@ -30,6 +30,7 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #setting the working Directory to the user home folder
     cd ~
+    DIRECTORY=$(echo "${pwd}")
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -189,7 +190,7 @@ Add_repos(){
 	else
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
-	    mkdir -p ~/repos     
+	    mkdir -p $DIRECTORY/repos     
 		mv /etc/apt/sources.list.d/45drives.sources /opt/45drives/archives/repos/45drives-$(date +%Y-%m-%d).list
 		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to '/opt/45drives/archives/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
