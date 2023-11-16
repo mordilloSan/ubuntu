@@ -125,16 +125,6 @@ Check_Permissions() {
 	fi
 	Show 0 "Current interpreter : \e[33m$interpreter\e[0m"
 }
-check_installed() {
-	if dpkg-query -W -f'${db:Status-Abbrev}\n' $* 2>/dev/null \
- | grep -q '^.i $'; then
-    	Show 2 "$* is Installed"
-		INSTALLED=true
-	else
-    	Show 2 "$* is Not installed"
-		INSTALLED=false
-	fi
-}
 Check_Connection(){
     internet=$(wget -q --spider http://google.com ; echo $?)
     if [ "$internet" != 0 ]; then
@@ -143,7 +133,6 @@ Check_Connection(){
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
 }
-
 Check_Service_status() {
     for SERVICE in "${CASA_SERVICES[@]}"; do
         Show 2 "Checking ${SERVICE}..."
@@ -259,7 +248,14 @@ change_renderer() {
 	local res
     local config=""
     #setting proper permissions in netplan
-    sudo chmod 600 /etc/netplan/*.yaml 
+    chmod 777 /etc/netplan/50-cloud-init.yaml
+    config=""
+    sudo chmod 777 /etc/netplan/50-cloud-init.yaml
+
+    config=$(netplan get)
+    echo $config
+    printf "$config" > file.log
+    
 	#backup current file --> what is the file name????? It changes!!!!
     #mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
     # Changing the renderer
@@ -274,6 +270,7 @@ change_renderer() {
     fi
     echo $config>>test.txt
     Show 2 "$config"
+    chmod 600 /etc/netplan/*.yaml 
 	netplan try
 	res=$?
 	if [[ $res != 0 ]]; then
@@ -304,8 +301,7 @@ check_for_kernel_update(){
 Install_Packages() {
 	local res
     Show 2 "Installing Packages"
-    for ((i = 0; i < ${#PACKAGES[@]}; i++)); do
-        packagesNeeded=${PACKAGES[i]}
+    for packagesNeeded in "${PACKAGES[@]}"; do
         Show 2 "Prepare the necessary dependencie: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
         if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
@@ -455,7 +451,6 @@ Wrap_up_Banner() {
     Get_IPs
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
-    #systemctl status cockpit.socket
     echo -e ""
     echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
@@ -485,7 +480,7 @@ Add_repos
 Update_System
 Install_Docker
 Install_Packages
-change_renderer 
+#change_renderer 
 Remove_cloudinit
 Remove_snap
 Remove_repo_backup
@@ -498,6 +493,7 @@ exit 0
 #Script running in full auto or with a grafical checkbox for selection of functions
 #installing everyday tools - htop (saving preferences)
 #possibility of rebooting and then resuming the install
+#reboot when kernel needs reloading
 #summarize software installed
 #progress in script
 #detect ports used by services
