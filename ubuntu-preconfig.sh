@@ -28,9 +28,11 @@ Start (){
     readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
-#    TARGET_ARCH=""
-    #setting a standard working Directory
-    cd /home
+    #setting the working Directory to the user home folder
+    DIR=$(echo "${whoami}")
+    cd /home/$DIR
+    cd home/$(echo "${whoami}")
+    sleep 60
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -87,14 +89,13 @@ ColorReset() {
 Check_Arch() {
     case $UNAME_M in
     *64*)
-#        TARGET_ARCH="amd64"
+        Show 0 "Your hardware architecture is : \e[33m$UNAME_M\e[0m"
         ;;
     *)
         Show 1 "Aborted, unsupported or unknown architecture: \e[33m$UNAME_M\e[0m"
         exit 1
         ;;
     esac
-    Show 0 "Your hardware architecture is : \e[33m$UNAME_M\e[0m"
 }
 Check_Distribution() {
     if [[ $DIST == *ubuntu* ]]; then
