@@ -5,10 +5,6 @@
 ####################
 Start (){
     # SYSTEM INFO
-    echo "$USER"
-    cd /home/$(echo "$USER")
-    pwd
-    sleep 30
     ((EUID)) && sudo_cmd="sudo"
     source /etc/os-release
     LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
@@ -32,6 +28,9 @@ Start (){
     readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
+    #Working Directory in user home folder
+    WORK_DIR="/home/$(echo "$USER")"
+    cd $WORK_DIR
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -144,6 +143,7 @@ Check_Connection(){
     fi
     Show 0 "Internet \e[33mOnline\e[0m"
 }
+
 Check_Service_status() {
     for SERVICE in "${CASA_SERVICES[@]}"; do
         Show 2 "Checking ${SERVICE}..."
@@ -177,6 +177,8 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
+    
+    Show 0 "Current Working Directory - \e[33m$pwd\e[0m"
     echo "" 
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
