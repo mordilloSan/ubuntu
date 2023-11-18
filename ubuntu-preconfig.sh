@@ -144,6 +144,31 @@ Check_Service_status() {
         fi
     done
 }
+Check_Reboot(){
+	local response=""
+	Show 0 "SETUP COMPLETE"
+    if [ -f /var/run/reboot-required ]; then
+        Show 2 'reboot required'
+        case $response in
+            [yY]|[yY][eE][sS])
+                reboot now
+                ;;
+            *)
+                echo "Reboot soon to finish configuration."
+                ;;
+        esac
+        return 0
+    fi
+	read -p "Reboot system now? [y/N]: " response
+}
+Check_Success(){
+    if [[ $res != 0 ]]; then
+        Show 1 "$1 failed!"
+		exit $res
+	else
+        Show 0 "$1 upgraded"
+    fi
+}
 ###################
 # Start Functions #
 ###################
@@ -224,6 +249,7 @@ Update_System() {
 	GreyStart
     apt-get update -q -u 
     res=$?
+    Check_Success "Package update"
     if [[ $res != 0 ]]; then
 		Show 1 "Package update failed!"
 		exit $res
@@ -232,7 +258,7 @@ Update_System() {
     fi
 	Show 2 "Upgrading packages"
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get -y --autoremove dist-upgrade
+	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --autoremove 
     res=$?
     if [[ $res != 0 ]]; then
         Show 1 "Package upgrade failed!"
@@ -241,10 +267,14 @@ Update_System() {
         Show 0 "System successfully upgraded"
     fi
 }
-#####################
 # Network Functions #
 #####################
 change_renderer() {
+
+    systemctl disable systemd-networkd.service
+    systemctl mask systemd-networkd.service
+    systemctl stop systemd-networkd.service
+
 	local res
     local config=""
     #setting proper permissions in netplan
@@ -282,7 +312,7 @@ change_renderer() {
 	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
 	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	systemctl restart network-manager
+	systemctl restart NetworkManager
 	res=$?
 	if [[ $res != 0 ]]; then
 		echo "Reloading network-manager failed."
@@ -458,20 +488,6 @@ Wrap_up_Banner() {
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: uninstall"
     echo -e "${COLOUR_RESET}"
 }
-setup_done() {
-	local response=""
-	echo "SETUP COMPLETE"
-	read -p "Reboot system now? [y/N]: " response
-	case $response in
-		[yY]|[yY][eE][sS])
-			reboot now
-			;;
-		*)
-			echo "Reboot soon to finish configuration."
-			;;
-	esac
-	return 0
-}
 
 Start
 trap 'onCtrlC' INT
@@ -486,7 +502,7 @@ Remove_snap
 Remove_repo_backup
 Initiate_Services
 Wrap_up_Banner
-setup_done
+Check_Reboot
 exit 0
 
 #Ideas
