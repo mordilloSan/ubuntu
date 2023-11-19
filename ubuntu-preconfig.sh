@@ -166,16 +166,16 @@ Check_Service_status() {
 }
 Check_Reboot(){
     if [ -f /var/run/reboot-required ]; then
-        #TESTE=$(cat /var/run/reboot-required* | sed  "/libc6/d" | sed  "/linux-base/d" ; uname -a | awk '{print "linux-image-"$3}')
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        Show 4 "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
-        Show 4 "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
+        echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
+        echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
     	echo "Reboot system now? [y/N]: "
-        read response
-        #read -p "Are you sure? " -n 1 -r
-        if [[ $response =~ ^[Yy]$ ]]; then
-            reboot
-        fi
+        read -p 'Again? [Y/n] ' answer
+        case "$answer" in
+            [Yy]*) reboot ;;
+        esac
+    else
+        Show 0 "No reboot required"
     fi
 }
 Check_Success(){
