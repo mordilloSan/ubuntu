@@ -69,9 +69,6 @@ Show() {
         echo -e "${aCOLOUR[2]}[$COLOUR_RESET${aCOLOUR[2]}      $COLOUR_RESET${aCOLOUR[2]}]${aCOLOUR[2]} $2"
     fi
 }
-Warn() {
-    echo -e "${aCOLOUR[3]}$1$COLOUR_RESET"
-}
 GreyStart() {
     echo -e "${aCOLOUR[2]}\c"
 }
@@ -188,7 +185,9 @@ Welcome_Banner() {
 	clear
 	echo -e "\e[0m\c"
 	set -e
+    echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	printf "\033[1mWelcome to the Ubuntu Preconfiguration Script.\033[0m\n"
+    echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
 	echo " This will update the system, remove cloud-init and snapd,
  replace systemd-networkd with network-manager, install cockpit,
@@ -369,7 +368,6 @@ Check_Docker_Install() {
         Show 1 "Installation failed, please uninstall docker"
     fi
 }
-
 ##################
 # Finish Section #
 ##################
