@@ -166,7 +166,7 @@ Check_Success(){
         Show 1 "$1 failed!"
 		exit $res
 	else
-        Show 0 "$1 upgraded"
+        Show 0 "$1 sucess"
     fi
 }
 ###################
