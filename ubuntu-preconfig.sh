@@ -491,7 +491,7 @@ Wrap_up_Banner() {
 change_ls(){
     #this adds the line to the end of the file. Could do better and put is in the alias section
     STRING="alias ls='ls -l $@'"
-    $STRING >> ~/.bashrc
+    echo $STRING >> ~/.bashrc
     Check_Success "ls alias"
     source ~/.bashrc
 }
