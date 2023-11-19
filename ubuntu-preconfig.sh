@@ -146,7 +146,6 @@ Check_Service_status() {
 }
 Check_Reboot(){
 	local response=""
-	Show 0 "SETUP COMPLETE"
     if [ -f /var/run/reboot-required ]; then
         TESTE=$(cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}')
         Show 2 "$TESTE"
@@ -324,10 +323,6 @@ change_renderer() {
 	echo "Successfully enabled network manager."
     sleep 60
 }
-check_for_kernel_update(){
-    echo ""
-    #cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}';
-
 ###################
 # Package Section #
 ###################
@@ -514,6 +509,7 @@ Initiate_Services
 change_ls
 Wrap_up_Banner
 Check_Reboot
+Show 0 "SETUP COMPLETE"
 exit 0
 
 #Ideas
