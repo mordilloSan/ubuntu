@@ -25,7 +25,7 @@ Start (){
         '\e[91m'       # Red        | Update notifications Alert
         '\e[33m'       # Yellow     | Emphasis
     )
-    readonly GREEN_LINE=" ${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
+    readonly GREEN_LINE="${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
@@ -190,9 +190,9 @@ Welcome_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
 	echo "This will update the system, add 45Drives repository,
-install cockpit, install docker, install tools and general packages,
-remove cloud-init and snapd, replace networkd with network-manager,
-install portainer."
+install cockpit, install docker, install general tools,
+remove cloud-init and snapd, remove backup and temp files
+replace networkd with network-manager, install portainer."
 	echo ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
