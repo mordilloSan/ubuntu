@@ -165,14 +165,13 @@ Check_Service_status() {
     done
 }
 Check_Reboot(){
-	local response=""
     if [ -f /var/run/reboot-required ]; then
         #TESTE=$(cat /var/run/reboot-required* | sed  "/libc6/d" | sed  "/linux-base/d" ; uname -a | awk '{print "linux-image-"$3}')
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        Show 2 "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
-        Show 2 "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
+        Show 4 "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
+        Show 4 "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
         GreyStart
-    	read -p "Reboot system now? [y/N]: " response
+    	echo ""Reboot system now? [y/N]: "" | read response
         case $response in
             [yY]|[yY][eE][sS])
                 reboot now
