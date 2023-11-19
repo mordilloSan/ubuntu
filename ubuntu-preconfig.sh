@@ -148,7 +148,9 @@ Check_Reboot(){
 	local response=""
 	Show 0 "SETUP COMPLETE"
     if [ -f /var/run/reboot-required ]; then
+        TESTE=$(cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}')
         Show 2 'reboot required'
+        
         case $response in
             [yY]|[yY][eE][sS])
                 reboot now
@@ -267,6 +269,7 @@ Update_System() {
         Show 0 "System successfully upgraded"
     fi
 }
+#####################
 # Network Functions #
 #####################
 change_renderer() {
@@ -324,7 +327,7 @@ change_renderer() {
 check_for_kernel_update(){
     echo ""
     #cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}';
-}
+
 ###################
 # Package Section #
 ###################
