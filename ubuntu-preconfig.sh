@@ -507,7 +507,7 @@ trap 'onCtrlC' INT
 Welcome_Banner
 Add_repos
 Update_System
-Check_Reboot
+#Check_Reboot
 Install_Docker
 Install_Packages
 #change_renderer 
