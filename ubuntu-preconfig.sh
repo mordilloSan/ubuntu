@@ -136,22 +136,22 @@ Check_Connection(){
     Show 0 "Internet : \e[33mOnline\e[0m"
 }
 Check_Resume(){
-# check if the resume flag file exists. 
-# We created this file before rebooting.
-if [ ! -f resume-after-reboot ]; then
-    echo "running script for the first time.."
-    # add this script to bashrc so it gets triggered immediately after reboot
-    wget $SCRIPT_LINK
-    echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
-    # create a flag file to check if we are resuming from reboot.
-    touch resume-after-reboot
-else
-    echo "resuming script after reboot.."
-    # Remove the line that we added in zshrc
-    sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
-    # remove the temporary file that we created to check for reboot
-    rm -f /var/run/resume-after-reboot
-fi
+    # check if the resume flag file exists. 
+    # We created this file before rebooting.
+    if [ ! -f resume-after-reboot ]; then
+        echo "running script for the first time.."
+        # add this script to bashrc so it gets triggered immediately after reboot
+        wget $SCRIPT_LINK
+        echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
+        # create a flag file to check if we are resuming from reboot.
+        touch resume-after-reboot
+    else
+        echo "resuming script after reboot.."
+        # Remove the line that we added in zshrc
+        sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
+        # remove the temporary file that we created to check for reboot
+        rm -f /var/run/resume-after-reboot
+    fi
 }
 Check_Service_status() {
     for SERVICE in "${CASA_SERVICES[@]}"; do
@@ -167,8 +167,12 @@ Check_Service_status() {
 Check_Reboot(){
 	local response=""
     if [ -f /var/run/reboot-required ]; then
-        TESTE=$(cat /var/run/reboot-required* | sed  "/libc6/d" | sed  "/linux-base/d" ; uname -a | awk '{print "linux-image-"$3}')
-        Show 3 "$TESTE"
+        #TESTE=$(cat /var/run/reboot-required* | sed  "/libc6/d" | sed  "/linux-base/d" ; uname -a | awk '{print "linux-image-"$3}')
+        Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
+        Show 2 "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
+        Show 2 "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
+        GreyStart
+    	read -p "Reboot system now? [y/N]: " response
         case $response in
             [yY]|[yY][eE][sS])
                 reboot now
@@ -179,7 +183,7 @@ Check_Reboot(){
         esac
         return 0
     fi
-	read -p "Reboot system now? [y/N]: " response
+
 }
 Check_Success(){
     if [[ $? != 0 ]]; then
