@@ -1,0 +1,19 @@
+network:
+	version: 2
+	renderer: NetworkManager
+	ethernets:
+		ens2p0:
+			dhcp4: no
+			addresses: [192.168.1.67/24]
+			gateway4: 192.168.1.1
+			nameservers:
+				addresses: [1,1,1,1]
+		ens3p0:
+			dhcp4: yes
+			optional: true
+		ens4p0:
+			dhcp4: yes
+			optional: true
+		ens5p0:
+			dhcp4: yes
+			optional: true
