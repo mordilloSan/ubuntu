@@ -488,12 +488,15 @@ Wrap_up_Banner() {
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: uninstall"
     echo -e "${COLOUR_RESET}"
 }
-
+change_ls(){
+    echo 'alias ls='ls -l $@'' >> ~/.bashrc
+}
 Start
 trap 'onCtrlC' INT
 Welcome_Banner
 Add_repos
 Update_System
+Check_Reboot
 Install_Docker
 Install_Packages
 #change_renderer 
@@ -501,17 +504,16 @@ Remove_cloudinit
 Remove_snap
 Remove_repo_backup
 Initiate_Services
+change_ls
 Wrap_up_Banner
 Check_Reboot
 exit 0
 
 #Ideas
 #Script running in full auto or with a grafical checkbox for selection of functions
-#installing everyday tools - htop (saving preferences)
+#htop (saving preferences)
 #possibility of rebooting and then resuming the install
-#reboot when kernel needs reloading
 #summarize software installed
 #progress in script
 #detect ports used by services
 #resolve pihole port conflict
-#change defaults behaviour of "ls" to "ls -l"
