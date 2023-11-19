@@ -190,7 +190,7 @@ Welcome_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
 	echo "This will update the system, add 45Drives repository,
-install cockpit, install docker, install tools, install packages,
+install cockpit, install docker, install tools and general packages,
 remove cloud-init and snapd, replace networkd with network-manager,
 install portainer."
 	echo ""
