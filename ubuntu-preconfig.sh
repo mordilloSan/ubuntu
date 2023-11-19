@@ -319,7 +319,7 @@ Install_Packages() {
     #install sensors modules
     Show 2 "Prepare the necessary dependencie: \e[33msensors\e[0m"
     GreyStart 
-    wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz #--show-progress
+    wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
     res1=$?
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
     res2=$?
