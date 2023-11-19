@@ -171,16 +171,14 @@ Check_Reboot(){
         Show 4 "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
         Show 4 "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
         GreyStart
-    	echo ""Reboot system now? [y/N]: "" | read response
-        case $response in
-            [yY]|[yY][eE][sS])
-                reboot now
-                ;;
-            *)
-                echo "Reboot soon to finish configuration."
-                ;;
-        esac
-        return 0
+    	echo "Reboot system now? [y/N]: " | read response
+        read -p "Are you sure? " -n 1 -r
+        if [[ $response =~ ^[Yy]$ ]]
+        then
+            /sbin/reboot
+        fi
+
+        read -p "Are you sure? " -n 1 -r
     fi
 
 }
@@ -522,7 +520,6 @@ Remove_cloudinit
 Remove_snap
 Remove_repo_backup
 Initiate_Services
-change_ls
 Wrap_up_Banner
 Check_Reboot
 Show 0 "SETUP COMPLETE"
