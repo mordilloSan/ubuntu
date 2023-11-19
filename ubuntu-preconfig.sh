@@ -162,11 +162,11 @@ Check_Reboot(){
 	read -p "Reboot system now? [y/N]: " response
 }
 Check_Success(){
-    if [[ $res != 0 ]]; then
+    if [[ $? != 0 ]]; then
         Show 1 "$1 failed!"
 		exit $res
 	else
-        Show 0 "$1 sucess"
+        Show 0 "$1 sucess!"
     fi
 }
 ###################
