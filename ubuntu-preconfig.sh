@@ -173,14 +173,10 @@ Check_Reboot(){
         GreyStart
     	echo "Reboot system now? [y/N]: " | read response
         read -p "Are you sure? " -n 1 -r
-        if [[ $response =~ ^[Yy]$ ]]
-        then
-            /sbin/reboot
+        if [[ $response =~ ^[Yy]$ ]]; then
+            reboot
         fi
-
-        read -p "Are you sure? " -n 1 -r
     fi
-
 }
 Check_Success(){
     if [[ $? != 0 ]]; then
