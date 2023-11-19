@@ -193,9 +193,7 @@ Welcome_Banner() {
  replace systemd-networkd with network-manager, install cockpit,
  add 45Drives repository, remove cloud-init and snapd, install docker and portainer."
 	echo ""
-    echo " This script should *not* be run in an SSH session, as the network will be
- modified and you may be disconnected. Run this script from the console or IPMI
- remote console."
+    echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
 	Check_Arch
 	Check_OS
@@ -205,6 +203,7 @@ Welcome_Banner() {
     W_D=$( pwd )
     Show 0 "Current Working Directory - \e[33m$W_D\e[0m"
     echo "" 
+    echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
     T_Z=$(timedatectl show --va -p Timezone)
