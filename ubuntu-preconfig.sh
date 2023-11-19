@@ -147,7 +147,7 @@ Check_Service_status() {
 Check_Reboot(){
 	local response=""
     if [ -f /var/run/reboot-required ]; then
-    Show 3 " Reboot necessary!"
+        Show 3 " Reboot necessary!"
         TESTE=$(cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}')
         Show 2 "$TESTE"
         
