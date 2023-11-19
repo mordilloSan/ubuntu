@@ -260,14 +260,7 @@ Update_System() {
 	Show 2 "Updating packages"
 	GreyStart
     apt-get update -q -u 
-    res=$?
     Check_Success "Package update"
-    if [[ $res != 0 ]]; then
-		Show 1 "Package update failed!"
-		exit $res
-	else
-        Show 0 "System successfully updated"
-    fi
 	Show 2 "Upgrading packages"
 	GreyStart
 	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --autoremove
