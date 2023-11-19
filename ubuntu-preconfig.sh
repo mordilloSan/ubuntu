@@ -148,7 +148,7 @@ Check_Resume(){
         rm -f /var/run/resume-after-reboot
     fi
 }
-Check_Service_status() {
+Check_Package() {
     for SERVICE in "${CASA_SERVICES[@]}"; do
         Show 2 "Checking ${SERVICE}..."
         if [[ $(${sudo_cmd} systemctl is-active "${SERVICE}") == "active" ]]; then
@@ -229,29 +229,16 @@ Add_repos(){
 	echo -e "${aCOLOUR[2]}Updating ca-certificates to ensure certificate validity..."
 	apt-get install ca-certificates -y -q=2
 	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
-	res=$?
-	if [ "$res" -ne "0" ]; then
-		Show 1 "Failed to add the gpg key to the apt keyring. Please review the above error and try again."
-		exit $res
-	fi
+    Check_Success "Add the gpg key to the apt keyring"
 	curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
-	res=$?
-	if [ "$res" -ne "0" ]; then
-		Show 1 "Failed to download the new repo file. Please review the above error and try again."
-		exit $res
-	fi
+    Check_Success "Download the new repo file"
 	lsb_release_cs=$(lsb_release -cs)
 	if [[ "$lsb_release_cs" == "" ]]; then
 		Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
-		exit $res
 	fi
 	lsb_release_cs="focal"
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
-	res=$?
-	if [ "$res" -ne "0" ]; then
-		Show 1 "Failed to update the new repo file. Please review the above error and try again."
-		exit $res
-	fi
+    Check_Success "Update the new repo file"
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
 	Show 0 "Success! Your repo has been updated to our new server!"
 }
@@ -302,23 +289,13 @@ change_renderer() {
     Show 2 "$config"
     chmod 600 /etc/netplan/*.yaml 
 	netplan try
-	res=$?
-	if [[ $res != 0 ]]; then
-		echo "netplan try failed."
-        #we should restore the old file then and retry netplan!!!!
-		exit $res
-	fi
+    Check_Success "Netplan configuration"
     # Cleaning up
 	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
 	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
 	systemctl restart NetworkManager
-	res=$?
-	if [[ $res != 0 ]]; then
-		echo "Reloading network-manager failed."
-		exit $res
-	fi
-	echo "Successfully enabled network manager."
+    Check_Success "NetworkManager restart"
     sleep 60
 }
 ###################
@@ -334,13 +311,7 @@ Install_Packages() {
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
             DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
-            res=$?
-            if [[ $res != 0 ]]; then
-                Show 1 "Instalation  failed!"
-                exit $res
-            else
-                Show 0 "$packagesNeeded installed" 
-            fi
+            Check_Success "$packagesNeeded installation"
         else
             Show 0 "$packagesNeeded already installed"
         fi
@@ -364,24 +335,11 @@ Install_Packages() {
     rm cockpit-sensors*.*
 }
 Initiate_Services(){
-    local res
     echo ""
-	# Enabling Cockpit
 	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
-    res=$?
-    if [[ $res != 0 ]]; then
-        Show 1 "Enabling cockpit.socket failed!"
-        exit $res
-    fi
-	Show 0 "Successfully initialized Cockpit."
-
+    Check_Success "Cockpit setup"
 	DEBIAN_FRONTEND=noninteractive systemctl enable --now NetworkManager
-    res=$?
-    if [[ $res != 0 ]]; then
-		Show 1 "Enabling NetworkManager failed!"
-		exit $res
-	fi
-	Show 0 "Successfully set up NetworkManager"
+    Check_Success "Network Manager setup"
 } 
 ##################
 # Docker Section #
@@ -427,12 +385,7 @@ Remove_cloudinit(){
         Show 0 "cloud-init not installed."
     else
         DEBIAN_FRONTEND=noninteractive apt-get autoremove -q -y --purge cloud-init 
-    	res=$?
-	    if [[ $res != 0 ]]; then
-            Show 1 "Removing cloud-init failed!"
-            exit $res
-        fi
-        Show 0 "cloud-init removed"
+        Check_Success "Removing cloud-init"
         rm -rf /etc/cloud/
         rm -rf /var/lib/cloud/
     fi
