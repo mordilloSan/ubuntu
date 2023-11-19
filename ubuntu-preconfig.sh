@@ -489,7 +489,11 @@ Wrap_up_Banner() {
     echo -e "${COLOUR_RESET}"
 }
 change_ls(){
-    echo 'alias ls='ls -l $@'' >> ~/.bashrc
+    #this adds the line to the end of the file. Could do better and put is in the alias section
+    STRING="alias ls='ls -l $@'"
+    $STRING >> ~/.bashrc
+    Check_Success "ls alias"
+    source ~/.bashrc
 }
 Start
 trap 'onCtrlC' INT
