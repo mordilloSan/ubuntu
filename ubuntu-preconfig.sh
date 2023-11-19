@@ -189,10 +189,11 @@ Welcome_Banner() {
 	printf "\033[1mWelcome to the Ubuntu Preconfiguration Script.\033[0m\n"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
-	echo " This will update the system, remove cloud-init and snapd,
- replace systemd-networkd with network-manager, install cockpit,
- add 45Drives repository, remove cloud-init and snapd, install docker and portainer."
+	echo " This will update the system, add 45Drives repository,
+install cockpit packages, install docker, remove cloud-init and snapd,
+replace systemd-networkd with network-manager and install portainer"
 	echo ""
+            This will update the system, remove cloud-init and snapd,
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
 	Check_Arch
