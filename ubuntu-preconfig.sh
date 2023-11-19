@@ -516,7 +516,8 @@ Update_System
 Check_Reboot
 Install_Docker
 Install_Packages
-#change_renderer 
+#change_renderer
+Get_IPs
 Remove_cloudinit
 Remove_snap
 Remove_repo_backup
