@@ -415,6 +415,7 @@ Remove_repo_backup(){
     return 0
 }
 Wrap_up_Banner() {
+    Show 0 "SETUP COMPLETE"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
@@ -433,7 +434,7 @@ Wrap_up_Banner() {
     echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e ""
-    echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: uninstall"
+    echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall Docker${COLOUR_RESET}: https://raw.githubusercontent.com/mordilloSan/ubuntu/main/uninstall_docker.sh"
     echo -e "${COLOUR_RESET}"
 }
 
@@ -452,8 +453,6 @@ Remove_snap
 Remove_repo_backup
 Initiate_Services
 Wrap_up_Banner
-#Check_Reboot dont think this is needed
-Show 0 "SETUP COMPLETE"
 exit 0
 
 #Ideas
