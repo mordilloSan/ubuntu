@@ -201,7 +201,7 @@ Welcome_Banner() {
 	Check_Permissions
     Check_Connection
     W_D=$( pwd )
-    Show 0 "Current Working Directory - \e[33m$W_D\e[0m"
+    Show 2 "Current Working Directory - \e[33m$W_D\e[0m"
     echo "" 
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     Show 2 "Setting Time Zone"
