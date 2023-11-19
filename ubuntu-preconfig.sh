@@ -5,7 +5,7 @@
 ####################
 Start (){
     # SYSTEM INFO
-    ((EUID)) && sudo_cmd="sudo"
+    ((EUID))
     source /etc/os-release
     LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
     readonly LSB_DIST
@@ -490,7 +490,7 @@ Wrap_up_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
-    PORT=$(${sudo_cmd} cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
+    PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
     for IP in ${ALL_IP}; do
         if [[ "$PORT" -eq "80" ]]; then
             echo -e "${GREEN_BULLET} http://$IP (${NIC})"
