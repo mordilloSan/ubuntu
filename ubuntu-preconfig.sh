@@ -172,14 +172,14 @@ Check_Reboot(){
     fi
 }
 Kernel_Reboot(){
-        Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
-        echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
-    	echo "Reboot system now? [y/N]: "
-        read -p "Reboot system now? [y/N]:" answer
-        case "$answer" in
-            [Yy]*) reboot ;;
-        esac  
+    Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
+    echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
+    echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
+    echo "Reboot system now? [y/N]: "
+    read -p "Reboot system now? [y/N]:" answer
+    case "$answer" in
+        [Yy]*) reboot ;;
+    esac  
 }
 Check_Success(){
     if [[ $? != 0 ]]; then
@@ -511,7 +511,7 @@ trap 'onCtrlC' INT
 Welcome_Banner
 Add_repos
 Update_System
-#Check_Reboot
+Check_Reboot
 Install_Docker
 Install_Packages
 #change_renderer 
@@ -520,12 +520,7 @@ Remove_snap
 Remove_repo_backup
 Initiate_Services
 Wrap_up_Banner
-#Check_Reboot
-Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
-echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
-echo "Reboot system now? [y/N]: "
-read -p "Reboot system now? [y/N]:" answer
+Check_Reboot
 Show 0 "SETUP COMPLETE"
 exit 0
 
