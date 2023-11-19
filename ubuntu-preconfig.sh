@@ -171,8 +171,7 @@ Kernel_Reboot(){
     echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
     echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
     echo "Reboot system now? [y/N]: "
-    read -p "Reboot system now? [y/N]:" response
-    IFS="" read -r response  </dev/tty # OR < /proc/$$/fd/0
+    IFS="Reboot system now? [y/N]:" read -r response  </dev/tty # OR < /proc/$$/fd/0
     case "$response" in
         [Yy]*) reboot ;;
     esac  
