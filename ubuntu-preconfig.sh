@@ -270,14 +270,8 @@ Update_System() {
     fi
 	Show 2 "Upgrading packages"
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --autoremove 
-    res=$?
-    if [[ $res != 0 ]]; then
-        Show 1 "Package upgrade failed!"
-		exit $res
-	else
-        Show 0 "System successfully upgraded"
-    fi
+	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --autoremove
+    Check_Success "Package upgrade"
 }
 #####################
 # Network Functions #
