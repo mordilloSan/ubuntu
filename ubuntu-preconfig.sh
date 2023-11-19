@@ -31,6 +31,8 @@ Start (){
     #Working Directory in user home folder
     WORK_DIR="/home/$(echo "$USER")"
     cd $WORK_DIR
+    #Script link
+    SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -132,6 +134,24 @@ Check_Connection(){
 		exit 1
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
+}
+Check_Resume(){
+# check if the resume flag file exists. 
+# We created this file before rebooting.
+if [ ! -f resume-after-reboot ]; then
+    echo "running script for the first time.."
+    # add this script to bashrc so it gets triggered immediately after reboot
+    wget $SCRIPT_LINK
+    echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
+    # create a flag file to check if we are resuming from reboot.
+    touch resume-after-reboot
+else
+    echo "resuming script after reboot.."
+    # Remove the line that we added in zshrc
+    sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
+    # remove the temporary file that we created to check for reboot
+    rm -f /var/run/resume-after-reboot
+fi
 }
 Check_Service_status() {
     for SERVICE in "${CASA_SERVICES[@]}"; do
@@ -485,13 +505,7 @@ Wrap_up_Banner() {
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: uninstall"
     echo -e "${COLOUR_RESET}"
 }
-change_ls(){
-    #this adds the line to the end of the file. Could do better and put is in the alias section
-    STRING="alias ls='ls -l $@'"
-    echo $STRING >> ~/.bashrc
-    Check_Success "ls alias"
-    source ~/.bashrc
-}
+
 Start
 trap 'onCtrlC' INT
 Welcome_Banner
