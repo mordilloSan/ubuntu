@@ -193,7 +193,6 @@ Welcome_Banner() {
 install cockpit packages, install docker, remove cloud-init and snapd,
 replace systemd-networkd with network-manager and install portainer"
 	echo ""
-            This will update the system, remove cloud-init and snapd,
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
 	Check_Arch
