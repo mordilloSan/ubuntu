@@ -166,7 +166,7 @@ Check_Service_status() {
 }
 Check_Reboot(){
     if [ -f /var/run/reboot-required ]; then
-        Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
+        echo "$(cat /var/run/reboot-required* | sed -n '1p')"
         echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
         echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
     	echo "Reboot system now? [y/N]: "
