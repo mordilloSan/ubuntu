@@ -162,8 +162,8 @@ Check_Package() {
 Check_Reboot(){
     if [ -f /var/run/reboot-required ]; then
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}')"
-        echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image")"
+        echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
+        echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")"
         echo "Reboot system now? [y/N]: "
         IFS="Reboot system now? [y/N]:" read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
