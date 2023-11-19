@@ -191,11 +191,10 @@ Welcome_Banner() {
 	echo ""
 	echo "This will update the system, add 45Drives repository,
 install cockpit, install docker, install general tools,
-remove cloud-init and snapd, remove backup and temp files
-replace networkd with network-manager, install portainer."
+remove cloud-init and snapd, remove backup&temp files
+switch networkd to network-manager, install portainer."
 	echo ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-	echo ""
 	Check_Arch
 	Check_OS
 	Check_Distribution
@@ -203,7 +202,6 @@ replace networkd with network-manager, install portainer."
     Check_Connection
     W_D=$( pwd )
     Show 2 "Current Working Directory - \e[33m$W_D\e[0m"
-    echo "" 
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
@@ -454,7 +452,7 @@ Remove_snap
 Remove_repo_backup
 Initiate_Services
 Wrap_up_Banner
-Check_Reboot
+#Check_Reboot dont think this is needed
 Show 0 "SETUP COMPLETE"
 exit 0
 
