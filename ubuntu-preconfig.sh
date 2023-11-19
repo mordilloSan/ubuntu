@@ -149,7 +149,7 @@ Check_Reboot(){
 	Show 0 "SETUP COMPLETE"
     if [ -f /var/run/reboot-required ]; then
         TESTE=$(cat /var/run/reboot-required*; uname -a | awk '{print "linux-image-"$3}')
-        Show 2 'reboot required'
+        Show 2 "$TESTE"
         
         case $response in
             [yY]|[yY][eE][sS])
