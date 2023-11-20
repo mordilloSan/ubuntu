@@ -140,7 +140,7 @@ Check_Package() {
 Check_Reboot(){
     if [ -f /var/run/reboot-required ]; then
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        if [$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//") = ""]; then
+        if [$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//") == ""]; then
             Show 2 "$(cat reboot-required.pkgs)"
         else    
             echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
