@@ -149,7 +149,7 @@ Check_Reboot(){
                 wget $SCRIPT_LINK
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
-                touch resume-after-rebootreboot
+                touch resume-after-reboot
                 sudo reboot </dev/tty
             ;;
         esac  
