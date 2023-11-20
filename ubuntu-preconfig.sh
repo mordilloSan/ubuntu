@@ -203,12 +203,15 @@ switch networkd to network-manager, install portainer."
     W_D=$( pwd )
     Show 2 "Current Working Directory - \e[33m$W_D\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
+    echo ""
+}
+Set_Timezone(){
     Show 2 "Setting Time Zone"
     timedatectl set-timezone Europe/Lisbon
     T_Z=$(timedatectl show --va -p Timezone)
     Show 0 "Time Zone is ${T_Z}." 
 }
-Add_repos(){
+Add_Repos(){
     Show 2 "Adding the necessary repository sources"
     items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
@@ -415,7 +418,7 @@ Remove_repo_backup(){
     return 0
 }
 Wrap_up_Banner() {
-    Show 0 "SETUP COMPLETE"
+    Show 0 "SETUP COMPLETE!"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
@@ -433,15 +436,14 @@ Wrap_up_Banner() {
     echo -e ""
     echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
-    echo -e ""
-    echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall Docker${COLOUR_RESET}: https://raw.githubusercontent.com/mordilloSan/ubuntu/main/uninstall_docker.sh"
     echo -e "${COLOUR_RESET}"
 }
 
 Start
 trap 'onCtrlC' INT
 Welcome_Banner
-Add_repos
+Set_Timezone
+Add_Repos
 Update_System
 Check_Reboot
 Install_Docker
