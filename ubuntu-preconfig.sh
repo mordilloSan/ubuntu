@@ -7,8 +7,7 @@ Start (){
     # SYSTEM INFO
     ((EUID))
     source /etc/os-release
-    LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
-    readonly LSB_DIST
+
     DIST=$(echo "${ID}")
     readonly DIST
     UNAME_M="$(uname -m)"
