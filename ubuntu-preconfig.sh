@@ -32,7 +32,7 @@ Start (){
     echo "The login user is ${SUDO_USER:-$(whoami)}"
     WORK_DIR= ${SUDO_USER:-$(whoami)}
     echo "$WORK_DIR"
-    WORK_DIR=$(echo "/home/${WORK_DIR}")
+    WORK_DIR="/home/${WORK_DIR}"
     echo "$WORK_DIR"
     echo "/home/${WORK_DIR}"
     sleep 5
