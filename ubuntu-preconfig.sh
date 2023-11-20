@@ -15,7 +15,7 @@ Start (){
     readonly UNAME_U
     WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     readonly WORK_DIR
-    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
+    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
