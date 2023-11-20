@@ -154,7 +154,7 @@ Check_Reboot(){
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch $WORK_DIR/resume-after-reboot
-                sudo reboot </dev/tty
+                reboot </dev/tty
             ;;
         esac
     else
