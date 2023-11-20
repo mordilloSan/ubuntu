@@ -31,7 +31,6 @@ Start (){
     #Working Directory in user home folder
     WORK_DIR= $whoami
     WORK_DIR="/home/$WORK_DIR"
-    cd $WORK_DIR
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
 }
@@ -147,7 +146,7 @@ Check_Reboot(){
         echo "Reboot system now? [y/N]: " | read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
             [Yy]*) 
-                wget $SCRIPT_LINK
+                wget $SCRIPT_LINK 
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch resume-after-reboot
@@ -188,25 +187,24 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
-    W_D=$( pwd )
-    Show 2 "Current Working Directory - \e[33m$W_D\e[0m"
+    Show 2 "Current Working Directory - \e[33m$WORK_DIR\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
 }
 Resume_Setup(){
     # check if the resume flag file exists. 
     # We created this file before rebooting.
-    if [ ! -f ./resume-after-reboot ]; then
+    if [ ! -f /$WORK_DIR/resume-after-reboot ]; then
         Set_Timezone
         Add_Repos
         Update_System
     else
         echo "resuming script after reboot.."
         # Remove the line that we added in zshrc
-        sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
+        sed -i '/sudo bash ubuntu-preconfig.sh/d' ~/.bashrc 
         # remove the temporary file that we created to check for reboot
-        rm -f resume-after-reboot
-        rm -f ubuntu-preconfig.sh
+        rm -f /$WORK_DIR/resume-after-reboot
+        rm -f /$WORK_DIR/ubuntu-preconfig.sh
     fi
 }
 Set_Timezone(){
@@ -224,8 +222,8 @@ Add_Repos(){
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
 	    mkdir -p ~/repos     
-		mv /etc/apt/sources.list.d/45drives.sources ~/repos/45drives-$(date +%Y-%m-%d).list
-		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to '$(echo ~)/repos'. Setting up the new repo..."
+		mv /etc/apt/sources.list.d/45drives.sources /$WORK_DIR/45drives-$(date +%Y-%m-%d).list
+		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to /$WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
 		fi
@@ -250,11 +248,11 @@ Update_System() {
 	local res
 	Show 2 "Updating packages"
 	GreyStart
-    apt-get update -q -u 
+    apt-get update -q
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
 	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --autoremove
+	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
     Check_Success "Package upgrade"
 }
 #####################
@@ -361,7 +359,7 @@ Install_Packages() {
         exit $res
     fi
     rm -r cockpit-sensors
-    rm cockpit-sensors*.*
+    rm -f cockpit-sensors*.*
 }
 Initiate_Services(){
     echo ""
