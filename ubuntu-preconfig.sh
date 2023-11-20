@@ -193,7 +193,7 @@ Welcome_Banner() {
 Resume_Setup(){
     # check if the resume flag file exists. 
     # We created this file before rebooting.
-    if [ ! -f /$WORK_DIR/resume-after-reboot ]; then
+    if [ ! -f $WORK_DIR/resume-after-reboot ]; then
         Set_Timezone
         Add_Repos
         Update_System
@@ -202,8 +202,8 @@ Resume_Setup(){
         # Remove the line that we added in zshrc
         sed -i '/sudo bash ubuntu-preconfig.sh/d' ~/.bashrc 
         # remove the temporary file that we created to check for reboot
-        rm -f /$WORK_DIR/resume-after-reboot
-        rm -f /$WORK_DIR/ubuntu-preconfig.sh
+        rm -f $WORK_DIR/resume-after-reboot
+        rm -f $WORK_DIR/ubuntu-preconfig.sh
     fi
 }
 Set_Timezone(){
@@ -221,8 +221,8 @@ Add_Repos(){
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
 	    mkdir -p ~/repos     
-		mv /etc/apt/sources.list.d/45drives.sources /$WORK_DIR/45drives-$(date +%Y-%m-%d).list
-		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to /$WORK_DIR/repos'. Setting up the new repo..."
+		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/45drives-$(date +%Y-%m-%d).list
+		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
 		fi
