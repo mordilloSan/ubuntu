@@ -6,7 +6,7 @@
 Start (){
     # SYSTEM INFO
     ((EUID))
-    #source /etc/os-release
+    source /etc/os-release
     DIST="${ID}"
     readonly DIST
     UNAME_M="$(uname -m)"
