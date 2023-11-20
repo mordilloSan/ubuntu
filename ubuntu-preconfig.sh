@@ -6,8 +6,8 @@
 Start (){
     # SYSTEM INFO
     ((EUID))
-    source /etc/os-release
-    DIST=$(echo "${ID}")
+    #source /etc/os-release
+    DIST="${ID}"
     readonly DIST
     UNAME_M="$(uname -m)"
     readonly UNAME_M
@@ -140,7 +140,7 @@ Check_Reboot(){
                 wget -q $SCRIPT_LINK 
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
-                touch $WORK_DIR/resume-after-reboot
+                touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
             ;;
         esac
@@ -185,7 +185,7 @@ Welcome_Banner() {
 Resume_Setup(){
     # check if the resume flag file exists. 
     # We created this file before rebooting.
-    if [ ! -f $WORK_DIR/resume-after-reboot ]; then
+    if [ ! -f "$WORK_DIR"/resume-after-reboot ]; then
         Set_Timezone
         Add_Repos
         Update_System
@@ -195,8 +195,8 @@ Resume_Setup(){
         # Remove the line that we added in zshrc
         sed -i '/sudo bash ubuntu-preconfig.sh/d' ~/.bashrc 
         # remove the temporary file that we created to check for reboot
-        rm -f $WORK_DIR/resume-after-reboot
-        rm -f $WORK_DIR/ubuntu-preconfig.sh
+        rm -f "$WORK_DIR"/resume-after-reboot
+        rm -f "$WORK_DIR"/ubuntu-preconfig.sh
     fi
 }
 Set_Timezone(){
@@ -213,8 +213,8 @@ Add_Repos(){
 	else
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
-	    mkdir -p $WORK_DIR/repos     
-		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/repos/45drives-"$(date +%Y-%m-%d)".list
+	    mkdir -p "$WORK_DIR"/repos     
+		mv /etc/apt/sources.list.d/45drives.sources "$WORK_DIR"/repos/45drives-"$(date +%Y-%m-%d)".list
 		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
@@ -380,7 +380,7 @@ Remove_snap(){
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
             if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core20" ]; then
-                snap remove --purge "$(echo $i)"
+                snap remove --purge "$i"
             fi
         done
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
