@@ -151,7 +151,7 @@ Check_Reboot(){
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to check if we are resuming from reboot.
                 touch resume-after-rebootreboot
-                reboot
+                sudo reboot
             ;;
         esac  
     else
