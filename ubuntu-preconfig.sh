@@ -139,7 +139,7 @@ Check_Reboot(){
             [Yy]*) 
                 wget -q $SCRIPT_LINK $WORK_DIR/ubuntu-preconfig.sh
                 chmod +x $WORK_DIR/ubuntu-preconfig.sh
-                echo "$WORK_DIR/ubuntu-preconfig.sh" >> ~/.bashrc 
+                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
@@ -194,7 +194,7 @@ Resume_Setup(){
     else
         Show 2 "Resuming script after reboot..."
         # Remove the line that we added in zshrc
-        sed -i '/sudo bash ubuntu-preconfig.sh/d' ~/.bashrc 
+        sed -i "/curl -fsSL $SCRIPT_LINK | sudo bash/d" ~/.bashrc 
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
         rm -f "$WORK_DIR"/ubuntu-preconfig.sh
@@ -252,7 +252,7 @@ Update_System() {
 #####################
 change_renderer() {
 
-    systemctl disable systemd-networkd.service
+    sudo systemctl disable systemd-networkd.service
     systemctl mask systemd-networkd.service
     systemctl stop systemd-networkd.service
     local config=""
@@ -268,7 +268,7 @@ change_renderer() {
 	#backup current file --> what is the file name????? It changes!!!!
     #mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
     # Changing the renderer
-    config="$(netplan get)"
+    config= echo "$(netplan get)"
     if echo "$config" | grep -q "renderer: networkd"; then
         echo "$config" | sed '2a renderer: NetworkManager'
 
@@ -425,7 +425,7 @@ trap 'onCtrlC' INT
 Welcome_Banner
 Resume_Setup
 Install_Packages
-#change_renderer
+change_renderer
 Get_IPs
 Remove_cloudinit
 Remove_snap
