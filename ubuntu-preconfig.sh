@@ -15,6 +15,7 @@ Start (){
     readonly UNAME_M
     UNAME_U="$(uname -s)"
     readonly UNAME_U
+    readonly WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
@@ -28,8 +29,6 @@ Start (){
     readonly GREEN_LINE="${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     readonly GREEN_BULLET="${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
-    #Working Directory in user home folder
-    WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
 }
@@ -148,7 +147,7 @@ Check_Reboot(){
                 wget $SCRIPT_LINK 
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
-                touch resume-after-reboot
+                touch $WORK_DIR/resume-after-reboot
                 sudo reboot </dev/tty
             ;;
         esac  
@@ -221,7 +220,7 @@ Add_Repos(){
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
 	    mkdir -p ~/repos     
-		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/45drives-$(date +%Y-%m-%d).list
+		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/repos/45drives-$(date +%Y-%m-%d).list
 		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
