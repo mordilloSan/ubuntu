@@ -38,7 +38,7 @@ onCtrlC() {
 Get_IPs() {
     ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
     for NIC in ${ALL_NIC}; do
-        IP=$(ifconfig "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
             ALL_IP="$ALL_IP $IP"
         fi
