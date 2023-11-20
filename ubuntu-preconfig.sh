@@ -26,14 +26,10 @@ Start (){
         '\e[33m'       # Yellow     | Emphasis
     )
     readonly GREEN_LINE="${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
-    readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
+    readonly GREEN_BULLET="${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
-    echo "The login user is ${SUDO_USER:-$(whoami)}"
     WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
-    echo "debug"
-    echo $WORK_DIR
-    sleep 5
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
 }
