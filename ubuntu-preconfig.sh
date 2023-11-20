@@ -141,7 +141,7 @@ Check_Reboot(){
     if [ -f /var/run/reboot-required ]; then
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
         if [$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//") == ""]; then
-            Show 2 "$(cat /var/run/reboot-required.pkgs)"
+            Show 2 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
         else    
             echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
             echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")"
