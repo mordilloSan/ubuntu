@@ -221,7 +221,7 @@ Add_Repos(){
 	else
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
-	    mkdir -p ~/repos     
+	    mkdir -p $WORK_DIR/repos     
 		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/repos/45drives-$(date +%Y-%m-%d).list
 		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
