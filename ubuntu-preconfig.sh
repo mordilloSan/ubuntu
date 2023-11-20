@@ -198,8 +198,9 @@ Resume_Setup(){
         Set_Timezone
         Add_Repos
         Update_System
+        Check_Reboot
     else
-        echo "resuming script after reboot.."
+        Show 2 "Resuming script after reboot..."
         # Remove the line that we added in zshrc
         sed -i '/sudo bash ubuntu-preconfig.sh/d' ~/.bashrc 
         # remove the temporary file that we created to check for reboot
@@ -441,7 +442,6 @@ Start
 trap 'onCtrlC' INT
 Welcome_Banner
 Resume_Setup
-Check_Reboot
 Install_Docker
 Install_Packages
 #change_renderer
