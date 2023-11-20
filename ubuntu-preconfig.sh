@@ -137,8 +137,9 @@ Check_Reboot(){
         read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
             [Yy]*) 
-                wget -q $SCRIPT_LINK 
-                echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
+                wget -q $SCRIPT_LINK $WORK_DIR/ubuntu-preconfig.sh
+                chmod +x $WORK_DIR/ubuntu-preconfig.sh
+                echo "$WORK_DIR/ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
