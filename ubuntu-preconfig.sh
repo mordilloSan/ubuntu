@@ -29,7 +29,8 @@ Start (){
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
-    WORK_DIR= whoami
+    echo "The login user is ${SUDO_USER:-$(whoami)}"
+    WORK_DIR= ${SUDO_USER:-$(whoami)}
     echo "$WORK_DIR"
     WORK_DIR=$(echo "/home/${WORK_DIR}")
     echo "$WORK_DIR"
