@@ -143,13 +143,12 @@ Check_Reboot(){
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
         echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
         echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")"
-        echo "Reboot system now? [y/N]: "
-        IFS="Reboot system now? [y/N]:" read -r response  </dev/tty # OR < /proc/$$/fd/0
+        echo "Reboot system now? [y/N]: " | read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
             [Yy]*) 
                 wget $SCRIPT_LINK
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
-                # create a flag file to check if we are resuming from reboot.
+                # create a flag file to signal that we are resuming from reboot.
                 touch resume-after-rebootreboot
                 sudo reboot </dev/tty
             ;;
@@ -196,7 +195,7 @@ Welcome_Banner() {
 Resume_Setup(){
     # check if the resume flag file exists. 
     # We created this file before rebooting.
-    if [ ! -f resume-after-reboot ]; then
+    if [ ! -f WORK_DIR/resume-after-reboot ]; then
         Set_Timezone
         Add_Repos
         Update_System
@@ -206,7 +205,7 @@ Resume_Setup(){
         sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
         # remove the temporary file that we created to check for reboot
         rm -f resume-after-reboot
-
+        rm -f ubuntu-preconfig.sh
     fi
 }
 Set_Timezone(){
