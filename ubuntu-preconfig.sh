@@ -315,7 +315,6 @@ Install_Docker() {
         GreyStart
         curl -fsSL https://get.docker.com | bash
         Check_Docker_Install
-        fi
     fi
 }
 Check_Docker_Install() {
