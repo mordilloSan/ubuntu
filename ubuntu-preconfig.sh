@@ -169,7 +169,7 @@ Check_Success(){
 # Start Functions #
 ###################
 Welcome_Banner() {
-	clear
+	#clear
 	echo -e "\e[0m\c"
 	set -e
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
