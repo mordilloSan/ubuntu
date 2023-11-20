@@ -137,8 +137,8 @@ Check_Reboot(){
         read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
             [Yy]*) 
-                wget -q $SCRIPT_LINK $WORK_DIR/ubuntu-preconfig.sh
-                chmod +x $WORK_DIR/ubuntu-preconfig.sh
+                #wget -q $SCRIPT_LINK $WORK_DIR/ubuntu-preconfig.sh
+                #chmod +x $WORK_DIR/ubuntu-preconfig.sh
                 echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
@@ -193,11 +193,6 @@ Resume_Setup(){
         Check_Reboot
     else
         Show 2 "Resuming script after reboot..."
-        # Remove the line that we added in zshrc
-        sed -i "/curl -fsSL $SCRIPT_LINK | sudo bash/d" ~/.bashrc 
-        # remove the temporary file that we created to check for reboot
-        rm -f "$WORK_DIR"/resume-after-reboot
-        rm -f "$WORK_DIR"/ubuntu-preconfig.sh
     fi
 }
 Set_Timezone(){
@@ -262,22 +257,22 @@ change_renderer() {
     sudo chmod 777 /etc/netplan/50-cloud-init.yaml
 
     config=$(netplan get)
-    echo $config
+    echo "$config"
 
     
 	#backup current file --> what is the file name????? It changes!!!!
     #mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
     # Changing the renderer
-    config= echo "$(netplan get)"
+    config=$(comand)echo "$(netplan get)"
     if echo "$config" | grep -q "renderer: networkd"; then
         echo "$config" | sed '2a renderer: NetworkManager'
 
         echo "$(netplan get)" | sed '2a renderer: NetworkManager'
 
     else
-        echo ${config/renderer: networkd/renderer: NetworkManager}
+        echo "${config/renderer: networkd/renderer: NetworkManager}"
     fi
-    echo $config>>test.txt
+    echo "$config">>test.txt
     Show 2 "$config"
     chmod 600 /etc/netplan/*.yaml 
 	netplan try
@@ -386,7 +381,7 @@ Remove_snap(){
         done
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
-                snap remove --purge "$(echo $i)"
+                snap remove --purge "$(echo "$i")"
         done
         DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
         rm -rf /var/cache/snapd/
@@ -395,9 +390,12 @@ Remove_snap(){
     fi
 
 }
-Remove_repo_backup(){
-    Show 2 "Just a test Funcion"
-    return 0
+Clean_Up(){
+        # Remove the line that we added in zshrc
+        sed -i "/curl -fsSL $SCRIPT_LINK | sudo bash/d" ~/.bashrc 
+        # remove the temporary file that we created to check for reboot
+        rm -f "$WORK_DIR"/resume-after-reboot
+        rm -f "$WORK_DIR"/ubuntu-preconfig.sh
 }
 Wrap_up_Banner() {
     Show 0 "SETUP COMPLETE!"
@@ -429,7 +427,7 @@ change_renderer
 Get_IPs
 Remove_cloudinit
 Remove_snap
-Remove_repo_backup
+Clean_Up
 Initiate_Services
 Wrap_up_Banner
 exit 0
