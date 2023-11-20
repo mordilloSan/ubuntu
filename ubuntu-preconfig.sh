@@ -30,7 +30,7 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
     echo "The login user is ${SUDO_USER:-$(whoami)}"
-    WORK_DIR= echo "/home/${SUDO_USER:-$(whoami)}"
+    WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     echo "debug"
     echo $WORK_DIR
     sleep 5
