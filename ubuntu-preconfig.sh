@@ -235,7 +235,7 @@ Add_Repos(){
 	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
     Check_Success "Update the new repo file"
 	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
-	Show 0 "Success! Your repo has been updated to our new server!"
+	Show 0 "Success! 45Drives repos has been updated!"
 }
 Update_System() {
 	Show 2 "Updating packages"
