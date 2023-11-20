@@ -313,13 +313,13 @@ Install_Docker() {
     else
         Show 2 "Docker not installed. Installing."
         GreyStart
-        curl -fsSL https://get.docker.com | bash
+        ${sudo_cmd} curl -fsSL https://get.docker.com | bash
         Check_Docker_Install
     fi
 }
 Check_Docker_Install() {
     if [[ -x "$(command -v docker)" ]]; then
-        Docker_Version=$(docker version --format '{{.Server.Version}}')
+        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
         Show 0 "Current Docker verison is ${Docker_Version}."
     else
         Show 1 "Installation failed, please uninstall docker"
