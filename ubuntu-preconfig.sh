@@ -30,11 +30,10 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
     echo "The login user is ${SUDO_USER:-$(whoami)}"
-    WORK_DIR= ${SUDO_USER:-$(whoami)}
+    WORK_DIR= echo "${SUDO_USER:-$(whoami)}"
     echo "$WORK_DIR"
-    WORK_DIR="/home/${WORK_DIR}"
+    WORK_DIR= echo "/home/${WORK_DIR}"
     echo "$WORK_DIR"
-    echo "/home/${WORK_DIR}"
     sleep 5
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
