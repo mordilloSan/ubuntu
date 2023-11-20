@@ -29,7 +29,8 @@ Start (){
     readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
-    WORK_DIR="/home/$(echo "$whoami")"
+    WORK_DIR= $whoami
+    WORK_DIR="/home/$WORK_DIR
     cd $WORK_DIR
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
