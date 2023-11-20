@@ -195,7 +195,7 @@ Welcome_Banner() {
 Resume_Setup(){
     # check if the resume flag file exists. 
     # We created this file before rebooting.
-    if [ ! -f WORK_DIR/resume-after-reboot ]; then
+    if [ ! -f $WORK_DIR/resume-after-reboot ]; then
         Set_Timezone
         Add_Repos
         Update_System
