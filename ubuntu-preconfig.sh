@@ -150,7 +150,7 @@ Check_Reboot(){
         read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
             [Yy]*) 
-                wget $SCRIPT_LINK 
+                wget -q $SCRIPT_LINK 
                 echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch $WORK_DIR/resume-after-reboot
@@ -164,7 +164,7 @@ Check_Reboot(){
 Check_Success(){
     if [[ $? != 0 ]]; then
         Show 1 "$1 failed!"
-		exit $res
+		exit $?
 	else
         Show 0 "$1 sucess!"
     fi
@@ -250,7 +250,6 @@ Add_Repos(){
 	Show 0 "Success! Your repo has been updated to our new server!"
 }
 Update_System() {
-	local res
 	Show 2 "Updating packages"
 	GreyStart
     apt-get update -q
@@ -268,8 +267,6 @@ change_renderer() {
     systemctl disable systemd-networkd.service
     systemctl mask systemd-networkd.service
     systemctl stop systemd-networkd.service
-
-	local res
     local config=""
     #setting proper permissions in netplan
     chmod 777 /etc/netplan/50-cloud-init.yaml
@@ -334,8 +331,8 @@ Check_Docker_Install() {
     fi
 }
 Install_Packages() {
-	local res
     Show 2 "Installing Packages"
+    Install_Docker
     for packagesNeeded in "${PACKAGES[@]}"; do
         Show 2 "Prepare the necessary dependencie: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
@@ -351,7 +348,7 @@ Install_Packages() {
     #install sensors modules
     Show 2 "Prepare the necessary dependencie: \e[33msensors\e[0m"
     GreyStart 
-    wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz --show-progress
+    wget -q https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.tar.xz
     res1=$?
     tar -xf cockpit-sensors.tar.xz cockpit-sensors/dist
     res2=$?
@@ -379,7 +376,6 @@ Initiate_Services(){
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
     GreyStart
-    local res
     if [ $(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "cloud-init not installed."
     else
@@ -391,7 +387,6 @@ Remove_cloudinit(){
 }
 Remove_snap(){
     Show 2 "Removing snap"
-    local res
     local SNAP_LIST
     if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         Show 0 "snap not installed"
@@ -446,7 +441,6 @@ Start
 trap 'onCtrlC' INT
 Welcome_Banner
 Resume_Setup
-Install_Docker
 Install_Packages
 #change_renderer
 Get_IPs
