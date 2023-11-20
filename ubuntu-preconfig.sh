@@ -132,11 +132,7 @@ Check_Resume(){
     # We created this file before rebooting.
     if [ ! -f resume-after-reboot ]; then
         echo "running script for the first time.."
-        # add this script to bashrc so it gets triggered immediately after reboot
-        wget $SCRIPT_LINK
-        echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
-        # create a flag file to check if we are resuming from reboot.
-        touch resume-after-reboot
+
     else
         echo "resuming script after reboot.."
         # Remove the line that we added in zshrc
@@ -164,7 +160,12 @@ Check_Reboot(){
         echo "Reboot system now? [y/N]: "
         IFS="Reboot system now? [y/N]:" read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
-            [Yy]*) reboot ;;
+            [Yy]*) 
+                wget $SCRIPT_LINK
+                echo "bash ubuntu-preconfig.sh" >> ~/.bashrc 
+                # create a flag file to check if we are resuming from reboot.
+                touch resume-after-rebootreboot
+            ;;
         esac  
     else
         Show 0 "No reboot required"
@@ -423,12 +424,12 @@ Wrap_up_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
-    PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
+    COCKPIT_PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
     for IP in ${ALL_IP}; do
-        if [[ "$PORT" -eq "80" ]]; then
+        if [[ "$COCKPIT_PORT" -eq "80" ]]; then
             echo -e "${GREEN_BULLET} http://$IP (${NIC})"
         else
-            echo -e "${GREEN_BULLET} http://$IP:$PORT (${NIC})"
+            echo -e "${GREEN_BULLET} http://$IP:$COCKPIT_PORT (${NIC})"
         fi
     done    
     echo -e " Open your browser and visit the above address."
