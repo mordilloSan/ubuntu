@@ -421,9 +421,9 @@ Wrap_up_Banner() {
     COCKPIT_PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
     for IP in ${ALL_IP}; do
         if [[ "$COCKPIT_PORT" -eq "80" ]]; then
-            echo -e "${GREEN_BULLET} http://$IP (${NIC})"
+            echo -e " ${GREEN_BULLET} http://$IP (${NIC})"
         else
-            echo -e "${GREEN_BULLET} http://$IP:$COCKPIT_PORT (${NIC})"
+            echo -e " ${GREEN_BULLET} http://$IP:$COCKPIT_PORT (${NIC})"
         fi
     done    
     echo -e " Open your browser and visit the above address."
@@ -448,7 +448,6 @@ Wrap_up_Banner
 exit 0
 
 #Ideas
-#Script running in full auto or with a grafical checkbox for selection of functions
 #htop (saving preferences)
 #possibility of rebooting and then resuming the install
 #summarize software installed
