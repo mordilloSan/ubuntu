@@ -127,20 +127,6 @@ Check_Connection(){
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
 }
-Check_Resume(){
-    # check if the resume flag file exists. 
-    # We created this file before rebooting.
-    if [ ! -f resume-after-reboot ]; then
-        echo "running script for the first time.."
-
-    else
-        echo "resuming script after reboot.."
-        # Remove the line that we added in zshrc
-        sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
-        # remove the temporary file that we created to check for reboot
-        rm -f /var/run/resume-after-reboot
-    fi
-}
 Check_Package() {
     for SERVICE in "${CASA_SERVICES[@]}"; do
         Show 2 "Checking ${SERVICE}..."
@@ -190,10 +176,10 @@ Welcome_Banner() {
 	printf "\033[1mWelcome to the Ubuntu Preconfiguration Script.\033[0m\n"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	echo ""
-	echo "This will update the system, add 45Drives repository,
-install cockpit, install docker, install general tools,
-remove cloud-init and snapd, remove backup&temp files
-switch networkd to network-manager, install portainer."
+	echo " This will update the system, add 45Drives repository,
+ install cockpit, install docker, install general tools,
+ remove cloud-init and snapd, remove backup&temp files
+ switch networkd to network-manager, install portainer."
 	echo ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	Check_Arch
@@ -205,6 +191,22 @@ switch networkd to network-manager, install portainer."
     Show 2 "Current Working Directory - \e[33m$W_D\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
+}
+Resume_Setup(){
+    # check if the resume flag file exists. 
+    # We created this file before rebooting.
+    if [ ! -f resume-after-reboot ]; then
+        Set_Timezone
+        Add_Repos
+        Update_System
+    else
+        echo "resuming script after reboot.."
+        # Remove the line that we added in zshrc
+        sed -i '/bash ubuntu-preconfig.sh/d' ~/.bashrc 
+        # remove the temporary file that we created to check for reboot
+        rm -f resume-after-reboot
+
+    fi
 }
 Set_Timezone(){
     Show 2 "Setting Time Zone"
@@ -302,6 +304,31 @@ change_renderer() {
 ###################
 # Package Section #
 ###################
+Install_Docker() {
+    Show 2 "Installing \e[33mDocker\e[0m"
+    if [[ -x "$(command -v docker)" ]]; then
+        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
+        Show 0 "Current Docker verison is ${Docker_Version}."
+    else
+        Show 2 "Docker not installed. Installing."
+        GreyStart
+        ${sudo_cmd} curl -fsSL https://get.docker.com | bash
+        if [[ $? -ne 0 ]]; then
+            Show 1 "Installation failed, please try again."
+            exit 1
+        else
+            Check_Docker_Install
+        fi
+    fi
+}
+Check_Docker_Install() {
+    if [[ -x "$(command -v docker)" ]]; then
+        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
+        Show 0 "Current Docker verison is ${Docker_Version}."
+    else
+        Show 1 "Installation failed, please uninstall docker"
+    fi
+}
 Install_Packages() {
 	local res
     Show 2 "Installing Packages"
@@ -342,34 +369,6 @@ Initiate_Services(){
 	DEBIAN_FRONTEND=noninteractive systemctl enable --now NetworkManager
     Check_Success "Network Manager setup"
 } 
-##################
-# Docker Section #
-##################
-Install_Docker() {
-    Show 2 "Installing \e[33mDocker\e[0m"
-    if [[ -x "$(command -v docker)" ]]; then
-        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        Show 0 "Current Docker verison is ${Docker_Version}."
-    else
-        Show 2 "Docker not installed. Installing."
-        GreyStart
-        ${sudo_cmd} curl -fsSL https://get.docker.com | bash
-        if [[ $? -ne 0 ]]; then
-            Show 1 "Installation failed, please try again."
-            exit 1
-        else
-            Check_Docker_Install
-        fi
-    fi
-}
-Check_Docker_Install() {
-    if [[ -x "$(command -v docker)" ]]; then
-        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
-        Show 0 "Current Docker verison is ${Docker_Version}."
-    else
-        Show 1 "Installation failed, please uninstall docker"
-    fi
-}
 ##################
 # Finish Section #
 ##################
@@ -439,13 +438,10 @@ Wrap_up_Banner() {
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
 }
-
 Start
 trap 'onCtrlC' INT
 Welcome_Banner
-Set_Timezone
-Add_Repos
-Update_System
+Resume_Setup
 Check_Reboot
 Install_Docker
 Install_Packages
