@@ -32,7 +32,7 @@ Start (){
     echo "The login user is ${SUDO_USER:-$(whoami)}"
     WORK_DIR= echo "/home/${SUDO_USER:-$(whoami)}"
     echo "debug"
-    echo "$WORK_DIR"
+    echo $WORK_DIR
     sleep 5
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
