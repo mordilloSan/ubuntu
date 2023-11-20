@@ -30,7 +30,7 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Working Directory in user home folder
     WORK_DIR= $whoami
-    WORK_DIR="/home/$WORK_DIR
+    WORK_DIR="/home/$WORK_DIR"
     cd $WORK_DIR
     #Script link
     SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
@@ -109,7 +109,7 @@ Check_OS() {
 Check_Permissions() {
 	interpreter=$(ps -p $$ | awk '$1 != "PID" {print $(NF)}' | tr -d '()')
 	if [ "$interpreter" != "bash" ]; then
-		Show 1 "Please run with bash. (\`./ubuntu-preconfig.sh\` or \`bash ubuntu-preconfig.sh\`)"
+		Show 1 "Please run with bash. (./ubuntu-preconfig.sh or bash ubuntu-preconfig.sh)"
 		Show 1 "Current interpreter: \e[33m$interpreter\e[0m"
 		exit 1
 	fi
