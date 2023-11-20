@@ -7,8 +7,6 @@ Start (){
     # SYSTEM INFO
     ((EUID))
     source /etc/os-release
-    LSB_DIST=$([ -n "${ID}" ] && echo "${ID}")
-    readonly LSB_DIST
     DIST=$(echo "${ID}")
     readonly DIST
     UNAME_M="$(uname -m)"
@@ -126,21 +124,10 @@ Check_Connection(){
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
 }
-Check_Package() {
-    for SERVICE in "${CASA_SERVICES[@]}"; do
-        Show 2 "Checking ${SERVICE}..."
-        if [[ $(${sudo_cmd} systemctl is-active "${SERVICE}") == "active" ]]; then
-            Show 0 "${SERVICE} is running."
-        else
-            Show 1 "${SERVICE} is not running, Please reinstall."
-            exit 1
-        fi
-    done
-}
 Check_Reboot(){
     if [ -f /var/run/reboot-required ]; then
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        if [$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//") == ""]; then
+        if [ "$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")" == "" ]; then
             Show 2 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
         else    
             echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
@@ -227,7 +214,7 @@ Add_Repos(){
         count=$(echo "$items" | wc -l)
         echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
 	    mkdir -p $WORK_DIR/repos     
-		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/repos/45drives-$(date +%Y-%m-%d).list
+		mv /etc/apt/sources.list.d/45drives.sources $WORK_DIR/repos/45drives-"$(date +%Y-%m-%d)".list
 		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
@@ -275,7 +262,7 @@ change_renderer() {
 
     config=$(netplan get)
     echo $config
-    printf "$config" > file.log
+
     
 	#backup current file --> what is the file name????? It changes!!!!
     #mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
@@ -308,18 +295,18 @@ change_renderer() {
 Install_Docker() {
     Show 2 "Installing \e[33mDocker\e[0m"
     if [[ -x "$(command -v docker)" ]]; then
-        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
+        Docker_Version=$(docker version --format '{{.Server.Version}}')
         Show 0 "Current Docker verison is ${Docker_Version}."
     else
         Show 2 "Docker not installed. Installing."
         GreyStart
-        ${sudo_cmd} curl -fsSL https://get.docker.com | bash
+        curl -fsSL https://get.docker.com | bash
         Check_Docker_Install
     fi
 }
 Check_Docker_Install() {
     if [[ -x "$(command -v docker)" ]]; then
-        Docker_Version=$(${sudo_cmd} docker version --format '{{.Server.Version}}')
+        Docker_Version=$(docker version --format '{{.Server.Version}}')
         Show 0 "Current Docker verison is ${Docker_Version}."
     else
         Show 1 "Installation failed, please uninstall docker"
@@ -331,7 +318,7 @@ Install_Packages() {
     for packagesNeeded in "${PACKAGES[@]}"; do
         Show 2 "Prepare the necessary dependencie: \e[33m$packagesNeeded\e[0m"
         lsb_release_cs=$(lsb_release -cs)
-        if [ $(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        if [ "$(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
             DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
@@ -353,7 +340,7 @@ Install_Packages() {
         Show 0 "sensors installed"
     else
         Show 1 "Instalation  failed!"
-        exit $res
+        return 1
     fi
     rm -r cockpit-sensors
     rm -f cockpit-sensors*.*
@@ -371,7 +358,7 @@ Initiate_Services(){
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
     GreyStart
-    if [ $(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+    if [ "$(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
         Show 0 "cloud-init not installed."
     else
         DEBIAN_FRONTEND=noninteractive apt-get autoremove -q -y --purge cloud-init 
@@ -383,7 +370,7 @@ Remove_cloudinit(){
 Remove_snap(){
     Show 2 "Removing snap"
     local SNAP_LIST
-    if [ $(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+    if [ "$(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
         Show 0 "snap not installed"
     else
         GreyStart
@@ -393,12 +380,12 @@ Remove_snap(){
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
             if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core20" ]; then
-                snap remove --purge $(echo $i)
+                snap remove --purge "$(echo $i)"
             fi
         done
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
-                snap remove --purge $(echo $i)
+                snap remove --purge "$(echo $i)"
         done
         DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
         rm -rf /var/cache/snapd/
