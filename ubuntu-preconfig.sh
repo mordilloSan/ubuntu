@@ -19,6 +19,8 @@ Start (){
     readonly WORK_DIR
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
+    ALL_NIC=""
+    ALL_IP=""
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -40,11 +42,15 @@ onCtrlC() {
     exit 1
 }
 Get_IPs() {
+    #use a 2d array for storing NIC and respective IP
+    #if no ip is found store "0"
     ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
     for NIC in ${ALL_NIC}; do
-        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+        IP=$(ip addr show "${i}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
-            ALL_IP="$ALL_IP $IP"
+            ALL_IP+=("$IP")
+        else
+            ALL_IP+=("0")
         fi
     done
 }
@@ -369,33 +375,40 @@ Clean_Up(){
 change_renderer() {
     echo ""
     Show 2 "\e[1mSetting Up Network Manager\e[0m"
+    #setup the temp file
+    touch "$WORK_DIR"/config.yaml
+    #first text always the same
+    echo "network:
+    version: 2
+    renderer: NetworkManager
+    ethernets:" >> "$WORK_DIR"/config.yaml
+    #for each interface that has a valid IP, setup static ip
+    # assumes router/gateway - 192.168.1.1
     for NIC in "${ALL_NIC[@]}"; do
-        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
-            if [[ -n $IP ]]; then
-                ALL_IP="$ALL_IP $IP"
-            fi
+        for IP in "${ALL_IP[@]}"; do
+            echo "
+                $NIC:
+                    dhcp4: no
+                    addresses: [$IP/24]
+                    gateway4: 192.168.1.1
+                    nameservers:
+                        addresses: [1.1.1.1]
+                    ens3p0:
+                        dhcp4: yes
+                        optional: true" >> "$WORK_DIR"/config.yaml
+        done
     done
-    network:
-        version: 2
-        renderer: NetworkManager
-        ethernets:
-            ens2p0:
-                dhcp4: no
-                addresses: [192.168.1.67/24]
-                gateway4: 192.168.1.1
-                nameservers:
-                    addresses: [1,1,1,1]
-            ens3p0:
-                dhcp4: yes
-                optional: true
- #    systemctl disable systemd-networkd.service
- #    systemctl disable systemd-networkd-wait-online.service
- #    systemctl stop systemd-networkd.service
- #    systemctl stop systemd-networkd-wait-online.service
- #   ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
- #	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
- #	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
- #	systemctl restart NetworkManager 
+		ens3p0:
+			dhcp4: yes
+			optional: true
+    systemctl disable systemd-networkd.service
+    systemctl disable systemd-networkd-wait-online.service
+    systemctl stop systemd-networkd.service
+    systemctl stop systemd-networkd-wait-online.service
+    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+    mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+    systemctl restart NetworkManager 
 }
 
 Wrap_up_Banner() {
