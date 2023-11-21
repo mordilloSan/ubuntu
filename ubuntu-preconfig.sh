@@ -224,7 +224,9 @@ Reboot(){
         case "$response" in
             [Yy]*) 
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL ${SCRIPT_LINK} | sudo bash" >> ~/.bashrc 
+                STRING="curl -fsSL ${SCRIPT_LINK} | sudo bash"
+                echo "$STRING"
+                echo "$STRING" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
@@ -356,8 +358,16 @@ Remove_snap(){
 }
 change_renderer() {
     Show 2 "Just a test function"
+
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    enp0s2:
+      dhcp4: true
+
 #    systemctl disable systemd-networkd.service
-#   systemctl disable systemd-networkd-wait-online.service
+#    systemctl disable systemd-networkd-wait-online.service
 #    systemctl stop systemd-networkd.service
 #    systemctl stop systemd-networkd-wait-online.service
 
