@@ -453,7 +453,6 @@ Setup(){
         Reboot
     else
         Show 2 "Resuming script after reboot..."
-        echo ""
     fi
     Install_Packages
     Initiate_Service
