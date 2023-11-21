@@ -381,7 +381,7 @@ Remove_snap(){
         done
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
-                snap remove --purge "$(echo "$i")"
+                snap remove --purge "$i"
         done
         DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
         rm -rf /var/cache/snapd/
