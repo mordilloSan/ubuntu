@@ -316,7 +316,7 @@ Check_Service() {
     echo ""
     Show 2 "\e[1mChecking Services\e[0m"
     for SERVICE in "${SERVICES[@]}"; do
-        Show 2 "Checking ${SERVICE}..."
+        Show 4 "Checking ${SERVICE}..."
         if [[ $(systemctl is-active "${SERVICE}") == "active" ]]; then
             Show 0 "${SERVICE} is running."
         else
@@ -382,6 +382,7 @@ change_renderer() {
   renderer: NetworkManager
   ethernets:" >> "$WORK_DIR"/config.yaml
     local i=0
+    
     for IP in "${ALL_IP[@]}"; do
         if [[ "$IP" != "" ]]; then
         echo "$IP"
