@@ -378,7 +378,7 @@ network:
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
-        sed -e s/curl -fsSL ${SCRIPT_LINK} | sudo bash//g -i ~/.bashrc
+        sed -e s/"$STRING"//g -i ~/.bashrc
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
 }
