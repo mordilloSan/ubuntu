@@ -388,8 +388,7 @@ change_renderer() {
 #        teste
 #    done
     for NIC in "${ALL_NIC[@]}"; do
-        for IP in "${ALL_IP[@]}"; do
-            if [ "${IP}" != "0" ]; then
+            if [ "${ALL_IP[$NIC]}" = "0" ]; then
             echo "
                 $NIC:
                     dhcp4: no
@@ -403,7 +402,6 @@ change_renderer() {
                     dhcp4: yes
                     optional: true" >> "$WORK_DIR"/config.yaml
             fi
-        done
     done
     systemctl disable systemd-networkd.service
     systemctl disable systemd-networkd-wait-online.service
