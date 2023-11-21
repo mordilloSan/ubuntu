@@ -224,9 +224,7 @@ Reboot(){
         case "$response" in
             [Yy]*) 
                 # add the link to bashrc to start the script on login
-                STRING="curl -fsSL ${SCRIPT_LINK} | sudo bash"
-                echo "$STRING"
-                echo "$STRING" >> ~/.bashrc 
+                echo "curl -fsSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh | sudo bash" >> ~/.bashrc
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
@@ -260,7 +258,7 @@ Check_Docker_Install() {
     fi
 }
 Install_Packages() {
-    Show 2 "Installing Packages"
+    Show 2 "\e[1mInstalling Packages\e[0m"
     Install_Docker
     for packagesNeeded in "${PACKAGES[@]}"; do
         Show 2 "Prepare the necessary dependencie: \e[33m$packagesNeeded\e[0m"
@@ -294,6 +292,7 @@ Install_Packages() {
 }
 Initiate_Service(){
     echo ""
+    Show 2 "\e[0mInitiating Services\e[1m"
     for SERVICE in "${SERVICES[@]}"; do
         Show 2 "Starting ${SERVICE}..."
         GreyStart
@@ -378,7 +377,7 @@ network:
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
-        sed -e s/"$STRING"//g -i ~/.bashrc
+        sed -e s/"curl -fsSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh | sudo bash"//g -i ~/.bashrc
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
 }
