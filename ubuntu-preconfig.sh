@@ -358,7 +358,7 @@ Remove_snap(){
 }
 Clean_Up(){
     echo ""
-    Show 2 "\e[1mStarting Clean Up!\e[0m"
+    Show 2 "\e[1mStarting Clean Up\e[0m"
     Remove_cloudinit
     Remove_snap
     # Remove the line that we added in bashrc
@@ -367,8 +367,8 @@ Clean_Up(){
     rm -f "$WORK_DIR"/resume-after-reboot
 }
 change_renderer() {
-    Show 2 "Just a test function"
-
+    echo ""
+    Show 2 "\e[1mSetting Up Network Manager\e[0m"
     for NIC in "${ALL_NIC[@]}"; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
             if [[ -n $IP ]]; then
