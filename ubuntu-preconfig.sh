@@ -259,6 +259,7 @@ Check_Docker_Install() {
     fi
 }
 Install_Packages() {
+    echo ""
     Show 2 "\e[1mInstalling Packages\e[0m"
     Install_Docker
     for packagesNeeded in "${PACKAGES[@]}"; do
@@ -354,12 +355,18 @@ Remove_snap(){
         rm -rf ~/snap
         Show 0 "snap removed"
     fi
-
+}
+Clean_Up(){
+    echo ""
+    Show 2 "\e[1mStarting Clean Up!\e[0m"
+    Remove_cloudinit
+    Remove_snap
+    # Remove the line that we added in bashrc
+    sed -i "/curl -fsSL/d" ~/.bashrc
+    # remove the temporary file that we created to check for reboot
+    rm -f "$WORK_DIR"/resume-after-reboot
 }
 change_renderer() {
-
-
-
     Show 2 "Just a test function"
 
     for NIC in "${ALL_NIC[@]}"; do
@@ -368,39 +375,29 @@ change_renderer() {
                 ALL_IP="$ALL_IP $IP"
             fi
     done
-network:
-    version: 2
-    renderer: NetworkManager
-    ethernets:
-        ens2p0:
-            dhcp4: no
-            addresses: [192.168.1.67/24]
-            gateway4: 192.168.1.1
-            nameservers:
-                addresses: [1,1,1,1]
-        ens3p0:
-            dhcp4: yes
-            optional: true
-
-
-      
-
-#    systemctl disable systemd-networkd.service
-#    systemctl disable systemd-networkd-wait-online.service
-#    systemctl stop systemd-networkd.service
-#    systemctl stop systemd-networkd-wait-online.service
-
-#   ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-#	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-#	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-#	systemctl restart NetworkManager 
+    network:
+        version: 2
+        renderer: NetworkManager
+        ethernets:
+            ens2p0:
+                dhcp4: no
+                addresses: [192.168.1.67/24]
+                gateway4: 192.168.1.1
+                nameservers:
+                    addresses: [1,1,1,1]
+            ens3p0:
+                dhcp4: yes
+                optional: true
+ #    systemctl disable systemd-networkd.service
+ #    systemctl disable systemd-networkd-wait-online.service
+ #    systemctl stop systemd-networkd.service
+ #    systemctl stop systemd-networkd-wait-online.service
+ #   ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+ #	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+ #	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+ #	systemctl restart NetworkManager 
 }
-Clean_Up(){
-        # Remove the line that we added in bashrc
-        sed -i "/curl -fsSL/d" ~/.bashrc
-        # remove the temporary file that we created to check for reboot
-        rm -f "$WORK_DIR"/resume-after-reboot
-}
+
 Wrap_up_Banner() {
     Show 0 "SETUP COMPLETE!"
     echo -e ""
@@ -442,8 +439,6 @@ Setup(){
     Install_Packages
     Initiate_Service
     Check_Service
-    Remove_cloudinit
-    Remove_snap
     Clean_Up
     Get_IPs
     change_renderer
