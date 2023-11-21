@@ -293,9 +293,22 @@ Initiate_Services(){
     echo ""
     Show 2 "Starting Services"
 	systemctl enable --now cockpit.socket
-    Check_Success "Cockpit setup"
+    Check_Success "Cockpit service"
 	systemctl enable --now NetworkManager
-    Check_Success "Network Manager setup"
+    Check_Success "Network Manager service"
+    systemctl enable --now NetworkManager-wait-online.service
+    systemctl start NetworkManager
+    systemctl start NetworkManager-wait-online.service
+
+    systemctl disable systemd-networkd.service
+    systemctl disable systemd-networkd-wait-online.service
+    systemctl stop systemd-networkd.service
+    systemctl stop systemd-networkd-wait-online.service
+
+    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+	systemctl restart NetworkManager 
 } 
 ##################
 # Finish Section #
@@ -340,19 +353,7 @@ Remove_snap(){
 
 }
 change_renderer() {
-    systemctl disable systemd-networkd.service
-    systemctl disable systemd-networkd-wait-online
-    systemctl enable systemd-NetworkManager-wait-online.
-
-
-    systemctl mask systemd-networkd.service
-    systemctl stop systemd-networkd.service
-	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	systemctl restart NetworkManager
-    Check_Success "NetworkManager restart"
-    sleep 60
+    Show 2 "Just a test function"
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
@@ -404,7 +405,7 @@ Setup(){
     Remove_snap
     Clean_Up
     Get_IPs
-    #change_renderer
+    change_renderer
     Wrap_up_Banner
 }
 Setup
