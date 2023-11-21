@@ -138,7 +138,7 @@ Check_Success(){
 # Start Functions #
 ###################
 Welcome_Banner() {
-	#clear
+	clear
 	echo -e "\e[0m\c"
 	set -e
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
@@ -353,10 +353,9 @@ change_renderer() {
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
-        sed -i "/curl -fsSL ${SCRIPT_LINK} | sudo bash/d" ~/.bashrc 
+        sed -e s/curl -fsSL ${SCRIPT_LINK} | sudo bash//g -i ~/.bashrc
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
-        rm -f "$WORK_DIR"/ubuntu-preconfig.sh
 }
 Wrap_up_Banner() {
     Show 0 "SETUP COMPLETE!"
