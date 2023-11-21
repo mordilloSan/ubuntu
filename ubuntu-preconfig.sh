@@ -385,19 +385,18 @@ change_renderer() {
     local i=0
     for IP in "${ALL_IP[@]}"; do
         if [ "$IP" != "0" ]; then
-        echo "      ${ALL_NIC[$i]}:
-        dhcp4: no
-        addresses: [${IP}/24]
-        gateway4: 192.168.1.1
-        nameservers:
-          addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
+        echo "    ${ALL_NIC[$i]}:
+      dhcp4: no
+      addresses: [${IP}/24]
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
         i=$i+1  
         else
         echo "  $NIC:
-        dhcp4: yes
-        optional: true" >> "$WORK_DIR"/config.yaml
+      dhcp4: yes
+      optional: true" >> "$WORK_DIR"/config.yaml
         fi
-
     done
     systemctl disable systemd-networkd.service
     systemctl disable systemd-networkd-wait-online.service

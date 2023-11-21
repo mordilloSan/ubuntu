@@ -17,17 +17,14 @@ network:
 		ens5p0:
 			dhcp4: yes
 			optional: true
-
-
-                                                                                                                     config.yaml                                                                                                                                
-  GNU nano 6.2                                                                                                                       config.yaml                                                                                                                                
+                                                                                                   
 network:
   version: 2
-    renderer: NetworkManager
-    ethernets:
-  ens5:
+  renderer: NetworkManager
+  ethernets:
+      ens5:
         dhcp4: no
-        addresses: [/24]
+        addresses: [172.31.18.241/20/24]
         gateway4: 192.168.1.1
         nameservers:
-            addresses: [1.1.1.1]
+          addresses: [1.1.1.1]
