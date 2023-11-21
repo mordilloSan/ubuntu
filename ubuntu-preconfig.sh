@@ -382,9 +382,10 @@ change_renderer() {
   ethernets:" >> "$WORK_DIR"/config.yaml
     #for each interface that has a valid IP, setup static ip
     # assumes router/gateway - 192.168.1.1
+    local i=0
     for IP in "${ALL_IP[@]}"; do
         if [ "$IP" != "0" ]; then
-        echo "      ${ALL_NIC[i]}:
+        echo "      ${ALL_NIC[$i]}:
         dhcp4: no
         addresses: [${IP}/24]
         gateway4: 192.168.1.1
