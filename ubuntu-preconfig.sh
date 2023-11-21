@@ -16,6 +16,7 @@ Start (){
     WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     readonly WORK_DIR
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
+    readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -289,27 +290,28 @@ Install_Packages() {
     rm -r cockpit-sensors
     rm -f cockpit-sensors*.*
 }
-Initiate_Services(){
+Initiate_Service(){
     echo ""
-    Show 2 "Starting Services"
-	systemctl enable --now cockpit.socket
-    Check_Success "Cockpit service"
-	systemctl enable --now NetworkManager
-    Check_Success "Network Manager service"
-    systemctl enable --now NetworkManager-wait-online.service
-    systemctl start NetworkManager
-    systemctl start NetworkManager-wait-online.service
-
-    systemctl disable systemd-networkd.service
-    systemctl disable systemd-networkd-wait-online.service
-    systemctl stop systemd-networkd.service
-    systemctl stop systemd-networkd-wait-online.service
-
-    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	systemctl restart NetworkManager 
-} 
+    for SERVICE in "${SERVICES[@]}"; do
+        Show 2 "Starting ${SERVICE}..."
+        GreyStart
+        systemctl enable "${SERVICE}"
+        systemctl start "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
+        ColorReset
+    done
+}
+Check_Service() {
+    echo ""
+    for SERVICE in "${SERVICES[@]}"; do
+        Show 2 "Checking ${SERVICE}..."
+        if [[ $(systemctl is-active "${SERVICE}") == "active" ]]; then
+            Show 0 "${SERVICE} is running."
+        else
+            Show 1 "${SERVICE} is not running, Please reinstall."
+            exit 1
+        fi
+    done
+}
 ##################
 # Finish Section #
 ##################
@@ -354,6 +356,15 @@ Remove_snap(){
 }
 change_renderer() {
     Show 2 "Just a test function"
+#    systemctl disable systemd-networkd.service
+#   systemctl disable systemd-networkd-wait-online.service
+#    systemctl stop systemd-networkd.service
+#    systemctl stop systemd-networkd-wait-online.service
+
+#   ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+#	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+#	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+#	systemctl restart NetworkManager 
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
@@ -400,7 +411,8 @@ Setup(){
         echo ""
     fi
     Install_Packages
-    Initiate_Services
+    Initiate_Service
+    Check_Service
     Remove_cloudinit
     Remove_snap
     Clean_Up
