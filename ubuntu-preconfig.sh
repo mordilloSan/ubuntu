@@ -46,7 +46,7 @@ Get_IPs() {
     #if no ip is found store "0"
     ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
     for NIC in ${ALL_NIC}; do
-        IP=$(ip addr show "${i}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
             ALL_IP+=("$IP")
         else
