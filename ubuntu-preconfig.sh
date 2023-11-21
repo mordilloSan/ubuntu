@@ -293,17 +293,17 @@ Install_Packages() {
 }
 Initiate_Service(){
     echo ""
-    Show 2 "\e[0mInitiating Services\e[1m"
+    Show 2 "\e[1mInitiating Services\e[0m"
     for SERVICE in "${SERVICES[@]}"; do
         Show 2 "Starting ${SERVICE}..."
-        GreyStart
         systemctl enable "${SERVICE}"
         systemctl start "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
-        ColorReset
+
     done
 }
 Check_Service() {
     echo ""
+    Show 2 "\e[1mChecking Services\e[0m"
     for SERVICE in "${SERVICES[@]}"; do
         Show 2 "Checking ${SERVICE}..."
         if [[ $(systemctl is-active "${SERVICE}") == "active" ]]; then
@@ -357,15 +357,33 @@ Remove_snap(){
 
 }
 change_renderer() {
+
+
+
     Show 2 "Just a test function"
 
-
+    for NIC in "${ALL_NIC[@]}"; do
+        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+            if [[ -n $IP ]]; then
+                ALL_IP="$ALL_IP $IP"
+            fi
+    done
 network:
-  version: 2
-  renderer: NetworkManager
-  ethernets:
-    enp0s2:
-      dhcp4: true
+    version: 2
+    renderer: NetworkManager
+    ethernets:
+        ens2p0:
+            dhcp4: no
+            addresses: [192.168.1.67/24]
+            gateway4: 192.168.1.1
+            nameservers:
+                addresses: [1,1,1,1]
+        ens3p0:
+            dhcp4: yes
+            optional: true
+
+
+      
 
 #    systemctl disable systemd-networkd.service
 #    systemctl disable systemd-networkd-wait-online.service
