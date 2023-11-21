@@ -46,7 +46,7 @@ Get_IPs() {
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
-            ALL_IP+=($IP)
+            ALL_IP+=("$IP")
         else
             ALL_IP+=("0")
         fi
@@ -383,18 +383,20 @@ change_renderer() {
     #for each interface that has a valid IP, setup static ip
     # assumes router/gateway - 192.168.1.1
     for IP in "${ALL_IP[@]}"; do
-        if [ "${IP}" != "0" ]; then
-        echo "      ${ALL_NIC["${IP}"]}:
+        if [ "$IP" != "0" ]; then
+        echo "      ${ALL_NIC[i]}:
         dhcp4: no
         addresses: [${IP}/24]
         gateway4: 192.168.1.1
         nameservers:
           addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
+        i=$i+1  
         else
         echo "  $NIC:
         dhcp4: yes
         optional: true" >> "$WORK_DIR"/config.yaml
         fi
+
     done
     systemctl disable systemd-networkd.service
     systemctl disable systemd-networkd-wait-online.service
