@@ -428,7 +428,7 @@ Remove_snap
 Clean_Up
 Initiate_Services
 Get_IPs
-change_renderer
+#change_renderer
 Wrap_up_Banner
 exit 0
 
