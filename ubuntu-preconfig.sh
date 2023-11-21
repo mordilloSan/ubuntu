@@ -5,6 +5,8 @@
 ####################
 Start (){
     # SYSTEM INFO
+    export DEBIAN_FRONTEND=noninteractive
+    export DEBIAN_PRIORITY=critical
     ((EUID))
     source /etc/os-release
     DIST=$(echo "${ID}")
@@ -31,8 +33,6 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
-    export DEBIAN_FRONTEND=noninteractive
-    export DEBIAN_PRIORITY=critical
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
