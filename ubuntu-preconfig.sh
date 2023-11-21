@@ -223,7 +223,7 @@ Reboot(){
         case "$response" in
             [Yy]*) 
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc 
+                echo "curl -fsSL ${SCRIPT_LINK} | sudo bash" >> ~/.bashrc 
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
@@ -353,7 +353,7 @@ change_renderer() {
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
-        sed -i "/curl -fsSL $SCRIPT_LINK | sudo bash/d" ~/.bashrc 
+        sed -i "/curl -fsSL ${SCRIPT_LINK} | sudo bash/d" ~/.bashrc 
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
         rm -f "$WORK_DIR"/ubuntu-preconfig.sh
