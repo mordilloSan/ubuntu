@@ -373,15 +373,13 @@ Clean_Up(){
 change_renderer() {
     echo ""
     Show 2 "\e[1mSetting Up Network Manager\e[0m"
-    #setup the temp file
-    touch "$WORK_DIR"/config.yaml
-    #first text always the same
+    #for each interface that has a valid IP, sets up static ip
+    #assumes router/gateway - 192.168.1.1
+    #YAML is indentation sensitive. Careful when changing code
     echo "network:
   version: 2
   renderer: NetworkManager
   ethernets:" >> "$WORK_DIR"/config.yaml
-    #for each interface that has a valid IP, setup static ip
-    # assumes router/gateway - 192.168.1.1
     local i=0
     for IP in "${ALL_IP[@]}"; do
         if [ "$IP" != "0" ]; then
@@ -398,8 +396,10 @@ change_renderer() {
       optional: true" >> "$WORK_DIR"/config.yaml
         fi
     done
+    systemctl disable systemd-networkd.socket
     systemctl disable systemd-networkd.service
     systemctl disable systemd-networkd-wait-online.service
+    systemctl stop systemd-networkd.socket
     systemctl stop systemd-networkd.service
     systemctl stop systemd-networkd-wait-online.service
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
