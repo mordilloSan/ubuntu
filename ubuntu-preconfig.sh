@@ -383,9 +383,10 @@ change_renderer() {
   ethernets:" >> "$WORK_DIR"/config.yaml
     local i=0
     for IP in "${ALL_IP[@]}"; do
+        if [[ "$IP" != "" ]]; then
         echo "$IP"
         echo "${ALL_NIC[i]}"
-        echo "$i"
+
         echo "    ${ALL_NIC[$i]}:
       dhcp4: no
       addresses: [${IP}/24]
@@ -399,6 +400,7 @@ change_renderer() {
       optional: true" >> "$WORK_DIR"/config.yaml
         fi
         let i++
+        echo "$i"
     done
     systemctl disable systemd-networkd.socket
     systemctl disable systemd-networkd.service
