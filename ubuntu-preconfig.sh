@@ -423,12 +423,12 @@ trap 'onCtrlC' INT
 Welcome_Banner
 Resume_Setup
 Install_Packages
-change_renderer
-Get_IPs
 Remove_cloudinit
 Remove_snap
 Clean_Up
 Initiate_Services
+Get_IPs
+change_renderer
 Wrap_up_Banner
 exit 0
 
