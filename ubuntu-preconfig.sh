@@ -30,6 +30,8 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
+    export DEBIAN_FRONTEND=noninteractive
+    export DEBIAN_PRIORITY=critical
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -238,8 +240,8 @@ Update_System() {
     apt-get update -q
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
-	GreyStart
-	DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
+	apt-get upgrade -y
+    apt-get dist-upgrade -y
     Check_Success "Package upgrade"
 }
 #####################
@@ -247,34 +249,6 @@ Update_System() {
 #####################
 change_renderer() {
 
-    local config=""
-    #setting proper permissions in netplan
-    chmod 777 /etc/netplan/50-cloud-init.yaml
-    config=""
-    chmod 777 /etc/netplan/50-cloud-init.yaml
-
-    config=$(netplan get)
-    echo "$config"
-
-    
-	#backup current file --> what is the file name????? It changes!!!!
-    #mv /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.backup
-    # Changing the renderer
-    config=$(comand)echo "$(netplan get)"
-    if echo "$config" | grep -q "renderer: networkd"; then
-        echo "$config" | sed '2a renderer: NetworkManager'
-
-        echo "$(netplan get)" | sed '2a renderer: NetworkManager'
-
-    else
-        echo "${config/renderer: networkd/renderer: NetworkManager}"
-    fi
-    echo "$config">>test.txt
-    Show 2 "$config"
-    chmod 600 /etc/netplan/*.yaml 
-	netplan try
-    Check_Success "Netplan configuration"
-    # Cleaning up
     systemctl disable systemd-networkd.service
     systemctl mask systemd-networkd.service
     systemctl stop systemd-networkd.service
@@ -317,7 +291,7 @@ Install_Packages() {
         if [ "$(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
-            DEBIAN_FRONTEND=noninteractive apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
+            apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
             Check_Success "$packagesNeeded installation"
         else
             Show 0 "$packagesNeeded already installed"
@@ -343,9 +317,10 @@ Install_Packages() {
 }
 Initiate_Services(){
     echo ""
-	DEBIAN_FRONTEND=noninteractive systemctl enable --now cockpit.socket
+    Show 2 "Starting Services"
+	systemctl enable --now cockpit.socket
     Check_Success "Cockpit setup"
-	DEBIAN_FRONTEND=noninteractive systemctl enable --now NetworkManager
+	systemctl enable --now NetworkManager
     Check_Success "Network Manager setup"
 } 
 ##################
@@ -357,7 +332,7 @@ Remove_cloudinit(){
     if [ "$(dpkg-query -W -f='${Status}' "cloud-init" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
         Show 0 "cloud-init not installed."
     else
-        DEBIAN_FRONTEND=noninteractive apt-get autoremove -q -y --purge cloud-init 
+        apt-get autoremove -q -y --purge cloud-init 
         Check_Success "Removing cloud-init"
         rm -rf /etc/cloud/
         rm -rf /var/lib/cloud/
@@ -383,7 +358,7 @@ Remove_snap(){
         for i in $SNAP_LIST; do
                 snap remove --purge "$i"
         done
-        DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge snapd -y
+        apt-get autoremove --purge snapd -y
         rm -rf /var/cache/snapd/
         rm -rf ~/snap
         Show 0 "snap removed"
@@ -391,7 +366,7 @@ Remove_snap(){
 
 }
 Clean_Up(){
-        # Remove the line that we added in zshrc
+        # Remove the line that we added in bashrc
         sed -i "/curl -fsSL $SCRIPT_LINK | sudo bash/d" ~/.bashrc 
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
