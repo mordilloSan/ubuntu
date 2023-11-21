@@ -359,6 +359,7 @@ Remove_snap(){
 change_renderer() {
     Show 2 "Just a test function"
 
+
 network:
   version: 2
   renderer: NetworkManager
