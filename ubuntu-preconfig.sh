@@ -391,7 +391,7 @@ change_renderer() {
             if [ "${IP}" != "0" ]; then
             echo "  ${ALL_NIC[$!IP]}:
                 dhcp4: no
-                addresses: [$IP/24]
+                addresses: [${IP}/24]
                 gateway4: 192.168.1.1
                 nameservers:
                     addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
