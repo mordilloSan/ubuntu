@@ -126,30 +126,6 @@ Check_Connection(){
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
 }
-Check_Reboot(){
-    if [ -f /var/run/reboot-required ]; then
-        Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
-        if [ "$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")" == "" ]; then
-            Show 2 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
-        else    
-            echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
-            echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")"
-        fi
-        echo "Reboot system now? [y/N]: "
-        read -r response  </dev/tty # OR < /proc/$$/fd/0
-        case "$response" in
-            [Yy]*) 
-                # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc 
-                # create a flag file to signal that we are resuming from reboot.
-                touch "$WORK_DIR"/resume-after-reboot
-                reboot </dev/tty
-            ;;
-        esac
-    else
-        Show 0 "No reboot required"
-    fi
-}
 Check_Success(){
     if [[ $? != 0 ]]; then
         Show 1 "$1 failed!"
@@ -183,18 +159,6 @@ Welcome_Banner() {
     Show 2 "Current Working Directory - \e[33m$WORK_DIR\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
-}
-Resume_Setup(){
-    # check if the resume flag file exists. 
-    # We created this file before rebooting.
-    if [ ! -f "$WORK_DIR"/resume-after-reboot ]; then
-        Set_Timezone
-        Add_Repos
-        Update_System
-        Check_Reboot
-    else
-        Show 2 "Resuming script after reboot..."
-    fi
 }
 Set_Timezone(){
     Show 2 "Setting Time Zone"
@@ -245,20 +209,29 @@ Update_System() {
     apt-get dist-upgrade -y
     Check_Success "Package upgrade"
 }
-#####################
-# Network Functions #
-#####################
-change_renderer() {
-
-    systemctl disable systemd-networkd.service
-    systemctl mask systemd-networkd.service
-    systemctl stop systemd-networkd.service
-	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-	systemctl restart NetworkManager
-    Check_Success "NetworkManager restart"
-    sleep 60
+Reboot(){
+    if [ -f /var/run/reboot-required ]; then
+        Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
+        if [ "$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")" == "" ]; then
+            Show 2 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
+        else    
+            echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
+            echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")"
+        fi
+        echo "Reboot system now? [y/N]: "
+        read -r response  </dev/tty # OR < /proc/$$/fd/0
+        case "$response" in
+            [Yy]*) 
+                # add the link to bashrc to start the script on login
+                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc 
+                # create a flag file to signal that we are resuming from reboot.
+                touch "$WORK_DIR"/resume-after-reboot
+                reboot </dev/tty
+            ;;
+        esac
+    else
+        Show 0 "No reboot required"
+    fi
 }
 ###################
 # Package Section #
@@ -366,6 +339,18 @@ Remove_snap(){
     fi
 
 }
+change_renderer() {
+
+    systemctl disable systemd-networkd.service
+    systemctl mask systemd-networkd.service
+    systemctl stop systemd-networkd.service
+	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+	systemctl restart NetworkManager
+    Check_Success "NetworkManager restart"
+    sleep 60
+}
 Clean_Up(){
         # Remove the line that we added in bashrc
         sed -i "/curl -fsSL $SCRIPT_LINK | sudo bash/d" ~/.bashrc 
@@ -394,24 +379,37 @@ Wrap_up_Banner() {
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
 }
-Start
-trap 'onCtrlC' INT
-Welcome_Banner
-Resume_Setup
-Install_Packages
-Remove_cloudinit
-Remove_snap
-Clean_Up
-Initiate_Services
-Get_IPs
-#change_renderer
-Wrap_up_Banner
+#################
+# Main Function #
+#################
+Setup(){
+    Start
+    trap 'onCtrlC' INT
+    Welcome_Banner
+    # check if the resume flag file exists. 
+    if [ ! -f "$WORK_DIR"/resume-after-reboot ]; then
+        Set_Timezone
+        Add_Repos
+        Update_System
+        Reboot
+    else
+        Show 2 "Resuming script after reboot..."
+        echo ""
+    fi
+    Install_Packages
+    Initiate_Services
+    Remove_cloudinit
+    Remove_snap
+    Clean_Up
+    Get_IPs
+    change_renderer
+    Wrap_up_Banner
+}
+Setup
 exit 0
 
 #Ideas
 #htop (saving preferences)
-#possibility of rebooting and then resuming the install
 #summarize software installed
 #progress in script
-#detect ports used by services
 #resolve pihole port conflict
