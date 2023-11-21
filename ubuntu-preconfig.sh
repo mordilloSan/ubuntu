@@ -379,19 +379,19 @@ change_renderer() {
     touch "$WORK_DIR"/config.yaml
     #first text always the same
     echo "network:
-    version: 2
-    renderer: NetworkManager
-    ethernets:" >> "$WORK_DIR"/config.yaml
+  version: 2
+  renderer: NetworkManager
+  ethernets:" >> "$WORK_DIR"/config.yaml
     #for each interface that has a valid IP, setup static ip
     # assumes router/gateway - 192.168.1.1
     for IP in "${ALL_IP[@]}"; do
         if [ "${IP}" != "0" ]; then
-        echo "  ${ALL_NIC[$!IP]}:
+        echo "      ${ALL_NIC["${IP}"]}:
         dhcp4: no
         addresses: [${IP}/24]
         gateway4: 192.168.1.1
         nameservers:
-            addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
+          addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
         else
         echo "  $NIC:
         dhcp4: yes
