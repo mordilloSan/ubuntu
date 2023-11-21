@@ -340,8 +340,11 @@ Remove_snap(){
 
 }
 change_renderer() {
-
     systemctl disable systemd-networkd.service
+    systemctl disable systemd-networkd-wait-online
+    systemctl enable systemd-NetworkManager-wait-online.
+
+
     systemctl mask systemd-networkd.service
     systemctl stop systemd-networkd.service
 	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
@@ -401,7 +404,7 @@ Setup(){
     Remove_snap
     Clean_Up
     Get_IPs
-    change_renderer
+    #change_renderer
     Wrap_up_Banner
 }
 Setup
