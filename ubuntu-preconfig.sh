@@ -404,7 +404,9 @@ change_renderer() {
     systemctl stop systemd-networkd.service
     systemctl stop systemd-networkd-wait-online.service
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-    mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+    if [ -f /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
+        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+    fi
     sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
     systemctl restart NetworkManager 
 }
