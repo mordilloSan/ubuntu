@@ -378,7 +378,7 @@ network:
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
-        sed -i '$d' ~/.bashrc
+        sed -i "/curl -fsSL/d" ~/.bashrc
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
 }
