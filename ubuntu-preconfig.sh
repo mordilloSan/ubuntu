@@ -33,6 +33,7 @@ Start (){
     readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
+    readonly STRING="curl -fsSL $SCRIPT_LINK | sudo bash"
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -224,7 +225,7 @@ Reboot(){
         case "$response" in
             [Yy]*) 
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh | sudo bash" >> ~/.bashrc
+                echo "$STRING" >> ~/.bashrc
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR"/resume-after-reboot
                 reboot </dev/tty
@@ -377,7 +378,7 @@ network:
 }
 Clean_Up(){
         # Remove the line that we added in bashrc
-        sed -e s/"curl -fsSL https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh | sudo bash"//g -i ~/.bashrc
+        sed -e -i "/$STRING/d" ~/.bashrc
         # remove the temporary file that we created to check for reboot
         rm -f "$WORK_DIR"/resume-after-reboot
 }
