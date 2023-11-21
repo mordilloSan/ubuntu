@@ -358,7 +358,7 @@ Remove_snap(){
 }
 Clean_Up(){
     echo ""
-    Show 2 "\e[1mStarting Clean Up\e[0m"
+    Show 4 "\e[1mStarting Clean Up\e[0m"
     Remove_cloudinit
     Remove_snap
     # Remove the line that we added in bashrc
