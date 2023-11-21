@@ -241,6 +241,7 @@ Update_System() {
 	Show 2 "Upgrading packages"
 	GreyStart
 	apt-get upgrade -y
+	GreyStart
     apt-get dist-upgrade -y
     Check_Success "Package upgrade"
 }
