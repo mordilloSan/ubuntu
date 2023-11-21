@@ -239,6 +239,7 @@ Update_System() {
     apt-get update -q
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
+	GreyStart
 	apt-get upgrade -y
     apt-get dist-upgrade -y
     Check_Success "Package upgrade"
