@@ -65,9 +65,9 @@ Show() {
     # NOTICE
     elif (($1 == 3)); then
         echo -e "${aCOLOUR[2]}[$COLOUR_RESET${aCOLOUR[4]}NOTICE$COLOUR_RESET${aCOLOUR[2]}]$COLOUR_RESET $2"
-    # PROGRESS
+    # MENTION
     elif (($1 == 4)); then
-        echo -e "${aCOLOUR[2]}[$COLOUR_RESET${aCOLOUR[2]}      $COLOUR_RESET${aCOLOUR[2]}]${aCOLOUR[2]} $2"
+        echo -e "${aCOLOUR[2]}[$COLOUR_RESET${aCOLOUR[0]}      $COLOUR_RESET${aCOLOUR[2]}]$COLOUR_RESET $2"
     fi
 }
 GreyStart() {
