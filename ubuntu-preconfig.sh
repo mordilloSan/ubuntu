@@ -40,9 +40,15 @@ onCtrlC() {
     exit 1
 }
 Get_IPs() {
-    #use a 2d array for storing NIC and respective IP
+    #use a 2d array for storing NIC's and respective IP's
     #if no ip is found store "0"
-    ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
+    NICS=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
+    #transforma a multi line string into an array
+    IFS=$'\n'
+    while read -r line; do
+        ALL_NIC+=("$line")
+    done <<< "$NICS"
+    #create the array of IP's
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
@@ -371,30 +377,28 @@ Clean_Up(){
     rm -f "$WORK_DIR"/resume-after-reboot
 }
 change_renderer() {
-    echo ""
-    Show 2 "\e[1mSetting Up Network Manager\e[0m"
-    #for each interface that has a valid IP, sets up static ip
-    #assumes router/gateway - 192.168.1.1
-    #YAML is indentation sensitive. Careful when changing code
     echo "network:
   version: 2
   renderer: NetworkManager
   ethernets:" >> "$WORK_DIR"/config.yaml
     local i=0
     for IP in "${ALL_IP[@]}"; do
-        if [ "$IP" != "0" ]; then
+        echo "$IP"
+        echo "${ALL_NIC[i]}"
+        echo "$i"
         echo "    ${ALL_NIC[$i]}:
       dhcp4: no
       addresses: [${IP}/24]
       gateway4: 192.168.1.1
       nameservers:
         addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
-        i=$i+1  
         else
-        echo "  $NIC:
+        echo "${ALL_NIC[i]}"
+        echo "  ${ALL_NIC[$i]}:
       dhcp4: yes
       optional: true" >> "$WORK_DIR"/config.yaml
         fi
+        let i++
     done
     systemctl disable systemd-networkd.socket
     systemctl disable systemd-networkd.service
