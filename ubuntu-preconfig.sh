@@ -247,14 +247,11 @@ Update_System() {
 #####################
 change_renderer() {
 
-    sudo systemctl disable systemd-networkd.service
-    systemctl mask systemd-networkd.service
-    systemctl stop systemd-networkd.service
     local config=""
     #setting proper permissions in netplan
     chmod 777 /etc/netplan/50-cloud-init.yaml
     config=""
-    sudo chmod 777 /etc/netplan/50-cloud-init.yaml
+    chmod 777 /etc/netplan/50-cloud-init.yaml
 
     config=$(netplan get)
     echo "$config"
@@ -278,6 +275,9 @@ change_renderer() {
 	netplan try
     Check_Success "Netplan configuration"
     # Cleaning up
+    systemctl disable systemd-networkd.service
+    systemctl mask systemd-networkd.service
+    systemctl stop systemd-networkd.service
 	ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 	mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
 	sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
