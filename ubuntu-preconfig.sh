@@ -19,8 +19,6 @@ Start (){
     readonly WORK_DIR
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
-    ALL_NIC=""
-    ALL_IP=""
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -48,7 +46,7 @@ Get_IPs() {
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
-            ALL_IP+=("$IP")
+            ALL_IP+=($IP)
         else
             ALL_IP+=("0")
         fi
