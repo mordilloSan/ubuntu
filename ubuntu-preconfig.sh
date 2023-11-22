@@ -49,7 +49,7 @@ echo ""
 echo "$TESTE"
 
 
-    for NIC in ${TESTE}; do
+    for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
             ALL_IP+=("$IP")
