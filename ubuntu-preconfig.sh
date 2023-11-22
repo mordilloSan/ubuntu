@@ -54,10 +54,10 @@ echo "$TESTE"
         if [[ -n $IP ]]; then
             ALL_IP+=("$IP")
         else
-            ALL_IP+=("$IP")
+            ALL_IP+=("teste")
         fi
     done
-    echo "$ALL_IP[@]"
+    echo "${ALL_IP[@]}"
 }
 ##########
 # Colors #
@@ -385,7 +385,7 @@ change_renderer() {
     local i=0
     
     for IP in "${ALL_IP[@]}"; do
-        if [[ "$IP" != "" ]]; then
+        if [[ "$IP" != "teste" ]]; then
         echo "$IP"
         echo "${ALL_NIC[i]}"
 
