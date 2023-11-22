@@ -40,23 +40,24 @@ onCtrlC() {
     exit 1
 }
 Get_IPs() {
-    #use a 2d array for storing NIC's and respective IP's
+    #use a 2d array for storing NIC and respective IP
     #if no ip is found store "0"
-    NICS=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
-    #transforma a multi line string into an array
-    IFS=$'\n'
-    while read -r line; do
-        ALL_NIC+=("$line")
-    done <<< "$NICS"
-    #create the array of IP's
-    for NIC in ${ALL_NIC}; do
+    ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")")
+TESTE="(${ALL_NIC})"
+echo "$ALL_NIC"
+echo ""
+echo "$TESTE"
+
+
+    for NIC in ${TESTE}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
             ALL_IP+=("$IP")
         else
-            ALL_IP+=("0")
+            ALL_IP+=("$IP")
         fi
     done
+    echo "$ALL_IP[@]"
 }
 ##########
 # Colors #
