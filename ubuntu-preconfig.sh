@@ -18,7 +18,7 @@ Start (){
     WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     readonly WORK_DIR
     if [[ ! -d "$WORK_DIR" ]]; then
-        mkdir $WORK_DIR
+        mkdir "$WORK_DIR"
     fi
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
