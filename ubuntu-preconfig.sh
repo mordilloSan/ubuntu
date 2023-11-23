@@ -45,11 +45,11 @@ onCtrlC() {
 Get_IPs() {
     # go trough all available NIC's till an IP is found
     # All other IP's are ignored
-    ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")") 
+    ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)" )") 
     for NIC in ${ALL_NIC}; do
-        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+        IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
-            ALL_NIC=$(echo "${ALL_NIC}" | grep -v $NIC)
+            ALL_NIC=${ALL_NIC//$NIC/}
             break
         fi
     done
@@ -311,9 +311,9 @@ Initiate_Service(){
 }
 Check_Service() {
     echo ""
-    Show 2 "\e[1mChecking Services\e[0m"
+    Show 4 "\e[1mChecking Services\e[0m"
     for SERVICE in "${SERVICES[@]}"; do
-        Show 4 "Checking ${SERVICE}..."
+        Show 2 "Checking ${SERVICE}..."
         if [[ $(systemctl is-active "${SERVICE}") == "active" ]]; then
             Show 0 "${SERVICE} is running."
         else
@@ -386,7 +386,7 @@ change_renderer() {
       gateway4: 192.168.1.1
       nameservers:
         addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
-    for NICS in "${ALL_NIC[@]}"; do
+    for NICS in ${ALL_NIC}; do
         echo "    ${NICS}:
       dhcp4: yes
       optional: true" >> "$WORK_DIR"/config.yaml
@@ -412,13 +412,11 @@ Wrap_up_Banner() {
     echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     COCKPIT_PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
-    for IP in ${ALL_IP}; do
         if [[ "$COCKPIT_PORT" -eq "80" ]]; then
             echo -e " ${GREEN_BULLET} http://$IP (${NIC})"
         else
             echo -e " ${GREEN_BULLET} http://$IP:$COCKPIT_PORT (${NIC})"
         fi
-    done    
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
     echo -e ""
