@@ -207,7 +207,7 @@ Add_Repos(){
     Check_Success "45Drives repos update"
 }
 Update_System() {
-	Show 2 "Updating packages"
+	Show 4 "Updating packages"
 	GreyStart
     apt-get update -q
     Check_Success "Package update"
@@ -267,7 +267,7 @@ Check_Docker_Install() {
 }
 Install_Packages() {
     echo ""
-    Show 2 "\e[1mInstalling Packages\e[0m"
+    Show 4 "\e[1mInstalling Packages\e[0m"
     Install_Docker
     for packagesNeeded in "${PACKAGES[@]}"; do
         Show 2 "Prepare the necessary dependencie: \e[33m$packagesNeeded\e[0m"
@@ -301,7 +301,7 @@ Install_Packages() {
 }
 Initiate_Service(){
     echo ""
-    Show 2 "\e[1mInitiating Services\e[0m"
+    Show 4 "\e[1mInitiating Services\e[0m"
     for SERVICE in "${SERVICES[@]}"; do
         Show 2 "Starting ${SERVICE}..."
         systemctl enable "${SERVICE}"
@@ -374,6 +374,8 @@ Clean_Up(){
     rm -f "$WORK_DIR"/resume-after-reboot
 }
 change_renderer() {
+    echo ""
+    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
     echo "network:
   version: 2
   renderer: NetworkManager
@@ -389,18 +391,18 @@ change_renderer() {
       dhcp4: yes
       optional: true" >> "$WORK_DIR"/config.yaml
     done
-    systemctl disable systemd-networkd.socket
-    systemctl disable systemd-networkd.service
-    systemctl disable systemd-networkd-wait-online.service
-    systemctl stop systemd-networkd.socket
-    systemctl stop systemd-networkd.service
-    systemctl stop systemd-networkd-wait-online.service
-    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
-        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-    fi
-    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-    systemctl restart NetworkManager 
+#    systemctl disable systemd-networkd.socket
+#    systemctl disable systemd-networkd.service
+#    systemctl disable systemd-networkd-wait-online.service
+#    systemctl stop systemd-networkd.socket
+#    systemctl stop systemd-networkd.service
+#    systemctl stop systemd-networkd-wait-online.service
+#    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+#    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
+#        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+#    fi
+#    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+#    systemctl restart NetworkManager 
 }
 
 Wrap_up_Banner() {
