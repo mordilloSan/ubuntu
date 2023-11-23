@@ -49,6 +49,7 @@ Get_IPs() {
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -z $IP ]]; then
+            ALL_NIC=$("$ALL_NIC" | grep -v "$NIC")
             break
         fi
     done
@@ -383,10 +384,8 @@ change_renderer() {
       gateway4: 192.168.1.1
       nameservers:
         addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
-    # remove the NIC that has an ip. What's left are NIC's without IP
-    ALL_NIC_OFF="${ALL_NIC#NIC}"
-    for NIC in "${ALL_NIC_OFF[@]}"; do
-        echo "    ${NIC}:
+    for NICS in "${ALL_NIC[@]}"; do
+        echo "    ${NICS}:
       dhcp4: yes
       optional: true" >> "$WORK_DIR"/config.yaml
     done
