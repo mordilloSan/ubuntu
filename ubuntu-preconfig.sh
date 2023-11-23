@@ -53,6 +53,8 @@ Get_IPs() {
             break
         fi
     done
+    # gets router IP
+    ROUTER=$(echo "$(route -n | grep 'UG[ \t]' | awk '{print $2}')")
 }
 ##########
 # Colors #
@@ -375,6 +377,7 @@ Clean_Up(){
 }
 
 change_renderer() {
+    # preparing the config.
     echo ""
     Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
     echo "network:
@@ -383,18 +386,19 @@ change_renderer() {
   ethernets:" >> "$WORK_DIR"/config.yaml
     echo "    ${NIC_ON}:
       dhcp4: no
-      addresses: [${IP}/24]
+      addresses: [${IP}]
       routes:
       - to: default
-        via: 192.168.1.1
+        via: $ROUTER
       nameservers:
         addresses: [1.1.1.1]
-        search: []" >> "$WORK_DIR"/config.yaml
+        search: []" >> /etc/netplan/config.yaml
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
       dhcp4: yes
-      optional: true" >> "$WORK_DIR"/config.yaml
+      optional: true" >> /etc/netplan/config.yaml
     done
+    chmod 600 /etc/netplan/*.yaml
     netplan try
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
     if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
