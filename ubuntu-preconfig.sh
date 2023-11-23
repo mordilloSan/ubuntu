@@ -45,7 +45,7 @@ onCtrlC() {
 Get_IPs() {
     # go trough all available NIC's till an IP is found
     # All other IP's are ignored
-    ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")" | sed ':a;N;$!ba;s/\n/ /g') 
+    ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")") 
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -z $IP ]]; then
@@ -386,7 +386,7 @@ change_renderer() {
     # remove the NIC that has an ip. What's left are NIC's without IP
     ALL_NIC_OFF="${ALL_NIC#NIC}"
     for NIC in "${ALL_NIC_OFF[@]}"; do
-        echo "  ${NIC}:
+        echo "    ${NIC}:
       dhcp4: yes
       optional: true" >> "$WORK_DIR"/config.yaml
     done
