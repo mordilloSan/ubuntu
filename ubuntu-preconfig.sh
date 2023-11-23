@@ -48,8 +48,8 @@ Get_IPs() {
     ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")") 
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
-        if [[ -z $IP ]]; then
-            ALL_NIC=$("$ALL_NIC" | grep -v "$NIC")
+        if [[ -n $IP ]]; then
+            ALL_NIC=$(echo "${ALL_NIC}" | grep -v $NIC)
             break
         fi
     done
