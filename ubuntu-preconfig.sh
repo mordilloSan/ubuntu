@@ -203,7 +203,7 @@ Add_Repos(){
 	lsb_release_cs="focal"
 	echo "Updating the new repo file"
     sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
-    0 "Success! 45Drives repos has been updated!"
+    Check_Success "45Drives repos update"
 }
 Update_System() {
 	Show 2 "Updating packages"
@@ -384,7 +384,7 @@ change_renderer() {
       nameservers:
         addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
 
-    # remove the NIC that has an ip. Left are NIC without IP
+    # remove the NIC that has an ip. What's left are NIC's without IP
     ALL_NIC_OFF="${ALL_NIC#NIC}"
     for NIC in "${ALL_NIC_OFF[@]}"; do
         echo "  ${NIC}:
