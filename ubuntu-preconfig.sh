@@ -233,7 +233,7 @@ Reboot(){
                 # add the link to bashrc to start the script on login
                 echo "$STRING" >> ~/.bashrc
                 # create a flag file to signal that we are resuming from reboot.
-                touch "$WORK_DIR"/resume-after-reboot
+                touch "$WORK_DIR/resume-after-reboot"
                 reboot </dev/tty
             ;;
         esac
@@ -383,7 +383,6 @@ change_renderer() {
       gateway4: 192.168.1.1
       nameservers:
         addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
-
     # remove the NIC that has an ip. What's left are NIC's without IP
     ALL_NIC_OFF="${ALL_NIC#NIC}"
     for NIC in "${ALL_NIC_OFF[@]}"; do
