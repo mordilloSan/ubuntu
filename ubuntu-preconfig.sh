@@ -396,18 +396,18 @@ change_renderer() {
       optional: true" >> "$WORK_DIR"/config.yaml
     done
     netplan try
-#    systemctl disable systemd-networkd.socket
-#    systemctl disable systemd-networkd.service
-#    systemctl disable systemd-networkd-wait-online.service
-#    systemctl stop systemd-networkd.socket
-#    systemctl stop systemd-networkd.service
-#    systemctl stop systemd-networkd-wait-online.service
-#    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-#    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
-#        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-#    fi
-#    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-#    systemctl restart NetworkManager 
+    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
+        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+    fi
+    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+    systemctl restart NetworkManager
+    systemctl disable systemd-networkd.socket
+    systemctl disable systemd-networkd.service
+    systemctl disable systemd-networkd-wait-online.service
+    systemctl stop systemd-networkd.socket
+    systemctl stop systemd-networkd.service
+    systemctl stop systemd-networkd-wait-online.service
 }
 
 Wrap_up_Banner() {
