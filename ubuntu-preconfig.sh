@@ -17,6 +17,9 @@ Start (){
     readonly UNAME_U
     WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     readonly WORK_DIR
+    if [[ ! -d "$WORK_DIR" ]]; then
+        mkdir $WORK_DIR
+    fi
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
     # COLORS
@@ -45,7 +48,7 @@ Get_IPs() {
     ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")" | sed ':a;N;$!ba;s/\n/ /g') 
     for NIC in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v docker | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
-        if [[ ! -n $IP ]]; then
+        if [[ -z $IP ]]; then
             break
         fi
     done
@@ -171,35 +174,36 @@ Set_Timezone(){
     Show 0 "Time Zone is ${T_Z}." 
 }
 Add_Repos(){
+    echo ""
     Show 2 "Adding the necessary repository sources"
+    GreyStart
     items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
-        echo -e "${aCOLOUR[2]}There were no existing 45Drives repos found. Setting up the new repo..."
+        echo -e "There were no existing 45Drives repos found. Setting up the new repo..."
 	else
         count=$(echo "$items" | wc -l)
-        echo -e "${aCOLOUR[2]}There were $count 45Drives repo(s) found. Archiving..."
+        echo -e "There were $count 45Drives repo(s) found. Archiving..."
 	    mkdir -p "$WORK_DIR"/repos     
 		mv /etc/apt/sources.list.d/45drives.sources "$WORK_DIR"/repos/45drives-"$(date +%Y-%m-%d)".list
-		echo -e "${aCOLOUR[2]}The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
+		echo -e "The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
 		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
 			rm -f /etc/apt/sources.list.d/45drives.sources
 		fi
 	fi
-	echo -e "${aCOLOUR[2]}Updating ca-certificates to ensure certificate validity..."
+	echo -e "Updating ca-certificates to ensure certificate validity..."
 	apt-get install ca-certificates -y -q=2
-	wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
-    Check_Success "Add the gpg key to the apt keyring"
-	curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
-    Check_Success "Download the new repo file"
-	lsb_release_cs=$(lsb_release -cs)
+	echo "Add the gpg key to the apt keyring"
+    wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
+    echo "Downloading the new repo file"
+    curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+    lsb_release_cs=$(lsb_release -cs)
 	if [[ "$lsb_release_cs" == "" ]]; then
 		Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
 	fi
 	lsb_release_cs="focal"
-	sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
-    Check_Success "Update the new repo file"
-	echo -e "${aCOLOUR[2]}The new repo file has been downloaded."
-	Show 0 "Success! 45Drives repos has been updated!"
+	echo "Updating the new repo file"
+    sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
+    0 "Success! 45Drives repos has been updated!"
 }
 Update_System() {
 	Show 2 "Updating packages"
