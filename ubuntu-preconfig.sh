@@ -383,14 +383,18 @@ change_renderer() {
     echo "    ${NIC}:
       dhcp4: no
       addresses: [${IP}/24]
-      gateway4: 192.168.1.1
+      routes:
+      - to: default
+        via: 192.168.1.1
       nameservers:
-        addresses: [1.1.1.1]" >> "$WORK_DIR"/config.yaml
+        addresses: [1.1.1.1]
+        search: []" >> "$WORK_DIR"/config.yaml
     for NICS in ${ALL_NIC}; do
         echo "    ${NICS}:
       dhcp4: yes
       optional: true" >> "$WORK_DIR"/config.yaml
     done
+    netplan try
 #    systemctl disable systemd-networkd.socket
 #    systemctl disable systemd-networkd.service
 #    systemctl disable systemd-networkd-wait-online.service
