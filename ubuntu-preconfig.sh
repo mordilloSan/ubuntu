@@ -22,6 +22,7 @@ Start (){
     fi
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
+    readonly NETWORK_SERVICES=("systemd-networkd.socket" "systemd-networkd.service" "systemd-networkd-wait-online.service")
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -32,8 +33,6 @@ Start (){
         '\e[33m'       # Yellow     | Emphasis
     )
     readonly GREEN_LINE="${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
-    readonly GREEN_BULLET="${aCOLOUR[0]}-$COLOUR_RESET"
-    readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
     readonly STRING="curl -fsSL $SCRIPT_LINK | sudo bash"
@@ -56,9 +55,7 @@ Get_IPs() {
     # gets router IP
     ROUTER=$(echo "$(route -n | grep 'UG[ \t]' | awk '{print $2}')")
 }
-##########
 # Colors #
-##########
 Show() {
     # OK
     if (($1 == 0)); then
@@ -81,12 +78,7 @@ Show() {
 GreyStart() {
     echo -e "${aCOLOUR[2]}\c"
 }
-ColorReset() {
-    echo -e "$COLOUR_RESET\c"
-}
-###################
 # Check Functions #
-###################
 Check_Arch() {
     case $UNAME_M in
     *64*)
@@ -144,9 +136,7 @@ Check_Success(){
         Show 0 "$1 sucess!"
     fi
 }
-###################
 # Start Functions #
-###################
 Welcome_Banner() {
 	clear
 	echo -e "\e[0m\c"
@@ -244,9 +234,7 @@ Reboot(){
         Show 0 "No reboot required"
     fi
 }
-###################
 # Package Section #
-###################
 Install_Docker() {
     Show 2 "Installing \e[33mDocker\e[0m"
     if [[ -x "$(command -v docker)" ]]; then
@@ -324,9 +312,63 @@ Check_Service() {
         fi
     done
 }
-##################
+Stop_Service(){
+    echo ""
+    Show 4 "\e[1mInitiating Services\e[0m"
+    for NSERVICE in "${NETWORK_SERVICES[@]}"; do
+        Show 2 "Stoping ${NSERVICE}..."
+        systemctl disable "${NSERVICE}"
+        systemctl stop "${NSERVICE}" || Show 2 "Service ${NSERVICE} does not exist."
+        Show 0 "Sucess"
+    done
+}
+# Network Manager #
+Check_renderer(){
+    #crude renderer check
+    TESTE=$(echo "$(ls /etc/netplan)" | sed -n '1p')
+    Show 2 "Config File already exists - $TESTE"
+    if grep -Fxq "renderer: NetworkManager" "$TESTE"; then
+        Show 0 "Network Manager OK"
+    else
+        Change_renderer
+    fi
+}
+Change_renderer() {
+    # backing up current config
+        mv "/etc/netplan/$TESTE" "/etc/netplan/$TESTE.backup"
+    # preparing the new config.
+    echo ""
+    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
+    echo "network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    ${NIC_ON}:
+      dhcp4: no
+      addresses: [${IP}]
+      routes:
+      - to: default
+        via: $ROUTER
+      nameservers:
+        addresses: [1.1.1.1]
+        search: []" >> /etc/netplan/"$TESTE"
+    for NICS in ${NIC_OFF}; do
+        echo "    ${NICS}:
+      dhcp4: yes
+      optional: true" >> /etc/netplan/"$TESTE"
+    done
+    chmod 600 /etc/netplan/"$TESTE"
+    netplan try
+    Check_Success "Netplan try"
+    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
+        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+    fi
+    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+    systemctl restart NetworkManager
+    Check_Success "NetworkManager"
+}
 # Finish Section #
-##################
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
     GreyStart
@@ -370,66 +412,23 @@ Clean_Up(){
     Show 4 "\e[1mStarting Clean Up\e[0m"
     Remove_cloudinit
     Remove_snap
+    Stop_Service
     # Remove the line that we added in bashrc
     sed -i "/curl -fsSL/d" ~/.bashrc
     # remove the temporary file that we created to check for reboot
     rm -f "$WORK_DIR"/resume-after-reboot
 }
-
-change_renderer() {
-    # backing up current config
-    for f in /etc/netplan/*.yaml; do
-        fnew=$(echo $f | sed 's/.yaml/.yaml.backup/')
-        mv "$f" "$fnew"
-    done
-    # preparing the new config.
-    echo ""
-    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
-    echo "network:
-  version: 2
-  renderer: NetworkManager
-  ethernets:
-    ${NIC_ON}:
-      dhcp4: no
-      addresses: [${IP}]
-      routes:
-      - to: default
-        via: $ROUTER
-      nameservers:
-        addresses: [1.1.1.1]
-        search: []" >> /etc/netplan/00-installer-config.yaml
-    for NICS in ${NIC_OFF}; do
-        echo "    ${NICS}:
-      dhcp4: yes
-      optional: true" >> /etc/netplan/00-installer-config.yaml
-    done
-    chmod 600 /etc/netplan/*.yaml
-    netplan try
-    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
-        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-    fi
-    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
-    systemctl restart NetworkManager
-    systemctl disable systemd-networkd.socket
-    systemctl disable systemd-networkd.service
-    systemctl disable systemd-networkd-wait-online.service
-    systemctl stop systemd-networkd.socket
-    systemctl stop systemd-networkd.service
-    systemctl stop systemd-networkd-wait-online.service
-}
-
 Wrap_up_Banner() {
     Show 0 "SETUP COMPLETE!"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-    echo -e " Cockpit ${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
+    echo -e " Cockpit ${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
     COCKPIT_PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
         if [[ "$COCKPIT_PORT" -eq "80" ]]; then
-            echo -e " ${GREEN_BULLET} http://$IP (${NIC})"
+            echo -e " http://$IP (${NIC_ON})"
         else
-            echo -e " ${GREEN_BULLET} http://$IP:$COCKPIT_PORT (${NIC})"
+            echo -e " http://$IP:$COCKPIT_PORT (${NIC_ON})"
         fi
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
@@ -438,9 +437,7 @@ Wrap_up_Banner() {
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
 }
-#################
 # Main Function #
-#################
 Setup(){
     Start
     trap 'onCtrlC' INT
@@ -457,9 +454,9 @@ Setup(){
     Install_Packages
     Initiate_Service
     Check_Service
-    Clean_Up
     Get_IPs
-    change_renderer
+    Check_renderer
+    Clean_Up
     Wrap_up_Banner
 }
 Setup
