@@ -9,7 +9,7 @@ Start (){
     export DEBIAN_PRIORITY=critical
     ((EUID))
     source /etc/os-release
-    DIST=$(echo "${ID}")
+    DIST=${ID}
     readonly DIST
     UNAME_M="$(uname -m)"
     readonly UNAME_M
@@ -46,7 +46,7 @@ onCtrlC() {
 Get_IPs() {
     # go trough all available NIC's till one IP is found
     # sed '\s.*$//' is to remove more that 1 ip in a NIC - good for VM's
-    ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)" )") 
+    ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)" )
     for NIC_ON in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g' | sed '\s.*$//')
         if [[ -n $IP ]]; then
@@ -327,9 +327,9 @@ Stop_Service(){
 }
 # Network Manager #
 Check_renderer(){
-    #crude renderer check
+    #crude renderer checkfind
     #this breaks with more than 1IP. Check VM's!!!!!
-    TESTE=$(echo "$(ls /etc/netplan)" | sed -n '1p')
+    TESTE=$(find /etc/netplan/* | sed -n '1p')
     Show 2 "Config File exists - $TESTE"
     if grep -Fxq "renderer: NetworkManager" /etc/netplan/"$TESTE"; then
         Show 0 "Network Manager OK"
