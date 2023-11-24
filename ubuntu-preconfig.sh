@@ -45,17 +45,18 @@ onCtrlC() {
 }
 Get_IPs() {
     # go trough all available NIC's till one IP is found
-    # Will break if 2 ip are present in one nic - VM!
+    # sed '\s.*$//' is to remove more that 1 ip in a NIC - good for VM's
     ALL_NIC=$(echo "$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)" )") 
     for NIC_ON in ${ALL_NIC}; do
-        IP=$(ip addr show "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
+        IP=$(ip addr show "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g' | sed '\s.*$//')
         if [[ -n $IP ]]; then
+            sed '\s.*$//' <File1
             NIC_OFF=${ALL_NIC//$NIC_ON/}
             break
         fi
     done
     # gets router IP
-    ROUTER=$(echo "$(route -n | grep 'UG[ \t]' | awk '{print $2}')")
+    ROUTER=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
 }
 # Colors #
 Show() {
