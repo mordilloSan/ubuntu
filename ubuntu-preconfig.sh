@@ -329,8 +329,8 @@ Check_renderer(){
     #crude renderer check
     #this breaks with more than 1IP. Check VM's!!!!!
     TESTE=$(echo "$(ls /etc/netplan)" | sed -n '1p')
-    Show 2 "Config File already exists - $TESTE"
-    if grep -Fxq "renderer: NetworkManager" "$TESTE"; then
+    Show 2 "Config File exists - $TESTE"
+    if grep -Fxq "renderer: NetworkManager" /etc/netplan/"$TESTE"; then
         Show 0 "Network Manager OK"
     else
         Change_renderer
