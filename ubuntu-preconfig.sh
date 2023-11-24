@@ -331,7 +331,7 @@ Check_renderer(){
     #this breaks with more than 1IP. Check VM's!!!!!
     TESTE=$(find /etc/netplan/* | sed -n '1p')
     Show 2 "Config File exists - $TESTE"
-    if grep -Fxq "renderer: NetworkManager" /etc/netplan/"$TESTE"; then
+    if grep -Fxq "renderer: NetworkManager" "$TESTE"; then
         Show 0 "Network Manager OK"
     else
         Change_renderer
@@ -339,7 +339,7 @@ Check_renderer(){
 }
 Change_renderer() {
     # backing up current config
-        mv "/etc/netplan/$TESTE" "/etc/netplan/$TESTE.backup"
+        mv "$TESTE" "$TESTE.backup"
     # preparing the new config.
     echo ""
     Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
@@ -355,13 +355,13 @@ Change_renderer() {
         via: $ROUTER
       nameservers:
         addresses: [1.1.1.1]
-        search: []" >> /etc/netplan/"$TESTE"
+        search: []" >> "$TESTE"
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
       dhcp4: yes
-      optional: true" >> /etc/netplan/"$TESTE"
+      optional: true" >> "$TESTE"
     done
-    chmod 600 /etc/netplan/"$TESTE"
+    chmod 600 "$TESTE"
     netplan try
     Check_Success "Netplan try"
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
