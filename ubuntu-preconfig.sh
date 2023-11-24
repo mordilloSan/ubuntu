@@ -36,6 +36,8 @@ Start (){
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
     readonly STRING="curl -fsSL $SCRIPT_LINK | sudo bash"
+    #Enable apt-get progress bar
+    echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -325,6 +327,7 @@ Stop_Service(){
 # Network Manager #
 Check_renderer(){
     #crude renderer check
+    #this breaks with more than 1IP. Check VM's!!!!!
     TESTE=$(echo "$(ls /etc/netplan)" | sed -n '1p')
     Show 2 "Config File already exists - $TESTE"
     if grep -Fxq "renderer: NetworkManager" "$TESTE"; then
