@@ -377,14 +377,19 @@ Clean_Up(){
 }
 
 change_renderer() {
-    # preparing the config.
+    # backing up current config
+    for f in /etc/netplan/*.yaml; do
+        fnew=$(echo $f | sed 's/.yaml/.yaml.backup/')
+        mv "$f" "$fnew"
+    done
+    # preparing the new config.
     echo ""
     Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
     echo "network:
   version: 2
   renderer: NetworkManager
-  ethernets:" >> "$WORK_DIR"/config.yaml
-    echo "    ${NIC_ON}:
+  ethernets:
+    ${NIC_ON}:
       dhcp4: no
       addresses: [${IP}]
       routes:
@@ -392,11 +397,11 @@ change_renderer() {
         via: $ROUTER
       nameservers:
         addresses: [1.1.1.1]
-        search: []" >> /etc/netplan/config.yaml
+        search: []" >> /etc/netplan/00-installer-config.yaml
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
       dhcp4: yes
-      optional: true" >> /etc/netplan/config.yaml
+      optional: true" >> /etc/netplan/00-installer-config.yaml
     done
     chmod 600 /etc/netplan/*.yaml
     netplan try
