@@ -368,8 +368,8 @@ Change_renderer() {
       optional: true" >> "$TESTE"
     done
     chmod 600 "$TESTE"
-    netplan try
-    Check_Success "Netplan try"
+    netplan apply
+    Check_Success "Netplan applied"
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
     if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
         mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
