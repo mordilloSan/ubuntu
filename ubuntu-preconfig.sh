@@ -173,7 +173,6 @@ Set_Timezone(){
     Show 0 "Time Zone is ${T_Z}." 
 }
 Add_Repos(){
-    echo ""
     Show 2 "Adding the necessary repository sources"
     GreyStart
     items=$(find /etc/apt/sources.list.d -name 45drives.sources)
@@ -205,7 +204,10 @@ Add_Repos(){
     Check_Success "45Drives repos update"
 }
 Update_System() {
-	Show 4 "Updating packages"
+    echo ""
+    Show 4 "Updating System"
+    Add_Repos
+	Show 2 "Updating packages"
 	GreyStart
     apt-get update -q
     Check_Success "Package update"
@@ -214,7 +216,7 @@ Update_System() {
 	apt-get upgrade -y
 	GreyStart
     apt-get dist-upgrade -y
-    Check_Success "Package upgrade"
+    Check_Success "System Update"
 }
 Reboot(){
     if [ -f /var/run/reboot-required ]; then
@@ -451,7 +453,6 @@ Setup(){
     # check if the resume flag file exists. 
     if [ ! -f "$WORK_DIR"/resume-after-reboot ]; then
         Set_Timezone
-        Add_Repos
         Update_System
         Reboot
     else
