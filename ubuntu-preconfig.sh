@@ -302,9 +302,7 @@ Initiate_Service(){
     Show 4 "\e[1mInitiating Services\e[0m"
     for SERVICE in "${SERVICES[@]}"; do
         Show 2 "Starting ${SERVICE}..."
-        systemctl enable "${SERVICE}"
-        systemctl start "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
-
+        systemctl enable --now "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
     done
 }
 Check_Service() {
