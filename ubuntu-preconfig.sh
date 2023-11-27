@@ -322,7 +322,7 @@ Check_Service() {
 }
 Stop_Service(){
     echo ""
-    Show 4 "\e[1mInitiating Services\e[0m"
+    Show 4 "\e[1mRemoving Unneeded Services\e[0m"
     for NSERVICE in "${NETWORK_SERVICES[@]}"; do
         Show 2 "Stoping ${NSERVICE}..."
         systemctl disable "${NSERVICE}"
