@@ -323,9 +323,9 @@ Stop_Service(){
     Show 4 "\e[1mRemoving Unneeded Services\e[0m"
     for NSERVICE in "${NETWORK_SERVICES[@]}"; do
         Show 2 "Stoping ${NSERVICE}..."
-        systemctl disable "${NSERVICE}"
-        systemctl stop "${NSERVICE}" || Show 2 "Service ${NSERVICE} does not exist."
-        Show 0 "Sucess"
+        GreyStart
+        systemctl disable --now "${NSERVICE}" || Show 2 "Service ${NSERVICE} does not exist."
+        Check_Success " ${NSERVICE} disabled"
     done
 }
 # Network Manager #
