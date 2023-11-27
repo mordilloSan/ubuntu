@@ -345,6 +345,7 @@ Check_renderer(){
 }
 Change_renderer() {
     # backing up current config
+    GreyStart
     echo "Backing up current config"
     mv "$TESTE" "$TESTE.backup"
     # preparing the new config.
@@ -361,7 +362,6 @@ Change_renderer() {
       nameservers:
         addresses: [1.1.1.1]
         search: []" >> "$TESTE"
-    echo "TESTE"
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
       dhcp4: yes
@@ -429,7 +429,8 @@ Clean_Up(){
     rm -f "$WORK_DIR"/resume-after-reboot
 }
 Wrap_up_Banner() {
-    Show 0 "SETUP COMPLETE!"
+    echo ""
+    Show 0 "\e[1mSETUP COMPLETE!\e[0m"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at:${COLOUR_RESET}"
