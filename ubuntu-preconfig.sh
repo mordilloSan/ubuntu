@@ -45,13 +45,17 @@ onCtrlC() {
 }
 Get_IPs() {
     # go trough all available NIC's till one IP is found
-    # HAVE TO REMOVE SECOND LINE OF IP!!!!!!!!
     ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)" )
     for NIC_ON in ${ALL_NIC}; do
         IP=$(ip addr show "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
-RESULT=$(sed '$d' <<< "$IP")
-echo "$RESULT"
         if [[ -n $IP ]]; then
+            #IF MORE THAN ONE IP EXISTS IN THAT NIC (ex. cloud VM's)
+            NUMBER_IP=$(cat "$IP" | wc -l)
+            if [[ $NUMBER_IP != 1 ]]; then
+                #removes all but first line
+                IP=$(sed '2,$d' <<< "$IP")
+            fi
+            #remove current nic from the list
             NIC_OFF=${ALL_NIC//$NIC_ON/}
             break
         fi
@@ -329,7 +333,6 @@ Stop_Service(){
 # Network Manager #
 Check_renderer(){
     #crude renderer checkfind
-    #this breaks with more than 1IP. Check VM's!!!!!
     TESTE=$(find /etc/netplan/* | sed -n '1p')
     Show 2 "Config File exists - $TESTE"
     if grep -Fxq "renderer: NetworkManager" "$TESTE"; then
@@ -429,7 +432,7 @@ Wrap_up_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit ${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
-    COCKPIT_PORT=$(cat $"/lib/systemd/system/cockpit.socket" | grep ListenStream= | sed 's/ListenStream=//')
+    COCKPIT_PORT=$(cat /lib/systemd/system/cockpit.socket | grep ListenStream= | sed 's/ListenStream=//')
         if [[ "$COCKPIT_PORT" -eq "80" ]]; then
             echo -e " http://$IP (${NIC_ON})"
         else
