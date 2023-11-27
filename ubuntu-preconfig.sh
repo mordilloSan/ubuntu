@@ -332,6 +332,8 @@ Stop_Service(){
 }
 # Network Manager #
 Check_renderer(){
+    echo ""
+    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
     #crude renderer checkfind
     TESTE=$(find /etc/netplan/* | sed -n '1p')
     Show 2 "Config File exists - $TESTE"
@@ -342,11 +344,9 @@ Check_renderer(){
     fi
 }
 Change_renderer() {
-    echo ""
-    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
-    Check_renderer
     # backing up current config
-        mv "$TESTE" "$TESTE.backup"
+    echo "Backing up current config"
+    mv "$TESTE" "$TESTE.backup"
     # preparing the new config.
     echo "network:
   version: 2
@@ -464,7 +464,7 @@ Setup(){
     Initiate_Service
     Check_Service
     Get_IPs
-    Change_renderer
+    Check_renderer
     Clean_Up
     Wrap_up_Banner
 }
