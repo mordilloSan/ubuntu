@@ -1,8 +1,6 @@
 #!/usr/bin/bash
 
-####################
 # Global Variables #
-####################
 Start (){
     # SYSTEM INFO
     export DEBIAN_FRONTEND=noninteractive
@@ -50,7 +48,7 @@ Get_IPs() {
         IP=$(ip addr show "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
             #IF MORE THAN ONE IP EXISTS IN THAT NIC (ex. cloud VM's)
-            NUMBER_IP=$(cat "$IP" | wc -l)
+            NUMBER_IP=$(wc -l <<< "$IP")
             if [[ $NUMBER_IP != 1 ]]; then
                 #removes all but first line
                 IP=$(sed '2,$d' <<< "$IP")
@@ -473,5 +471,4 @@ exit 0
 #Ideas
 #htop (saving preferences)
 #summarize software installed
-#progress in script
 #resolve pihole port conflict
