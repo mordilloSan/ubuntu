@@ -325,7 +325,7 @@ Stop_Service(){
         Show 2 "Stoping ${NSERVICE}..."
         GreyStart
         systemctl disable --now "${NSERVICE}" || Show 2 "Service ${NSERVICE} does not exist."
-        Check_Success " ${NSERVICE} disabled"
+        Check_Success "Disabling ${NSERVICE}"
     done
 }
 # Network Manager #
