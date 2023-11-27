@@ -342,11 +342,12 @@ Check_renderer(){
     fi
 }
 Change_renderer() {
+    echo ""
+    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
+    Check_renderer
     # backing up current config
         mv "$TESTE" "$TESTE.backup"
     # preparing the new config.
-    echo ""
-    Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
     echo "network:
   version: 2
   renderer: NetworkManager
@@ -462,7 +463,7 @@ Setup(){
     Initiate_Service
     Check_Service
     Get_IPs
-    Check_renderer
+    Change_renderer
     Clean_Up
     Wrap_up_Banner
 }
