@@ -361,6 +361,7 @@ Change_renderer() {
       nameservers:
         addresses: [1.1.1.1]
         search: []" >> "$TESTE"
+    echo "TESTE"
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
       dhcp4: yes
