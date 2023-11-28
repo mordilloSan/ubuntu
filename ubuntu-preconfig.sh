@@ -457,7 +457,7 @@ Extras(){
     docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
 }
 Wrap_up_Banner() {
-    echo ""
+    echo -e ""
     Show 0 "\e[1mSETUP COMPLETE!\e[0m"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
@@ -469,14 +469,14 @@ Wrap_up_Banner() {
         else
             echo -e " http://$IP:$COCKPIT_PORT (${NIC_ON})"
         fi
-    echo ""
+    echo -e ""
     echo -e "${GREEN_LINE}"
     echo -e " Portainer ${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
         echo -e " https://$IP:9443 (${NIC_ON})"
-    echo ""   
+    echo -e ""   
     echo -e " Open your browser and visit the above address."
-    echo " Credits goes to:"
+    echo -e " Credits goes to:"
     echo -e ""
     echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
