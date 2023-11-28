@@ -444,9 +444,14 @@ Clean_Up(){
     rm -f "$WORK_DIR"/resume-after-reboot
 }
 Extras(){
-mkdir "$WORK_DIR"/docker
-echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
-mount 192.168.1.65:/volume2/docker
+    #mounting the NAS
+    Show 2 "Setting up the NFS mount"
+    mkdir "$WORK_DIR"/docker
+    echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+    mount 192.168.1.65:/volume2/docker
+    Check_Success "Mounting the NAS NFS mount"
+    #starting portainer
+    docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
 }
 Wrap_up_Banner() {
     echo ""
@@ -498,8 +503,7 @@ exit 0
 #htop (saving preferences)
 
 #after mouting NFS
-#cd docker/portainer
-#docker compose up -d
+
 
 
 
