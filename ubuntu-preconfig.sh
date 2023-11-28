@@ -344,9 +344,9 @@ Check_renderer(){
 Change_renderer() {
     # backing up current config
     GreyStart
-    echo "Backing up current config"
+    Show 2 "Backing up current config to $TESTE.backup"
     mv "$TESTE" "$TESTE.backup"
-    # preparing the new config.
+    Show 2 "Preparing the new network configuration."
     echo "network:
   version: 2
   renderer: NetworkManager
@@ -367,9 +367,10 @@ Change_renderer() {
     done
     chmod 600 "$TESTE"
     netplan apply
-    Check_Success "Netplan applied"
+    Check_Success "Netplan applied. Your current IP is $IP"
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
     if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
+        Show 2 "Backing up 10-globally-managed-devices.conf"
         mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
     fi
     sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
@@ -379,7 +380,7 @@ Change_renderer() {
 Pihole_DNS(){
     echo ""
     Show 0 "\e[1mPreparing for Pihole\e[0m"
-    Show 2 " Disabling stub resolver"
+    Show 2 "Disabling stub resolver"
     GreyStart
     sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
     Check_Success "Disabling stub resolver"
