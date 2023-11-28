@@ -491,3 +491,8 @@ exit 0
 
 #Ideas
 #htop (saving preferences)
+
+#for cadvisor
+#echo 'GRUB_CMDLINE_LINUX="cgroup_enable=memory"' >> /etc/default/grub
+#sudo update-grub2
+#reboot
