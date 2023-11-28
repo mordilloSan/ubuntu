@@ -219,11 +219,11 @@ Update_System() {
 	GreyStart
 	apt-get upgrade -qq
 	GreyStart
-    apt-get dist-upgrade -qq
+    apt-get dist-upgrade
     Check_Success "System Update"
 }
 Reboot(){
-    if [ -f /var/run/reboot-required ]; then
+    if [ -f /var/run/reboot-required ] || [ -f /var/run/reboot-required.pkgs ]; then
         Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
         if [ "$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")" == "" ]; then
             Show 2 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
