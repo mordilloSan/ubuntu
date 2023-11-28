@@ -233,6 +233,7 @@ Reboot(){
         read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
             [Yy]*) 
+                Show 2 "Rebooting..."
                 # add the link to bashrc to start the script on login
                 echo "$STRING" >> ~/.bashrc
                 Check_Success "bashrc"
@@ -446,7 +447,9 @@ Clean_Up(){
 Extras(){
     #mounting the NAS
     Show 2 "Setting up the NFS mount"
-    mkdir "$WORK_DIR"/docker
+    if [ -f "$WORK_DIR/docker" ]; then
+        mkdir "$WORK_DIR"/docker
+    fi
     echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
     mount 192.168.1.65:/volume2/docker
     Check_Success "Mounting the NAS NFS mount"
@@ -501,8 +504,6 @@ exit 0
 
 #Ideas
 #htop (saving preferences)
-
-#after mouting NFS
 
 
 
