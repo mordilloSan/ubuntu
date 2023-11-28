@@ -237,6 +237,7 @@ Reboot(){
             [Yy]*) 
                 # add the link to bashrc to start the script on login
                 echo "$STRING" >> ~/.bashrc
+                Check_Success "bashrc"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
                 reboot </dev/tty
