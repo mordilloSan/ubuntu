@@ -486,5 +486,3 @@ exit 0
 
 #Ideas
 #htop (saving preferences)
-#summarize software installed
-#resolve pihole port conflict
