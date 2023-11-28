@@ -34,10 +34,8 @@ Start (){
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
     readonly STRING="curl -fsSL $SCRIPT_LINK | sudo bash"
-    #Enable apt-get progress bar
-    if [ ! -f /etc/apt/apt.conf.d/99fancy ]; then   
-        echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
-    elif [ "$(cat /etc/apt/apt.conf.d/99fancy | grep "Progress-Fancy")" == "" ]; then
+    #Enable apt-get progress bar, Check if file exists or if it doesnt contain the key
+    if [ ! -f /etc/apt/apt.conf.d/99fancy ] || [ "$(cat /etc/apt/apt.conf.d/99fancy | grep "Progress-Fancy")" == "" ]; then   
         echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
     fi    
 }
@@ -445,6 +443,11 @@ Clean_Up(){
     # remove the temporary file that we created to check for reboot
     rm -f "$WORK_DIR"/resume-after-reboot
 }
+Extras(){
+mkdir "$WORK_DIR"/docker
+echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+mount 192.168.1.65:/volume2/docker
+}
 Wrap_up_Banner() {
     echo ""
     Show 0 "\e[1mSETUP COMPLETE!\e[0m"
@@ -488,12 +491,15 @@ Setup(){
     Wrap_up_Banner
 }
 Setup
+Extras
 exit 0
 
 #Ideas
 #htop (saving preferences)
 
-#for cadvisor
-#echo 'GRUB_CMDLINE_LINUX="cgroup_enable=memory"' >> /etc/default/grub
-#sudo update-grub2
-#reboot
+#after mouting NFS
+#cd docker/portainer
+#docker compose up -d
+
+
+
