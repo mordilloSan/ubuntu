@@ -449,10 +449,10 @@ Extras(){
     Show 4 "Setting up the NFS mount"
     if [ ! -d "$WORK_DIR/docker" ]; then
         mkdir "$WORK_DIR"/docker
+        echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+        mount 192.168.1.65:/volume2/docker
+        Check_Success "Mounting the NAS NFS mount"
     fi
-    echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
-    mount 192.168.1.65:/volume2/docker
-    Check_Success "Mounting the NAS NFS mount"
     #starting portainer
     docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
 }
