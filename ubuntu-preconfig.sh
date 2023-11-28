@@ -328,7 +328,7 @@ Stop_Service(){
         Check_Success "Disabling ${NSERVICE}"
     done
 }
-# Network Manager #
+# Network #
 Check_renderer(){
     echo ""
     Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
@@ -375,6 +375,19 @@ Change_renderer() {
     sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
     systemctl restart NetworkManager
     Check_Success "NetworkManager"
+}
+Pihole_DNS(){
+    echo ""
+    Show 0 "\e[1mPreparing for Pihole\e[0m"
+    Show 2 " Disabling stub resolver"
+    GreyStart
+    sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
+    Check_Success "Disabling stub resolver"
+    Show 2 "Pointing symlink to /run/systemd/resolve/resolv.conf"
+    sh -c 'rm /etc/resolv.conf && ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf'
+    Check_Success "Pointing symlink"
+    systemctl restart systemd-resolved
+    Check_Success "Restarting systemd-resolved"
 }
 # Finish Section #
 Remove_cloudinit(){
@@ -464,6 +477,7 @@ Setup(){
     Check_Service
     Get_IPs
     Check_renderer
+    Pihole_DNS
     Clean_Up
     Wrap_up_Banner
 }
