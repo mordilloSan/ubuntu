@@ -447,8 +447,10 @@ Extras(){
     #mounting the NAS
     echo ""
     Show 4 "Setting up the NFS mount"
-    if [ ! -d "$WORK_DIR/docker" ]; then
-        mkdir "$WORK_DIR"/docker
+    if ! mountpoint -q "$WORK_DIR/docker" ;then
+        if [ ! -d "$WORK_DIR/docker" ]; then
+            mkdir "$WORK_DIR"/docker
+        fi
         echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
         mount 192.168.1.65:/volume2/docker
         Check_Success "Mounting the NAS NFS mount"
