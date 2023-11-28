@@ -367,7 +367,7 @@ Change_renderer() {
     done
     chmod 600 "$TESTE"
     netplan apply
-    Check_Success "Netplan applied. Your current IP is $IP"
+    Check_Success "Your current IP is $IP. Netplan"
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
     if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
         Show 2 "Backing up 10-globally-managed-devices.conf"
