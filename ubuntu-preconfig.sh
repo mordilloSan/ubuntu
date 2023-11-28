@@ -465,9 +465,9 @@ Wrap_up_Banner() {
     echo -e "${GREEN_LINE}"
     COCKPIT_PORT=$(cat /lib/systemd/system/cockpit.socket | grep ListenStream= | sed 's/ListenStream=//')
         if [[ "$COCKPIT_PORT" -eq "80" ]]; then
-            echo -e " http://$IP (${NIC_ON})"
+            echo -e " https://$IP (${NIC_ON})"
         else
-            echo -e " http://$IP:$COCKPIT_PORT (${NIC_ON})"
+            echo -e " https://$IP:$COCKPIT_PORT (${NIC_ON})"
         fi
     echo -e ""
     echo -e "${GREEN_LINE}"
