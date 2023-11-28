@@ -35,7 +35,11 @@ Start (){
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
     readonly STRING="curl -fsSL $SCRIPT_LINK | sudo bash"
     #Enable apt-get progress bar
-    echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
+    if [ ! -f /etc/apt/apt.conf.d/99fancy ]; then   
+        echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
+    elif [ "$(cat /etc/apt/apt.conf.d/99fancy | grep "Progress-Fancy")" == "" ]; then
+        echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
+    fi    
 }
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -209,13 +213,13 @@ Update_System() {
     Add_Repos
 	Show 2 "Updating packages"
 	GreyStart
-    apt-get update -q
+    apt-get update -qq
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
 	GreyStart
-	apt-get upgrade -y
+	apt-get upgrade -qq
 	GreyStart
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -qq
     Check_Success "System Update"
 }
 Reboot(){
