@@ -338,7 +338,7 @@ Check_renderer(){
     #crude renderer checkfind
     TESTE=$(find /etc/netplan/* | sed -n '1p')
     Show 2 "Config File exists - $TESTE"
-    if grep -Fxq "renderer: NetworkManager" "$TESTE"; then
+    if grep -Fq "renderer: Network" "$TESTE"; then
         Show 0 "Network Manager OK"
     else
         Change_renderer
