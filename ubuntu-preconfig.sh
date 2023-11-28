@@ -469,6 +469,10 @@ Wrap_up_Banner() {
         else
             echo -e " http://$IP:$COCKPIT_PORT (${NIC_ON})"
         fi
+    echo ""
+    echo -e " Portainer ${COLOUR_RESET} is running at:${COLOUR_RESET}"
+    echo -e "${GREEN_LINE}"
+        echo -e " https://$IP:9443 (${NIC_ON})"    
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
     echo -e ""
@@ -496,10 +500,11 @@ Setup(){
     Check_renderer
     Pihole_DNS
     Clean_Up
+    Extras
     Wrap_up_Banner
 }
 Setup
-Extras
+
 exit 0
 
 #Ideas
