@@ -33,7 +33,6 @@ Start (){
     readonly GREEN_LINE="${aCOLOUR[0]}─────────────────────────────────────────────────────$COLOUR_RESET"
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
-    readonly STRING="curl -fsSL $SCRIPT_LINK | sudo bash"
     #Enable apt-get progress bar, Check if file exists or if it doesnt contain the key
     if [ ! -f /etc/apt/apt.conf.d/99fancy ] || [ "$(cat /etc/apt/apt.conf.d/99fancy | grep "Progress-Fancy")" == "" ]; then   
         echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
@@ -235,7 +234,7 @@ Reboot(){
             [Yy]*) 
                 Show 2 "Rebooting..."
                 # add the link to bashrc to start the script on login
-                echo "$STRING" >> ~/.bashrc
+                echo "curl -fsSL $SCRIPT_LINK |  bash" >> ~/.bashrc
                 Check_Success "bashrc"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
@@ -446,7 +445,8 @@ Clean_Up(){
 }
 Extras(){
     #mounting the NAS
-    Show 2 "Setting up the NFS mount"
+    echo ""
+    Show 4 "Setting up the NFS mount"
     if [ ! -d "$WORK_DIR/docker" ]; then
         mkdir "$WORK_DIR"/docker
     fi
@@ -476,8 +476,8 @@ Wrap_up_Banner() {
         echo -e " https://$IP:9443 (${NIC_ON})"
     echo -e ""   
     echo -e " Open your browser and visit the above address."
-    echo -e " Credits goes to:"
     echo -e ""
+    echo -e " ${aCOLOUR[2]}Credits goes to:"
     echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
