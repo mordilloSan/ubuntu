@@ -235,7 +235,7 @@ Reboot(){
                 Show 4 "Preparing to reboot..."
                 # add the link to bashrc to start the script on login
                 Show 2 "Setting up run on boot"
-                echo "curl -fsSL '$SCRIPT_LINK' |  bash" >> "$WORK_DIR/.bashrc"
+                echo "curl -fsSL $SCRIPT_LINK |  bash" >> ~/.bashrc
                 Check_Success "bashrc"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
