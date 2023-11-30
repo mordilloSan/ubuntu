@@ -239,7 +239,7 @@ Reboot(){
                 Check_Success "Setting up run script on boot"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
-                Check_Success "script resuming after reboot"
+                Check_Success "Script resuming after reboot"
                 reboot </dev/tty
             ;;
         esac
