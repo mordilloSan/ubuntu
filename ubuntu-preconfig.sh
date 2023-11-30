@@ -234,7 +234,7 @@ Reboot(){
             [Yy]*) 
                 Show 2 "Rebooting..."
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL '$SCRIPT_LINK' |  bash" >> "$WORK_DIR"/.bashrc
+                echo "curl -fsSL '$SCRIPT_LINK' |  bash" >> "$WORK_DIR/.bashrc"
                 Check_Success "bashrc"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
@@ -471,7 +471,7 @@ Wrap_up_Banner() {
     Show 0 "\e[1mSETUP COMPLETE!\e[0m"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-    echo -e " Cockpit ${COLOUR_RESET} is running at:${COLOUR_RESET}"
+    echo -e " Cockpit${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
     COCKPIT_PORT=$(cat /lib/systemd/system/cockpit.socket | grep ListenStream= | sed 's/ListenStream=//')
         if [[ "$COCKPIT_PORT" -eq "80" ]]; then
@@ -480,10 +480,10 @@ Wrap_up_Banner() {
             echo -e " https://$IP:$COCKPIT_PORT (${NIC_ON})"
         fi
     echo -e ""
+    echo -e "${GREEN_LINE}${aCOLOUR[1]}"
+    echo -e " Portainer${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
-    echo -e " Portainer ${COLOUR_RESET} is running at:${COLOUR_RESET}"
-    echo -e "${GREEN_LINE}"
-        echo -e " https://$IP:9443 (${NIC_ON})"
+    echo -e " https://$IP:9443 (${NIC_ON})"
     echo -e ""   
     echo -e " Open your browser and visit the above address."
     echo -e ""
