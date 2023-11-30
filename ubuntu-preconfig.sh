@@ -467,6 +467,8 @@ NFS_Mount(){
     fi
 }
 Containers(){
+    echo ""
+    Show 4 "Starting Containers"
     #starting portainer
     docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
 }
