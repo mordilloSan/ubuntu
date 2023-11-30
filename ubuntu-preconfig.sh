@@ -210,13 +210,13 @@ Update_System() {
     Add_Repos
 	Show 2 "Updating packages"
 	GreyStart
-    apt-get update -qq -y
+    apt-get update -qq
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
 	GreyStart
-	apt-get upgrade -qq -y
+	apt-get upgrade -qq
 	GreyStart
-    apt-get dist-upgrade -qq -y
+    apt-get dist-upgrade -qq
     Check_Success "System Update"
 }
 Reboot(){
@@ -234,7 +234,7 @@ Reboot(){
             [Yy]*) 
                 Show 2 "Rebooting..."
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK |  bash" >> ~/.bashrc
+                echo "curl -fsSL $SCRIPT_LINK |  bash" >> $WORK_DIR/.bashrc
                 Check_Success "bashrc"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
@@ -447,15 +447,17 @@ Extras(){
     #mounting the NAS
     echo ""
     Show 4 "Setting up the NFS mount"
-    if ! mountpoint -q "$WORK_DIR/docker" ;then
+    if mountpoint "$WORK_DIR/docker" = ""; then
         if [ ! -d "$WORK_DIR/docker" ]; then
             Show 2 "Creating Directory"
             mkdir "$WORK_DIR"/docker
         fi
-        echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
         Show 2 "Mounting!"
         mount 192.168.1.65:/volume2/docker
         Check_Success "Mounting the NAS NFS mount"
+        Show 2 "Making the mount permanent"       
+        echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+        Check_Success "NFS boot mount "
     fi
     #starting portainer
     docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
