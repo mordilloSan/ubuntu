@@ -210,13 +210,13 @@ Update_System() {
     Add_Repos
 	Show 2 "Updating packages"
 	GreyStart
-    apt-get -qq update -show-progress 
+    apt-get -qq update
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
 	GreyStart
-	apt-get -qq upgrade -show-progress
+	apt-get -qq upgrade
 	GreyStart
-    apt-get -qq dist-upgrade -show-progress
+    apt-get -qq dist-upgrade
     Check_Success "System Update"
 }
 Reboot(){
