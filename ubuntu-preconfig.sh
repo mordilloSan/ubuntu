@@ -235,7 +235,7 @@ Reboot(){
             [Yy]*) 
                 Show 4 "Preparing to reboot..."
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK |  bash" >> ~/.bashrc
+                echo "curl -fsSL $SCRIPT_LINK |  bash" >> .bashrc
                 Check_Success "Setting up run script on boot"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
@@ -371,7 +371,7 @@ Change_renderer() {
       optional: true" >> "$TESTE"
     done
     chmod 600 "$TESTE"
-    netplan apply
+    netplan try
     Check_Success "Your current IP is $IP. Netplan"
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
     if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
