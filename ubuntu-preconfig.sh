@@ -210,7 +210,7 @@ Update_System() {
     Add_Repos
 	Show 2 "Updating packages"
 	GreyStart
-    apt-get update -qq
+    apt-get update -show-progress  -qq
     Check_Success "Package update"
 	Show 2 "Upgrading packages"
 	GreyStart
@@ -234,7 +234,7 @@ Reboot(){
             [Yy]*) 
                 Show 2 "Rebooting..."
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK |  bash" >> $WORK_DIR/.bashrc
+                echo "curl -fsSL $SCRIPT_LINK |  bash" >> "$WORK_DIR"/.bashrc
                 Check_Success "bashrc"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
