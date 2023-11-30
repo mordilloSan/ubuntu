@@ -163,6 +163,7 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
+    Show 2 "NFS IP - $NAS_IP"
     Show 2 "Current Working Directory - \e[33m$WORK_DIR\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
