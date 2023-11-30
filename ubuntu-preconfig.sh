@@ -358,7 +358,7 @@ Change_renderer() {
   ethernets:
     ${NIC_ON}:
       dhcp4: no
-      addresses: [${IP}]
+      addresses: [${IP}/24]
       routes:
       - to: default
         via: $ROUTER
