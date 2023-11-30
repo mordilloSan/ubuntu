@@ -470,7 +470,7 @@ Containers(){
     echo ""
     Show 4 "Starting Containers"
     #starting portainer
-    docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
+    Show 2 "$(docker compose -fd "$WORK_DIR"/docker/portainer/docker-compose.yml up)"
 }
 Wrap_up_Banner() {
     echo -e ""
