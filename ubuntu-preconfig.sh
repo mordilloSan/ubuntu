@@ -234,12 +234,12 @@ Reboot(){
         case "$response" in
             [Yy]*) 
                 Show 4 "Preparing to reboot..."
+                # create a flag file to signal that we are resuming from reboot.
+                touch "$WORK_DIR/resume-after-reboot"
+                Check_Success "Flag file to resume after reboot"
                 # add the link to bashrc to start the script on login
                 echo "curl -fsSL $SCRIPT_LINK |  bash" >> "$WORK_DIR"/.bashrc
                 Check_Success "Setting up run script on boot"
-                # create a flag file to signal that we are resuming from reboot.
-                touch "$WORK_DIR/resume-after-reboot"
-                Check_Success "Script resuming after reboot"
                 reboot </dev/tty
             ;;
         esac
@@ -510,6 +510,7 @@ Setup(){
         Show 2 "Resuming script after reboot..."
     fi
     Install_Packages
+    Reboot
     Initiate_Service
     Check_Service
     Get_IPs
