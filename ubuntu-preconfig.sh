@@ -235,7 +235,7 @@ Reboot(){
             [Yy]*) 
                 Show 4 "Preparing to reboot..."
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK |  bash" >> .bashrc
+                echo "curl -fsSL $SCRIPT_LINK |  bash" >> "$WORK_DIR"/.bashrc
                 Check_Success "Setting up run script on boot"
                 # create a flag file to signal that we are resuming from reboot.
                 touch "$WORK_DIR/resume-after-reboot"
@@ -445,7 +445,7 @@ Clean_Up(){
     # remove the temporary file that we created to check for reboot
     rm -f "$WORK_DIR"/resume-after-reboot
 }
-Extras(){
+NFS_Mount(){
     #mounting the NAS
     echo ""
     Show 4 "Setting up the NFS mount"
@@ -462,11 +462,13 @@ Extras(){
         Show 2 "Making the mount permanent"       
         echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
         Check_Success "NFS boot mount "
-        #starting portainer
-        docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
     else
         Show 3 "$NAS_IP not available!"
     fi
+}
+Containers(){
+    #starting portainer
+    docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
 }
 Wrap_up_Banner() {
     echo -e ""
@@ -512,9 +514,10 @@ Setup(){
     Check_Service
     Get_IPs
     Check_renderer
-    Pihole_DNS
+    #Pihole_DNS
     Clean_Up
-    Extras
+    NFS_Mount
+    Containers
     Wrap_up_Banner
 }
 Setup
