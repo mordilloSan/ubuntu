@@ -4,7 +4,6 @@
 Start (){
     # SYSTEM INFO
     export DEBIAN_FRONTEND=noninteractive
-    export DEBIAN_PRIORITY=critical
     ((EUID))
     source /etc/os-release
     DIST=${ID}
@@ -13,7 +12,7 @@ Start (){
     readonly UNAME_M
     UNAME_U="$(uname -s)"
     readonly UNAME_U
-    WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
+    local WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
     readonly WORK_DIR
     if [[ ! -d "$WORK_DIR" ]]; then
         mkdir "$WORK_DIR"
@@ -21,6 +20,7 @@ Start (){
     readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
     readonly NETWORK_SERVICES=("systemd-networkd.socket" "systemd-networkd.service" "systemd-networkd-wait-online.service")
+    readonly NAS_IP="192.168.1.65"
     # COLORS
     readonly COLOUR_RESET='\e[0m'
     readonly aCOLOUR=(
@@ -449,13 +449,13 @@ Extras(){
     Show 4 "Setting up the NFS mount"
     if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
         Show 2 "NFS already mounted"
-    else
+    elif ping -c 1 "$NAS_IP" &> /dev/null; then
         if [ ! -d "$WORK_DIR/docker" ]; then
             Show 2 "Creating Directory"
             mkdir "$WORK_DIR"/docker
         fi
         Show 2 "NFS Mounting in progress"
-        mountpoint 192.168.1.65:/volume2/docker
+        mountpoint "$NAS_IP":/volume2/docker
         Check_Success "Mounting the NAS NFS mount"
         Show 2 "Making the mount permanent"       
         echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
