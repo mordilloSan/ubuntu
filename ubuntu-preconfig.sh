@@ -457,7 +457,7 @@ Extras(){
             mkdir "$WORK_DIR"/docker
         fi
         Show 2 "NFS Mounting in progress"
-        mountpoint "$NAS_IP":/volume2/docker
+        mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
         Check_Success "Mounting the NAS NFS mount"
         Show 2 "Making the mount permanent"       
         echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
