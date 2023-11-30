@@ -12,7 +12,7 @@ Start (){
     readonly UNAME_M
     UNAME_U="$(uname -s)"
     readonly UNAME_U
-    local WORK_DIR="/home/${SUDO_USER:-$(whoami)}"
+    WORK_DIR="/home/$(logname)"
     readonly WORK_DIR
     if [[ ! -d "$WORK_DIR" ]]; then
         mkdir "$WORK_DIR"
