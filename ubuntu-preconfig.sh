@@ -400,6 +400,36 @@ Pihole_DNS(){
     Check_Success "Restarting systemd-resolved"
 }
 # Finish Section #
+
+NFS_Mount(){
+    #mounting the NAS
+    echo ""
+    Show 4 "\e[1mSetting up the NFS mount\e[0m"
+    if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
+        Show 2 "NFS already mounted"
+    elif ping -c 1 "$NAS_IP" &> /dev/null; then
+        if [ ! -d "$WORK_DIR/docker" ]; then
+            Show 2 "Creating Directory"
+            mkdir "$WORK_DIR"/docker
+        fi
+        Show 2 "NFS Mounting in progress"
+        mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
+        Check_Success "NAS NFS mount"
+        Show 2 "Making the mount permanent"
+        if grep "$WORK_DIR"/docker /etc/fstab; then
+            echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+        fi
+        Check_Success "NFS mount on boot"
+    else
+        Show 3 "$NAS_IP not available!"
+    fi
+}
+Containers(){
+    echo ""
+    Show 4 "\e[1mStarting Containers\e[0m"
+    #starting portainer
+    docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
+}
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
     GreyStart
@@ -454,37 +484,8 @@ Clean_Up(){
     rm -r cockpit-sensors
     rm -f cockpit-sensors*.*
     #backup of the original network config
-    rm "$NETWORK_CONFIG.backup"
+    rm -f "$NETWORK_CONFIG.backup"
     Show 0 "Temp files Removed"
-}
-NFS_Mount(){
-    #mounting the NAS
-    echo ""
-    Show 4 "\e[1mSetting up the NFS mount\e[0m"
-    if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
-        Show 2 "NFS already mounted"
-    elif ping -c 1 "$NAS_IP" &> /dev/null; then
-        if [ ! -d "$WORK_DIR/docker" ]; then
-            Show 2 "Creating Directory"
-            mkdir "$WORK_DIR"/docker
-        fi
-        Show 2 "NFS Mounting in progress"
-        mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
-        Check_Success "NAS NFS mount"
-        Show 2 "Making the mount permanent"
-        if grep "$WORK_DIR"/docker /etc/fstab; then
-            echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
-        fi
-        Check_Success "NFS mount on boot"
-    else
-        Show 3 "$NAS_IP not available!"
-    fi
-}
-Containers(){
-    echo ""
-    Show 4 "\e[1mStarting Containers\e[0m"
-    #starting portainer
-    docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
 }
 Wrap_up_Banner() {
     echo -e ""
