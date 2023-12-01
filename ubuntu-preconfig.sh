@@ -400,7 +400,6 @@ Pihole_DNS(){
     Check_Success "Restarting systemd-resolved"
 }
 # Finish Section #
-
 NFS_Mount(){
     #mounting the NAS
     echo ""
@@ -416,7 +415,7 @@ NFS_Mount(){
         mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
         Check_Success "NAS NFS mount"
         Show 2 "Making the mount permanent"
-        if grep "$WORK_DIR"/docker /etc/fstab; then
+        if ! grep "$WORK_DIR"/docker /etc/fstab; then
             echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
         fi
         Check_Success "NFS mount on boot"
@@ -508,7 +507,8 @@ Wrap_up_Banner() {
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
 }
-# Main Function #
+
+# Execute Everything
 Setup(){
     Start
     trap 'onCtrlC' INT
@@ -536,12 +536,4 @@ Setup(){
     Wrap_up_Banner
 }
 Setup
-
 exit 0
-
-#Ideas
-#htop (saving preferences)
-
-
-
-
