@@ -222,10 +222,10 @@ Update_System() {
 }
 Reboot(){
     if [ -f /var/run/reboot-required ] || [ -f /var/run/reboot-required.pkgs ]; then
-        Show 3 "$(cat /var/run/reboot-required* | sed -n '1p')"
         if [ "$(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")" == "" ]; then
-            Show 2 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
-        else    
+            Show 3 "System needs to be restarted for $(cat /var/run/reboot-required.pkgs)"
+        else
+            Show 3 "System needs to be restarted for new Kernel"    
             echo "Current Kernel Version - $(uname -a | awk '{print "linux-image-"$3}' | sed -e "s/^linux-image-//")"
             echo "Available Kernel Version - $(cat /var/run/reboot-required* | grep "linux-image" | sed -e "s/^linux-image-//")"
         fi
