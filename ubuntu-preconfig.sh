@@ -462,10 +462,10 @@ NFS_Mount(){
         fi
         Show 2 "NFS Mounting in progress"
         mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
-        Check_Success "Mounting the NAS NFS mount"
+        Check_Success "NAS NFS mount"
         Show 2 "Making the mount permanent"       
         echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
-        Check_Success "NFS boot mount "
+        Check_Success "NFS mount on boot"
     else
         Show 3 "$NAS_IP not available!"
     fi
@@ -474,7 +474,7 @@ Containers(){
     echo ""
     Show 4 "Starting Containers"
     #starting portainer
-    Show 2 "$(docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml -d up)"
+    Show 2 "$(docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d)"
 }
 Wrap_up_Banner() {
     echo -e ""
