@@ -517,10 +517,11 @@ Setup(){
     Check_Service
     Get_IPs
     Check_renderer
-    #Pihole_DNS
-    Clean_Up
     NFS_Mount
+    sleep 2
     Containers
+    Clean_Up
+    Pihole_DNS
     Wrap_up_Banner
 }
 Setup
