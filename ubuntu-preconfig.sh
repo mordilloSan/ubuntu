@@ -238,7 +238,7 @@ Reboot(){
                 touch "$WORK_DIR/resume-after-reboot"
                 Check_Success "Flag file to resume after reboot"
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK |  bash" >> "$WORK_DIR"/.bashrc
+                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> "$WORK_DIR"/.bashrc
                 Check_Success "Setting up run script on boot"
                 reboot </dev/tty
             ;;
