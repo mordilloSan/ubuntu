@@ -445,9 +445,11 @@ Clean_Up(){
     Remove_snap
     Stop_Service
     # Remove the line that we added in bashrc
-    sed -i "/curl -fsSL/d" ~/.bashrc
+    sed -i "/curl -fsSL/d" "$WORK_DIR"/.bashrc
+    Check_Success "Start script at boot disabled"
     # remove the temporary file that we created to check for reboot
     rm -f "$WORK_DIR"/resume-after-reboot
+    Check_Success "Removing temp files"
 }
 NFS_Mount(){
     #mounting the NAS
