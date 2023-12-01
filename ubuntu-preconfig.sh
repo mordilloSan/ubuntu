@@ -441,9 +441,6 @@ Remove_snap(){
 Clean_Up(){
     echo ""
     Show 4 "\e[1mStarting Clean Up\e[0m"
-    Remove_cloudinit
-    Remove_snap
-    Stop_Service
     # Remove the line that we added in bashrc
     sed -i "/curl -fsSL/d" "$WORK_DIR"/.bashrc
     Check_Success "Start script at boot disabled"
@@ -454,7 +451,7 @@ Clean_Up(){
 NFS_Mount(){
     #mounting the NAS
     echo ""
-    Show 4 "Setting up the NFS mount"
+    Show 4 "\e[1mSetting up the NFS mount\e[0m"
     if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
         Show 2 "NFS already mounted"
     elif ping -c 1 "$NAS_IP" &> /dev/null; then
@@ -474,7 +471,7 @@ NFS_Mount(){
 }
 Containers(){
     echo ""
-    Show 4 "Starting Containers"
+    Show 4 "\e[1mStarting Containers\e[0m"
     #starting portainer
     Show 2 "$(docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d)"
 }
@@ -526,8 +523,11 @@ Setup(){
     NFS_Mount
     sleep 2
     Containers
-    Clean_Up
     Pihole_DNS
+    Remove_cloudinit
+    Remove_snap
+    Stop_Service
+    Clean_Up
     Wrap_up_Banner
 }
 Setup
