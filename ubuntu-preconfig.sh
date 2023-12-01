@@ -403,25 +403,26 @@ Pihole_DNS(){
 NFS_Mount(){
     #mounting the NAS
     echo ""
-    Show 4 "\e[1mSetting up the NFS mount\e[0m"
-    if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
-        Show 2 "NFS already mounted"
-    elif ping -c 1 "$NAS_IP" &> /dev/null; then
-        if [ ! -d "$WORK_DIR/docker" ]; then
-            Show 2 "Creating Directory"
-            mkdir "$WORK_DIR"/docker
-        fi
-        Show 2 "NFS Mounting in progress"
-        mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
-        Check_Success "NAS NFS mount"
-        Show 2 "Making the mount permanent"
-        if ! grep "$WORK_DIR"/docker /etc/fstab; then
-            echo "$NAS_IP:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
-            Check_Success "NFS mount on boot"
+    if ping -c 1 "$NAS_IP" &> /dev/null; then
+        Show 4 "\e[1mSetting up the NFS mount\e[0m"
+        if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
+            Show 2 "NFS already mounted"
         else
-            Show 0 "NFS Mount on boot"
+            if [ ! -d "$WORK_DIR/docker" ]; then
+                Show 2 "Creating Directory"
+                mkdir "$WORK_DIR"/docker
+            fi
+            Show 2 "NFS Mounting in progress"
+            mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
+            Check_Success "NAS NFS mount"
+            Show 2 "Making the mount permanent"
+            if ! grep "$WORK_DIR"/docker /etc/fstab; then
+                echo "$NAS_IP:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+                Check_Success "NFS mount on boot"
+            else
+                Show 0 "NFS Mount on boot"
+            fi
         fi
-        
     else
         Show 3 "$NAS_IP not available!"
     fi
