@@ -344,9 +344,9 @@ Check_renderer(){
     echo ""
     Show 4 "\e[1mChanging networkd to NetworkManager\e[0m"
     #crude renderer checkfind
-    TESTE=$(find /etc/netplan/* | sed -n '1p')
-    Show 2 "Config File exists - $TESTE"
-    if grep -Fq "renderer: Network" "$TESTE"; then
+    NETWORK_CONFIG=$(find /etc/netplan/* | sed -n '1p')
+    Show 2 "Config File exists - $NETWORK_CONFIG"
+    if grep -Fq "renderer: Network" "$NETWORK_CONFIG"; then
         Show 0 "Network Manager OK"
     else
         Change_renderer
@@ -355,8 +355,8 @@ Check_renderer(){
 Change_renderer() {
     # backing up current config
     GreyStart
-    Show 2 "Backing up current config to $TESTE.backup"
-    mv "$TESTE" "$TESTE.backup"
+    Show 2 "Backing up current config to $NETWORK_CONFIG.backup"
+    mv "$NETWORK_CONFIG" "$NETWORK_CONFIG.backup"
     Show 2 "Preparing the new network configuration."
     echo "network:
   version: 2
@@ -370,13 +370,13 @@ Change_renderer() {
         via: $ROUTER
       nameservers:
         addresses: [1.1.1.1]
-        search: []" >> "$TESTE"
+        search: []" >> "$NETWORK_CONFIG"
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
       dhcp4: yes
-      optional: true" >> "$TESTE"
+      optional: true" >> "$NETWORK_CONFIG"
     done
-    chmod 600 "$TESTE"
+    chmod 600 "$NETWORK_CONFIG"
     netplan try
     Check_Success "Your current IP is $IP. Netplan"
     ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
@@ -450,7 +450,9 @@ Clean_Up(){
     Check_Success "Start script at boot disabled"
     # remove the temporary file that we created to check for reboot
     rm -f "$WORK_DIR"/resume-after-reboot
-    Check_Success "Removing temp files"
+    # if all packages are installed ok we can remove the repo backup
+    rm -rf "$WORK_DIR"/repos
+    Show 0 "Temp files Removed"
 }
 NFS_Mount(){
     #mounting the NAS
@@ -478,7 +480,6 @@ Containers(){
     Show 4 "\e[1mStarting Containers\e[0m"
     #starting portainer
     docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
-    Check_Success "Portainer start"
 }
 Wrap_up_Banner() {
     echo -e ""
