@@ -416,7 +416,7 @@ NFS_Mount(){
         Check_Success "NAS NFS mount"
         Show 2 "Making the mount permanent"
         if ! grep "$WORK_DIR"/docker /etc/fstab; then
-            echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+            echo "$NAS_IP:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
             Check_Success "NFS mount on boot"
         else
             Show 0 "NFS Mount on boot"
