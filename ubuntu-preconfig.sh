@@ -441,6 +441,8 @@ Remove_snap(){
 Clean_Up(){
     echo ""
     Show 4 "\e[1mStarting Clean Up\e[0m"
+    Remove_cloudinit
+    Remove_snap
     # Remove the line that we added in bashrc
     sed -i "/curl -fsSL/d" "$WORK_DIR"/.bashrc
     Check_Success "Start script at boot disabled"
@@ -525,8 +527,6 @@ Setup(){
     sleep 2
     Containers
     Pihole_DNS
-    Remove_cloudinit
-    Remove_snap
     Stop_Service
     Clean_Up
     Wrap_up_Banner
