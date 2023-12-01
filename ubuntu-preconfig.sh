@@ -305,8 +305,6 @@ Install_Packages() {
         Show 1 "Instalation  failed!"
         return 1
     fi
-    rm -r cockpit-sensors
-    rm -f cockpit-sensors*.*
 }
 Initiate_Service(){
     echo ""
@@ -452,6 +450,11 @@ Clean_Up(){
     rm -f "$WORK_DIR"/resume-after-reboot
     # if all packages are installed ok we can remove the repo backup
     rm -rf "$WORK_DIR"/repos
+    #leftovers of package install
+    rm -r cockpit-sensors
+    rm -f cockpit-sensors*.*
+    #backup of the original network config
+    rm "$NETWORK_CONFIG.backup"
     Show 0 "Temp files Removed"
 }
 NFS_Mount(){
@@ -468,8 +471,10 @@ NFS_Mount(){
         Show 2 "NFS Mounting in progress"
         mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
         Check_Success "NAS NFS mount"
-        Show 2 "Making the mount permanent"       
-        echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+        Show 2 "Making the mount permanent"
+        if grep "$WORK_DIR"/docker /etc/fstab; then
+            echo "192.168.1.65:/volume2/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+        fi
         Check_Success "NFS mount on boot"
     else
         Show 3 "$NAS_IP not available!"
