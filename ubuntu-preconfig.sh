@@ -61,6 +61,8 @@ Get_IPs() {
     done
     # gets router IP
     ROUTER=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
+    #gets cockpit port
+    COCKPIT_PORT=$(cat /lib/systemd/system/cockpit.socket | grep ListenStream= | sed 's/ListenStream=//')
 }
 # Colors #
 Show() {
@@ -485,12 +487,7 @@ Wrap_up_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Cockpit${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
-    COCKPIT_PORT=$(cat /lib/systemd/system/cockpit.socket | grep ListenStream= | sed 's/ListenStream=//')
-        if [[ "$COCKPIT_PORT" -eq "80" ]]; then
-            echo -e " https://$IP (${NIC_ON})"
-        else
-            echo -e " https://$IP:$COCKPIT_PORT (${NIC_ON})"
-        fi
+    echo -e " https://$IP:$COCKPIT_PORT (${NIC_ON})"
     echo -e ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Portainer${COLOUR_RESET} is running at:${COLOUR_RESET}"
