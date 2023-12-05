@@ -34,7 +34,7 @@ Start (){
     #Script link
     readonly SCRIPT_LINK="https://raw.githubusercontent.com/mordilloSan/ubuntu/main/ubuntu-preconfig.sh"
     #Enable apt-get progress bar, Check if file exists or if it doesnt contain the key
-    if [ ! -f /etc/apt/apt.conf.d/99fancy ] || [ "$(cat /etc/apt/apt.conf.d/99fancy | grep "Progress-Fancy")" == "" ]; then   
+    if [ ! -f /etc/apt/apt.conf.d/99fancy ] || [ "$(grep "Progress-Fancy" "/etc/apt/apt.conf.d/99fancy")" == "" ]; then   
         echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
     fi    
 }
@@ -62,7 +62,7 @@ Get_IPs() {
     # gets router IP
     ROUTER=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
     #gets cockpit port
-    COCKPIT_PORT=$(cat /lib/systemd/system/cockpit.socket | grep ListenStream= | sed 's/ListenStream=//')
+    COCKPIT_PORT=$(grep "ListenStream=" "/lib/systemd/system/cockpit.socket" | sed 's/ListenStream=//')
 }
 # Colors #
 Show() {
