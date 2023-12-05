@@ -426,6 +426,7 @@ NFS_Mount(){
     else
         Show 3 "$NAS_IP not available!"
     fi
+    sleep 2
 }
 Containers(){
     echo ""
@@ -531,12 +532,11 @@ Setup(){
     Check_Service
     Get_IPs
     Check_renderer
-    NFS_Mount
-    sleep 2
-    Containers
     Pihole_DNS
     Stop_Service
     Clean_Up
+    NFS_Mount
+    Containers
     Wrap_up_Banner
 }
 Setup
