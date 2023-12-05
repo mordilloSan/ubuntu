@@ -5,8 +5,7 @@ Start (){
     # SYSTEM INFO
     export DEBIAN_FRONTEND=noninteractive
     ((EUID))
-    source /etc/os-release
-    DIST=${ID}
+    DIST=$(lsb_release -a | grep ID | awk '{print $3}')
     readonly DIST
     UNAME_M="$(uname -m)"
     readonly UNAME_M
@@ -44,7 +43,7 @@ onCtrlC() {
 }
 Get_IPs() {
     # go trough all available NIC's till one IP is found
-    ALL_NIC=$(ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)" )
+    ALL_NIC=$(ls /sys/class/net | grep -v "$(ls /sys/devices/virtual/net/)" )
     for NIC_ON in ${ALL_NIC}; do
         IP=$(ifconfig "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
@@ -122,8 +121,7 @@ Check_Permissions() {
 		Show 1 "Current interpreter: \e[33m$interpreter\e[0m"
 		exit 1
 	fi
-	euid=$(id -u)
-	if [[ "$euid" != 0 ]]; then
+	if [[ "$EUID" != 0 ]]; then
 		Show 1 "Please run as root or with sudo."
 		exit 1
 	fi
@@ -539,5 +537,6 @@ Setup(){
     Containers
     Wrap_up_Banner
 }
+
 Setup
 exit 0
