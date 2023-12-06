@@ -489,14 +489,14 @@ Clean_Up(){
     rm -f "$NETWORK_CONFIG.backup"
     Show 0 "Temp files Removed"
 
-    rm -f 10-help-text
-    rm -f 50-motd-news
-    rm -f 88-esm-announce
-    rm -f 91-contract-ua-esm-status
-    rm -f 92-unattended-upgrades
-    rm -f 95-hwe-eol
-    rm -f 97-overlayroot
-    rm -f 98-fsck-at-reboot
+    rm -f /etc/update-motd.d/10-help-text
+    rm -f /etc/update-motd.d/50-motd-news
+    rm -f /etc/update-motd.d/88-esm-announce
+    rm -f /etc/update-motd.d/91-contract-ua-esm-status
+    rm -f /etc/update-motd.d/92-unattended-upgrades
+    rm -f /etc/update-motd.d/95-hwe-eol
+    rm -f /etc/update-motd.d/97-overlayroot
+    rm -f /etc/update-motd.d/98-fsck-at-reboot
 
 }
 Wrap_up_Banner() {
