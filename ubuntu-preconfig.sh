@@ -98,19 +98,19 @@ Check_Arch() {
         ;;
     esac
 }
-Check_Distribution() {
-    if [[ $DIST == *ubuntu* ]]; then
-        Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
-    else
-        Show 1 "Aborted, installation is only supported in linux ubuntu."
-        exit 1
-    fi
-}
 Check_OS() {
     if [[ $UNAME_U == *Linux* ]]; then
         Show 0 "Your OS is : \e[33m$UNAME_U\e[0m"
     else
         Show 1 "This script is only for Linux."
+        exit 1
+    fi
+}
+Check_Distribution() {
+    if [[ $DIST == *ubuntu* ]]; then
+        Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
+    else
+        Show 1 "Aborted, installation is only supported in linux ubuntu."
         exit 1
     fi
 }
