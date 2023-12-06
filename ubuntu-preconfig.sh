@@ -99,7 +99,7 @@ Check_Arch() {
     esac
 }
 Check_Distribution() {
-    if [[ $DIST == *ubuntu* ]]; then
+    if [[ $DIST == *Ubuntu* ]]; then
         Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
     else
         Show 1 "Aborted, installation is only supported in linux ubuntu."
