@@ -4,8 +4,8 @@
 Start (){
     # SYSTEM INFO
     export DEBIAN_FRONTEND=noninteractive
-    ((EUID))
-    DIST=$(lsb_release -a | grep ID | awk '{print $3}')
+    source /etc/os-release
+    DIST="$ID"
     readonly DIST
     UNAME_M="$(uname -m)"
     readonly UNAME_M
@@ -100,15 +100,15 @@ Check_Arch() {
 }
 Check_Distribution() {
     if [[ $DIST == *Ubuntu* ]]; then
-        Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
+        echo  "Your Linux Distribution is : \e[33m$DIST\e[0m"
     else
-        Show 1 "Aborted, installation is only supported in linux ubuntu."
+        echo  "Aborted, installation is only supported in linux ubuntu."
         exit 1
     fi
 }
 Check_OS() {
     if [[ $UNAME_U == *Linux* ]]; then
-        Show 0 "Your System is : \e[33m$UNAME_U\e[0m"
+        Show 0 "Your OS is : \e[33m$UNAME_U\e[0m"
     else
         Show 1 "This script is only for Linux."
         exit 1
