@@ -411,11 +411,11 @@ NFS_Mount(){
                 mkdir "$WORK_DIR"/docker
             fi
             Show 2 "NFS Mounting in progress"
-            mount -t nfs "$NAS_IP":/volume2/docker "$WORK_DIR"/docker
+            mount -t nfs "$NAS_IP":/volume2/Server "$WORK_DIR"/docker
             Check_Success "NAS NFS mount"
             Show 2 "Making the mount permanent"
             if ! grep "$WORK_DIR"/docker /etc/fstab; then
-                echo "$NAS_IP:/volume2/server/docker $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
+                echo "$NAS_IP:/volume2/Server $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
                 Check_Success "NFS mount on boot"
             else
                 Show 0 "NFS Mount on boot"
