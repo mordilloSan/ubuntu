@@ -420,6 +420,7 @@ NFS_Mount(){
             else
                 Show 0 "NFS Mount on boot"
             fi
+            Containers
         fi
     else
         Show 3 "$NAS_IP not available!"
@@ -520,7 +521,6 @@ Wrap_up_Banner() {
     echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
 }
-
 # Execute Everything
 Setup(){
     Start
@@ -544,7 +544,6 @@ Setup(){
     Stop_Service
     Clean_Up
     NFS_Mount
-    Containers
     Wrap_up_Banner
 }
 
