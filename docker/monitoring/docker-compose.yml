@@ -1,6 +1,7 @@
 version: '3.8' 
 networks: 
   monitoring:
+    name: monitoring
     driver: bridge 
 
 services: 
@@ -20,7 +21,8 @@ services:
       - /sys:/host/sys:ro 
       - /:/rootfs:ro
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
-    command:
+      - /run/udev/data:/run/udev/data
+    command: 
       - '--collector.disable-defaults'
       - '--collector.stat'
       - '--collector.time'
@@ -29,9 +31,9 @@ services:
       - '--collector.hwmon'
       - '--collector.meminfo'
       - '--collector.diskstats'
-      - '--collector.systemd'
+
       - '--collector.processes'
-      - '--path.rootfs=/rootfs'
+      - '--collector.netclass.netlink'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
       - '--path.procfs=/host/proc' 
       - '--path.rootfs=/rootfs' 
@@ -49,7 +51,7 @@ services:
     networks: 
       - monitoring
     ports: 
-      - 9090:9090 
+      - 9091:9090 
     environment: 
       - PUID=1000
       - PGID=1000
@@ -80,9 +82,6 @@ services:
       PGID: 1000
       TZ: "Europe/Lisbon"
       GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource,natel-discrete-panel,grafana-piechart-panel
-      GF_SERVER_ROOT_URL: http://localhost
-      GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_AUTH_ANONYMOUS_ENABLED: true 
     volumes: 
       - /home/miguelmariz/docker/grafana/data:/etc/grafana/provisioning/datasources 
       - /home/miguelmariz/docker/grafana:/var/lib/grafana 
@@ -94,6 +93,7 @@ services:
     read_only: true 
     image: gcr.io/cadvisor/cadvisor:latest 
     container_name: cadvisor
+    hostname: cadvisor
     networks: 
       - monitoring 
     ports: 
@@ -105,19 +105,8 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     devices:
       - /dev/kmsg:/dev/kmsg
-    cap_add:
-      - SYS_ADMIN
     restart: unless-stopped 
-    depends_on: 
-      - redis
 
-  redis: 
-    image: redis:latest 
-    container_name: redis 
-    ports: 
-      - 6379:6379 
-    networks: 
-      - monitoring
 
   influxdb:
     image: influxdb:latest
