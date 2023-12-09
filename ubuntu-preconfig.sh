@@ -242,7 +242,7 @@ Reboot(){
                     Show 0 "Flag file to resume after reboot success"
                 fi                
                 # add the link to bashrc to start the script on login
-                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> "$WORK_DIR"/.bashrc
+                echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc
                 Check_Success "Setting up run script on boot"
                 reboot </dev/tty
             ;;
@@ -383,6 +383,7 @@ Change_renderer() {
     sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
     systemctl restart NetworkManager
     Check_Success "NetworkManager"
+    systemctl enable NetworkManager-wait-online.service
 }
 Pihole_DNS(){
     echo ""

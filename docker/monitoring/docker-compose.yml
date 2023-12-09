@@ -1,0 +1,142 @@
+version: '3.8' 
+networks: 
+  monitoring:
+    driver: bridge 
+
+services: 
+  node-exporter:
+    security_opt:
+      - no-new-privileges=true
+    read_only: true
+    image: prom/node-exporter:latest 
+    container_name: node-exporter
+    hostname: node-exporter 
+    networks: 
+      - monitoring
+    ports: 
+      - 9100:9100 
+    volumes: 
+      - /proc:/host/proc:ro 
+      - /sys:/host/sys:ro 
+      - /:/rootfs:ro
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+    command:
+      - '--collector.disable-defaults'
+      - '--collector.stat'
+      - '--collector.time'
+      - '--collector.cpu'
+      - '--collector.loadavg'
+      - '--collector.hwmon'
+      - '--collector.meminfo'
+      - '--collector.diskstats'
+      - '--collector.systemd'
+      - '--collector.processes'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--path.procfs=/host/proc' 
+      - '--path.rootfs=/rootfs' 
+      - '--path.sysfs=/host/sys'
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:9100/
+    restart: unless-stopped 
+  
+  prometheus:
+    security_opt:
+      - no-new-privileges=true
+    image: prom/prometheus:latest
+    container_name: prometheus
+    hostname: prometheus
+    networks: 
+      - monitoring
+    ports: 
+      - 9090:9090 
+    environment: 
+      - PUID=1000
+      - PGID=1000
+    restart: unless-stopped 
+    volumes: 
+      - /home/miguelmariz/docker/prometheus:/prometheus
+      - /home/miguelmariz/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--storage.tsdb.retention.time=60d'
+      - '--config.file=/etc/prometheus/prometheus.yml' 
+      - '--storage.tsdb.path=/prometheus' 
+      - '--web.console.libraries=/etc/prometheus/console_libraries' 
+      - '--web.console.templates=/etc/prometheus/consoles' 
+      - '--web.enable-lifecycle' 
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:9090/ || exit 1
+
+  grafana: 
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    networks: 
+      - monitoring
+    ports: 
+      - 3340:3000
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "Europe/Lisbon"
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource,natel-discrete-panel,grafana-piechart-panel
+      GF_SERVER_ROOT_URL: http://localhost
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: true 
+    volumes: 
+      - /home/miguelmariz/docker/grafana/data:/etc/grafana/provisioning/datasources 
+      - /home/miguelmariz/docker/grafana:/var/lib/grafana 
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000/api/health
+    restart: unless-stopped
+       
+  cadvisor:
+    read_only: true 
+    image: gcr.io/cadvisor/cadvisor:latest 
+    container_name: cadvisor
+    networks: 
+      - monitoring 
+    ports: 
+      - 8081:8080 
+    volumes: 
+      - /:/rootfs:ro 
+      - /var/run:/var/run:rw 
+      - /sys:/sys:ro 
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    cap_add:
+      - SYS_ADMIN
+    restart: unless-stopped 
+    depends_on: 
+      - redis
+
+  redis: 
+    image: redis:latest 
+    container_name: redis 
+    ports: 
+      - 6379:6379 
+    networks: 
+      - monitoring
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    hostname: influxdb
+    networks: 
+      - monitoring
+    ports:
+      - "9086:8086"
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /home/miguelmariz/docker/influxdb/config:/etc/influxdb2
+      - /home/miguelmariz/docker/influxdb/db:/var/lib/influxdb2
+    healthcheck:
+      test: "curl -f http://192.168.1.66:9086/ping"
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
