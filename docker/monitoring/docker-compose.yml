@@ -31,7 +31,6 @@ services:
       - '--collector.hwmon'
       - '--collector.meminfo'
       - '--collector.diskstats'
-
       - '--collector.processes'
       - '--collector.netclass.netlink'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
@@ -106,7 +105,6 @@ services:
     devices:
       - /dev/kmsg:/dev/kmsg
     restart: unless-stopped 
-
 
   influxdb:
     image: influxdb:latest
