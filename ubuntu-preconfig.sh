@@ -423,8 +423,8 @@ NFS_Mount(){
             else
                 Show 0 "NFS Mount on boot"
             fi
-            Containers
         fi
+        Containers
     else
         Show 3 "$NAS_IP not available!"
     fi
