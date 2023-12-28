@@ -23,7 +23,6 @@ services:
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
       - /run/udev/data:/run/udev/data
     command: 
-      - '--collector.disable-defaults'
       - '--collector.stat'
       - '--collector.time'
       - '--collector.cpu'
