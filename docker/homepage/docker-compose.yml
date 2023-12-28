@@ -1,0 +1,17 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    hostname: homepage
+    environment:
+      - PGID=999 #docker groupid
+      - PUID=1000
+      - TZ=Europe/Lisbon
+    ports:
+      - 3001:3000
+    volumes:
+      - /home/miguelmariz/docker/homepage:/app/config
+      - /home/miguelmariz/docker/homepage/images:/app/public/images
+      - /home/miguelmariz/docker/homepage/icons:/app/public/icons
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
