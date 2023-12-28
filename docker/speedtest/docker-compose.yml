@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  speedtest-tracker:
+    image: ghcr.io/alexjustesen/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    ports:
+      - '3080:80'
+      - '3443:443'
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - DB_CONNECTION=pgsql
+      - DB_HOST=speedtest_db
+      - DB_PORT=5432
+      - DB_DATABASE=speedtest_tracker
+      - DB_USERNAME=miguelmariz
+      - DB_PASSWORD=F4FzXF%t@X&MNEV4n
+      # run inside container - "php artisan key:generate --show" then copy paste
+      - APP_KEY="base64:7AZ5Uss88X9O+RHSt+aYsPqLnuF8oF676wAzTUsYvLk="
+    volumes:
+      - /home/miguelmariz/docker/speedtest/web:/etc/ssl/web
+      - /home/miguelmariz/docker/speedtest:/config
+    healthcheck:
+      test: "curl -k https://192.168.1.66:3443"
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    depends_on:
+      speedtest_db:
+        condition: service_healthy
+
+  speedtest_db:
+    image: postgres:15
+    container_name: speedtest_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - POSTGRES_DB=speedtest_tracker
+      - POSTGRES_USER=miguelmariz
+      - POSTGRES_PASSWORD=F4FzXF%t@X&MNEV4n
+    volumes:
+      - /home/miguelmariz/teste:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d speedtest_tracker -U miguelmariz"]
+      interval: 15s
+      timeout: 15s
+      retries: 5
+      start_period: 10s
+    restart: always

@@ -1,0 +1,16 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    network_mode: bridge
+    ports:
+      - 801:80
+    volumes:
+      - /home/miguelmariz/docker/vaultwarden:/data
+    environment:
+      - SIGNUPS_ALLOWED=false
+      - INVITATIONS_ALLOWED=false
+      - PGID=1000
+      - PUID=1000
+      - TZ=Europe/Lisbon
+    restart: unless-stopped

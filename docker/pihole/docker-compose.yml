@@ -1,0 +1,43 @@
+version: "3"
+services:
+  pihole:
+    container_name: pihole
+    hostname: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "81:80/tcp"
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=Europe/Lisbon
+      - DNSMASQ_LISTENING=all
+      - WEBPASSWORD=teste
+    volumes:
+      - /home/miguelmariz/docker/pihole/pihole:/etc/pihole
+      - /home/miguelmariz/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
+    restart: unless-stopped
+
+  pihole-exporter:
+    container_name: pihole-exporter
+    hostname: pihole-exporter
+    image: ekofr/pihole-exporter:latest
+    networks:
+      - monitoring
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=Europe/Lisbon
+      - PIHOLE_HOSTNAME=192.168.1.66
+      #inside pihole bash run --> "awk -F= -v key="WEBPASSWORD" '$1==key {print $2}' /etc/pihole/setupVars.conf"
+      - PIHOLE_API_TOKEN=teste
+      - PIHOLE_PORT=81
+    restart: unless-stopped
+    depends_on:
+      pihole:
+        condition: service_healthy
+
+networks:
+  monitoring:
+    external: true

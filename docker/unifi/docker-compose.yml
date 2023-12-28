@@ -1,0 +1,57 @@
+services:
+  unifi:
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    container_name: unifi
+    hostname: unifi
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+      - MONGO_USER=miguelmariz
+      - MONGO_PASS=unifipwd
+      - MONGO_HOST=unifi_db
+      - MONGO_PORT=27017
+      - MONGO_DBNAME=unifi
+      - MEM_LIMIT=1024 #optional
+      - MEM_STARTUP=1024 #optional
+    volumes:
+      - /home/miguelmariz/docker/unifi:/config
+    ports:
+      - 8443:8443
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 1900:1900/udp #optional
+      - 8843:8843 #optional
+      - 8880:8880 #optional
+      - 6789:6789 #optional
+      - 5514:5514/udp #optional
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8443"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: always
+    
+  unifi_db:
+    image: mongo:4.4.24
+    container_name: unifi_db
+    hostname: unifi_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /home/miguelmariz/docker/unifi/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - /home/miguelmariz/docker/unifi/mongo_db/config:/data/configdb
+      - /home/miguelmariz/docker/unifi/mongo_db/db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    command: 
+      mongod --port 27017
+    restart: always
