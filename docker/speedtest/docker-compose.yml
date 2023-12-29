@@ -14,7 +14,7 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=speedtest_tracker
       - DB_USERNAME=miguelmariz
-      - DB_PASSWORD=F4FzXF%t@X&MNEV4n
+      - DB_PASSWORD=teste
       # run inside container - "php artisan key:generate --show" then copy paste
       - APP_KEY="base64:7AZ5Uss88X9O+RHSt+aYsPqLnuF8oF676wAzTUsYvLk="
     volumes:
@@ -38,7 +38,7 @@ services:
       - PGID=1000
       - POSTGRES_DB=speedtest_tracker
       - POSTGRES_USER=miguelmariz
-      - POSTGRES_PASSWORD=F4FzXF%t@X&MNEV4n
+      - POSTGRES_PASSWORD=teste
     volumes:
       - /home/miguelmariz/teste:/var/lib/postgresql/data
     healthcheck:
