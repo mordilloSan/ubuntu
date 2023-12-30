@@ -39,7 +39,7 @@ Start (){
         echo 'DPkg::Progress-Fancy "1";' >> /etc/apt/apt.conf.d/99fancy
     fi    
 }
-    # shellcheck disable=SC2317
+# shellcheck disable=SC2317
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
     exit 1
