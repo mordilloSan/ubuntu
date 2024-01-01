@@ -8,8 +8,6 @@ services:
     volumes:
       - /home/miguelmariz/docker/vaultwarden:/data
     environment:
-      - SIGNUPS_ALLOWED=false
-      - INVITATIONS_ALLOWED=false
       - PGID=1000
       - PUID=1000
       - TZ=Europe/Lisbon

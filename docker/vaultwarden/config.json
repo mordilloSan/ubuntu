@@ -1,5 +1,4 @@
 {
-  "domain": "http://192.168.1.65",
   "sends_allowed": true,
   "incomplete_2fa_time_limit": 3,
   "disable_icon_download": false,
