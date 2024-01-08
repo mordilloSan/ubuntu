@@ -1,13 +1,15 @@
 #!/bin/bash
 
-packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
+packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines" "lm-sensors" "htop" "network-manager")
 total_packages=${#packages[@]}
 progress=0
 
-# Function to display a text-based progress indicator
+# Function to display a text-based progress indicator for each package
 function show_progress {
     package_name=$1
-    percentage=$2
+    current=$2
+    total=$3
+    percentage=$((current * 100 / total))
     echo "Installing $package_name: $percentage%"
 }
 
@@ -16,6 +18,11 @@ function is_package_installed {
     dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
 }
 
+# List of packages to install
+packages=("package1" "package2" "package3")
+total_packages=${#packages[@]}
+progress=0
+
 # Loop through each package and install if not already installed
 for current_package in "${packages[@]}"; do
     if ! is_package_installed "$current_package"; then
@@ -23,8 +30,7 @@ for current_package in "${packages[@]}"; do
     fi
 
     ((progress++))
-    percentage=$((progress * 100 / total_packages))
-    show_progress "$current_package" $percentage
+    show_progress "$current_package" $progress "$total_packages"
 done
 
 # Display completion message
