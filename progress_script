@@ -15,8 +15,15 @@ function install_package_with_progress {
     fi
 }
 
-# List of packages to install
-packages=("lm-sensors" "htop" "network-manager" "net-tools")
+# Install pv first
+if is_package_installed "pv"; then
+    echo "pv is already installed."
+else
+    sudo apt-get install -y "pv"
+fi
+
+# List of packages to install (excluding pv, as it's already installed)
+packages=("nfs-kernel-server" "curl" "vim")
 
 # Loop through each package and install if not already installed
 for current_package in "${packages[@]}"; do
