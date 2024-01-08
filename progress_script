@@ -1,39 +1,31 @@
 #!/bin/bash
 
-readonly packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
+packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
 total_packages=${#packages[@]}
 progress=0
 
-# Function to display a progress bar
+# Function to display a text-based progress indicator
 function show_progress {
     package_name=$1
     percentage=$2
-    echo "$percentage" | whiptail --gauge "Installing $package_name" 10 70 0
+    echo "Installing $package_name: $percentage%"
 }
 
 # Function to check if a package is installed
 function is_package_installed {
-    dpkg -l "$1" | grep -q "ii"
+    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
 }
 
 # Loop through each package and install if not already installed
 for current_package in "${packages[@]}"; do
-    if [ "$(dpkg-query -W -f='${Status}' "$current_package" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
-        sudo apt-get install -y "$current_package" > /dev/null 2>&1 &
-        pid=$!
-
-        while kill -0 $pid > /dev/null 2>&1; do
-            ((progress++))
-            percentage=$((progress * 100 / total_packages))
-            show_progress "$current_package" $percentage
-            sleep 0.5
-        done
-    else
-        ((progress++))
-        percentage=$((progress * 100 / total_packages))
-        show_progress "$current_package" $percentage
+    if ! is_package_installed "$current_package"; then
+        sudo apt-get install -y "$current_package" > /dev/null 2>&1
     fi
+
+    ((progress++))
+    percentage=$((progress * 100 / total_packages))
+    show_progress "$current_package" $percentage
 done
 
 # Display completion message
-whiptail --msgbox "All packages installed successfully!" 10 70
+echo "All packages installed successfully!"
