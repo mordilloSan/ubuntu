@@ -1,18 +1,11 @@
 #!/bin/bash
 
-packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines" "lm-sensors" "htop" "network-manager")
-total_packages=${#packages[@]}
-progress=0
+packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
 
 # Function to check if a package is installed
 function is_package_installed {
     dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
 }
-
-# List of packages to install
-packages=("package1" "package2" "package3")
-total_packages=${#packages[@]}
-progress=0
 
 # Loop through each package and install if not already installed
 for current_package in "${packages[@]}"; do
@@ -33,15 +26,12 @@ chmod 644 "$HA_QCOW2_FILE"
 # Import Home Assistant VM with UEFI
 virt-install \
   --name homeassistant \
-  --ram 2048 \
+  --ram 4096 \
   --disk path="$HA_QCOW2_FILE",bus=sata \
-  --vcpus 2 \
+  --vcpus 4 \
   --os-variant=generic  \
   --network bridge=virbr0 \
   --graphics none \
   --boot uefi \
   --noautoconsole \
   --import  # Specify import method
-
-# Clean up downloaded QCOW2 image
-rm -f "$HA_QCOW2_FILE"
