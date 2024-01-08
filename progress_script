@@ -1,36 +1,26 @@
 #!/bin/bash
 
-packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines" "lm-sensors" "htop" "network-manager")
-total_packages=${#packages[@]}
-progress=0
-
-# Function to display a text-based progress indicator for each package
-function show_progress {
-    package_name=$1
-    current=$2
-    total=$3
-    percentage=$((current * 100 / total))
-    echo "Installing $package_name: $percentage%"
-}
-
 # Function to check if a package is installed
 function is_package_installed {
-    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
+    dpkg -l "$1" | grep -q "ii"
+}
+
+# Function to display a progress bar using pv
+function install_package_with_progress {
+    package_name=$1
+    if is_package_installed "$package_name"; then
+        echo "$package_name is already installed."
+    else
+        sudo apt-get install -y "$package_name" | pv -p -s $(apt-cache show "$package_name" | grep "Installed-Size:" | awk '{print $2}')k > /dev/null
+    fi
 }
 
 # List of packages to install
-packages=("package1" "package2" "package3")
-total_packages=${#packages[@]}
-progress=0
+packages=("lm-sensors" "htop" "network-manager" "net-tools")
 
 # Loop through each package and install if not already installed
 for current_package in "${packages[@]}"; do
-    if ! is_package_installed "$current_package"; then
-        sudo apt-get install -y "$current_package" > /dev/null 2>&1
-    fi
-
-    ((progress++))
-    show_progress "$current_package" $progress "$total_packages"
+    install_package_with_progress "$current_package"
 done
 
 # Display completion message
