@@ -46,7 +46,7 @@ onCtrlC() {
 }
 Get_IPs() {
     # go trough all available NIC's till one IP is found
-    ALL_NIC=$(ls /sys/class/net | grep -v "$(ls /sys/devices/virtual/net/)" )
+    ALL_NIC=$(ip -o link show | awk -F': ' '$2 !~ /^(lo|veth|br|docker)/ {print $2}')
     for NIC_ON in ${ALL_NIC}; do
         IP=$(ifconfig "${NIC_ON}" | grep inet | grep -v 127.0.0.1 | grep -v 172.17.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
         if [[ -n $IP ]]; then
@@ -158,7 +158,7 @@ Welcome_Banner() {
 	echo " This will update the system, add 45Drives repository,
  install cockpit, install docker, install general tools,
  remove cloud-init and snapd, remove backup&temp files
- switch networkd to network-manager, install portainer."
+ switch networkd to network-manager, install portainer, and start all stacks"
 	echo ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	Check_Arch
@@ -439,9 +439,21 @@ NFS_Mount(){
 }
 Containers(){
     echo ""
-    Show 4 "\e[1mStarting Containers\e[0m"
+    Show 4 "\e[1mStarting Portainer\e[0m"
     #starting portainer
     docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
+    Show 4 "\e[1mStarting Portainer Stacks\e[0m"
+    #Using the portainer API to start all stacks
+    PORTAINER_URL="https://$IP:9443"
+    read -r -p "Enter your user name" USERNAME
+    read -r -p "Enter your password" PASSWORD
+    # Get a list of stacks
+    STACKS=$(curl -s -X GET -H "Content-Type: application/json" -u "$USERNAME:$PASSWORD" "$PORTAINER_URL/api/stacks")
+    # Iterate over the stacks and stop/start each one
+    for STACK_ID in $(echo "$STACKS" | jq -r '.[] | .Id'); do
+        curl -X POST -H "Content-Type: application/json" -d '{"type": 1}' -u "$USERNAME:$PASSWORD" "$PORTAINER_URL/api/stacks/$STACK_ID/stop"
+        curl -X POST -H "Content-Type: application/json" -d '{"type": 2}' -u "$USERNAME:$PASSWORD" "$PORTAINER_URL/api/stacks/$STACK_ID/start"
+    done    
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
@@ -499,17 +511,6 @@ Clean_Up(){
     #backup of the original network config
     rm -f "$NETWORK_CONFIG.backup"
     Show 0 "Temp files Removed"
-
-    rm -f /etc/update-motd.d/10-help-text
-    rm -f /etc/update-motd.d/50-motd-news
-    rm -f /etc/update-motd.d/88-esm-announce
-    rm -f /etc/update-motd.d/91-contract-ua-esm-status
-    rm -f /etc/update-motd.d/92-unattended-upgrades
-    rm -f /etc/update-motd.d/95-hwe-eol
-    rm -f /etc/update-motd.d/97-overlayroot
-    rm -f /etc/update-motd.d/98-fsck-at-reboot
-    rm -f /etc/update-motd.d/90-updates-available
-
 }
 Wrap_up_Banner() {
     echo -e ""
