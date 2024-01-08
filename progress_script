@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+
+# Function to display a progress bar
+function show_progress {
+    package_name=$1
+    percentage=$2
+    echo "$percentage" | whiptail --gauge "Installing $package_name" 10 70 0
+}
+
+# List of packages to install
+readonly packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
+total_packages=${#packages[@]}
+progress=0
+
+# Loop through each package and install
+for current_package in "${packages[@]}"; do
+    sudo apt-get install -y "$current_package" > /dev/null 2>&1 &
+    pid=$!
+    
+    while kill -0 $pid > /dev/null 2>&1; do
+        ((progress++))
+        percentage=$((progress * 100 / total_packages))
+        show_progress "$current_package" $percentage
+        sleep 0.5
+    done
+done
+
+# Display completion message
+whiptail --msgbox "All packages installed successfully!" 10 70
