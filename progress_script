@@ -1,34 +1,47 @@
 #!/bin/bash
 
+packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines" "lm-sensors" "htop" "network-manager")
+total_packages=${#packages[@]}
+progress=0
+
 # Function to check if a package is installed
 function is_package_installed {
-    dpkg -l "$1" | grep -q "ii"
+    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
 }
 
-# Function to display a progress bar using pv
-function install_package_with_progress {
-    package_name=$1
-    if is_package_installed "$package_name"; then
-        echo "$package_name is already installed."
-    else
-        sudo apt-get install -y "$package_name" | pv -p -s $(apt-cache show "$package_name" | grep "Installed-Size:" | awk '{print $2}')k > /dev/null
-    fi
-}
-
-# Install pv first
-if is_package_installed "pv"; then
-    echo "pv is already installed."
-else
-    sudo apt-get install -y "pv"
-fi
-
-# List of packages to install (excluding pv, as it's already installed)
-packages=("nfs-kernel-server" "curl" "vim")
+# List of packages to install
+packages=("package1" "package2" "package3")
+total_packages=${#packages[@]}
+progress=0
 
 # Loop through each package and install if not already installed
 for current_package in "${packages[@]}"; do
-    install_package_with_progress "$current_package"
+    if ! is_package_installed "$current_package"; then
+        sudo apt-get install -y "$current_package" > /dev/null 2>&1
+    fi
 done
 
-# Display completion message
-echo "All packages installed successfully!"
+HA_OVA_URL="https://github.com/home-assistant/operating-system/releases/download/11.3/haos_ova-11.3.qcow2.xz"
+HA_QCOW2_FILE="/var/lib/libvirt/images/homeassistant.qcow2"
+
+wget "$HA_OVA_URL" -O - | xzcat -d > "$HA_QCOW2_FILE"
+
+# Grant permissions to libvirt-qemu user
+chown libvirt-qemu:libvirt-qemu "$HA_QCOW2_FILE"
+chmod 644 "$HA_QCOW2_FILE"
+
+# Import Home Assistant VM with UEFI
+virt-install \
+  --name homeassistant \
+  --ram 2048 \
+  --disk path="$HA_QCOW2_FILE",bus=sata \
+  --vcpus 2 \
+  --os-variant=generic  \
+  --network bridge=virbr0 \
+  --graphics none \
+  --boot uefi \
+  --noautoconsole \
+  --import  # Specify import method
+
+# Clean up downloaded QCOW2 image
+rm -f "$HA_QCOW2_FILE"
