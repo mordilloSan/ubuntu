@@ -17,7 +17,7 @@ Start (){
     if [[ ! -d "$WORK_DIR" ]]; then
         mkdir "$WORK_DIR"
     fi
-    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp" "wireguard-tools")
+    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp" "wireguard-tools" "qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
     readonly NETWORK_SERVICES=("networkd-dispatcher.service" "systemd-networkd.socket" "systemd-networkd.service" "systemd-networkd-wait-online.service")
     readonly NAS_IP="192.168.1.65"
@@ -132,17 +132,17 @@ Check_Permissions() {
 Check_Connection(){
     internet=$(wget -q --spider http://google.com ; echo $?)
     if [ "$internet" != 0 ]; then
-		Show 1 "Can not reach the internet"
+		Show 1 "No internet connection"
 		exit 1
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
 }
 Check_Success(){
-    if [[ $? != 0 ]]; then
-        Show 1 "$1 failed!"
-		exit $?
+    if [[ $1 != 0 ]]; then
+        Show 1 "$2 failed!"
+		exit "$1"
 	else
-        Show 0 "$1 sucess!"
+        Show 0 "$2 sucess!"
     fi
 }
 # Start Functions #
@@ -182,30 +182,24 @@ Add_Repos(){
     items=$(find /etc/apt/sources.list.d -name 45drives.sources)
 	if [[ -z "$items" ]]; then
         echo -e "There were no existing 45Drives repos found. Setting up the new repo..."
+        echo -e "Updating ca-certificates to ensure certificate validity..."
+        apt-get install ca-certificates -y -q=2
+        echo "Add the gpg key to the apt keyring"
+        wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
+        echo "Downloading the new repo file"
+        curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
+        lsb_release_cs=$(lsb_release -cs)
+        if [[ "$lsb_release_cs" == "" ]]; then
+            Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
+        fi
+        lsb_release_cs="focal"
+        echo "Updating the new repo file"
+        sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
+        Check_Success $? "45Drives repos update"
 	else
         count=$(echo "$items" | wc -l)
-        echo -e "There were $count 45Drives repo(s) found. Archiving..."
-	    mkdir -p "$WORK_DIR"/repos     
-		mv /etc/apt/sources.list.d/45drives.sources "$WORK_DIR"/repos/45drives-"$(date +%Y-%m-%d)".list
-		echo -e "The obsolete repos have been archived to $WORK_DIR/repos'. Setting up the new repo..."
-		if [[ -f "/etc/apt/sources.list.d/45drives.sources" ]]; then
-			rm -f /etc/apt/sources.list.d/45drives.sources
-		fi
-	fi
-	echo -e "Updating ca-certificates to ensure certificate validity..."
-	apt-get install ca-certificates -y -q=2
-	echo "Add the gpg key to the apt keyring"
-    wget -qO - https://repo.45drives.com/key/gpg.asc | gpg --pinentry-mode loopback --batch --yes --dearmor -o /usr/share/keyrings/45drives-archive-keyring.gpg
-    echo "Downloading the new repo file"
-    curl -sSL https://repo.45drives.com/lists/45drives.sources -o /etc/apt/sources.list.d/45drives.sources
-    lsb_release_cs=$(lsb_release -cs)
-	if [[ "$lsb_release_cs" == "" ]]; then
-		Show 1 "Failed to fetch the distribution codename. This is likely because the command, 'lsb_release' is not available. Please install the proper package and try again. (apt install -y lsb-core)"
-	fi
-	lsb_release_cs="focal"
-	echo "Updating the new repo file"
-    sed -i "s/focal/$lsb_release_cs/g" /etc/apt/sources.list.d/45drives.sources
-    Check_Success "45Drives repos update"
+        echo -e "There are $count 45Drives repo(s) already."
+	fi	
 }
 Update_System() {
     echo ""
@@ -214,13 +208,11 @@ Update_System() {
 	Show 2 "Updating packages"
 	GreyStart
     apt-get -qq update
-    Check_Success "Package update"
+    Check_Success $? "Package update"
 	Show 2 "Upgrading packages"
 	GreyStart
 	apt-get -qq upgrade
-	GreyStart
-    apt-get -qq dist-upgrade
-    Check_Success "System Update"
+    Check_Success $? "System Update"
 }
 Reboot(){
     if [ -f /var/run/reboot-required ] || [ -f /var/run/reboot-required.pkgs ]; then
@@ -237,15 +229,15 @@ Reboot(){
             [Yy]*) 
                 Show 4 "Preparing to reboot..."
                 # create a flag file to signal that we are resuming from reboot.
-                if [ -f "$WORK_DIR"/resume-after-reboot ]; then
-                    touch "$WORK_DIR/resume-after-reboot"
-                    Check_Success "Flag file to resume after reboot"
+                if [ -f ~/resume-after-reboot ]; then
+                    touch ~/resume-after-reboot
+                    Check_Success $? "Flag file to resume after reboot"
                 else
                     Show 0 "Flag file to resume after reboot success"
                 fi                
                 # add the link to bashrc to start the script on login
                 echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc
-                Check_Success "Setting up run script on boot"
+                Check_Success $? "Setting up run script on boot"
                 reboot </dev/tty
             ;;
         esac
@@ -285,7 +277,7 @@ Install_Packages() {
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
             apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
-            Check_Success "$packagesNeeded installation"
+            Check_Success $? "$packagesNeeded installation"
         else
             Show 0 "$packagesNeeded already installed"
         fi
@@ -334,7 +326,7 @@ Stop_Service(){
         Show 2 "Stoping ${NSERVICE}..."
         GreyStart
         systemctl disable --now "${NSERVICE}" || Show 2 "Service ${NSERVICE} does not exist."
-        Check_Success "Disabling ${NSERVICE}"
+        Check_Success $? "Disabling ${NSERVICE}"
     done
 }
 # Network #
@@ -379,7 +371,7 @@ Change_renderer() {
     aux=$?  
     if [[ $aux = 0 ]]; then
         netplan apply
-        Check_Success "Your current IP is $IP. Netplan"
+        Check_Success $? "Your current IP is $IP. Netplan"
 	else
         Show 1 " Netplan failed!"
     fi
@@ -390,7 +382,7 @@ Change_renderer() {
     fi
     sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
     systemctl restart NetworkManager
-    Check_Success "NetworkManager"
+    Check_Success $? "NetworkManager"
     systemctl enable NetworkManager-wait-online.service
 }
 Pihole_DNS(){
@@ -399,12 +391,12 @@ Pihole_DNS(){
     Show 2 "Disabling stub resolver"
     GreyStart
     sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
-    Check_Success "Disabling stub resolver"
+    Check_Success $? "Disabling stub resolver"
     Show 2 "Pointing symlink to /run/systemd/resolve/resolv.conf"
     sh -c 'rm /etc/resolv.conf && ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf'
-    Check_Success "Pointing symlink"
+    Check_Success $? "Pointing symlink"
     systemctl restart systemd-resolved
-    Check_Success "Restarting systemd-resolved"
+    Check_Success $? "Restarting systemd-resolved"
 }
 # Finish Section #
 NFS_Mount(){
@@ -417,15 +409,15 @@ NFS_Mount(){
         else
             if [ ! -d "$WORK_DIR/docker" ]; then
                 Show 2 "Creating Directory"
-                mkdir "$WORK_DIR"/docker
+                mkdir ~/docker
             fi
             Show 2 "NFS Mounting in progress"
-            mount -t nfs "$NAS_IP":/volume2/Server "$WORK_DIR"/docker
-            Check_Success "NAS NFS mount"
+            mount -t nfs "$NAS_IP":/volume2/Server ~/docker
+            Check_Success $? "NAS NFS mount"
             Show 2 "Making the mount permanent"
-            if ! grep "$WORK_DIR"/docker /etc/fstab; then
+            if ! grep ~/docker /etc/fstab; then
                 echo "$NAS_IP:/volume2/Server $WORK_DIR/docker  nfs      defaults    0       0" >> /etc/fstab
-                Check_Success "NFS mount on boot"
+                Check_Success $? "NFS mount on boot"
             else
                 Show 0 "NFS Mount on boot"
             fi
@@ -439,20 +431,15 @@ NFS_Mount(){
 Containers(){
     echo ""
     Show 4 "\e[1mStarting Portainer\e[0m"
-    #starting portainer
-    docker compose -f "$WORK_DIR"/docker/portainer/docker-compose.yml up -d
-    Show 4 "\e[1mStarting Portainer Stacks\e[0m"
-    #Using the portainer API to start all stacks
-    PORTAINER_URL="https://$IP:9443"
-    read -r -p "Enter your user name" USERNAME
-    read -r -p "Enter your password" PASSWORD
-    # Get a list of stacks
-    STACKS=$(curl -s -X GET -H "Content-Type: application/json" -u "$USERNAME:$PASSWORD" "$PORTAINER_URL/api/stacks")
-    # Iterate over the stacks and stop/start each one
-    for STACK_ID in $(echo "$STACKS" | jq -r '.[] | .Id'); do
-        curl -X POST -H "Content-Type: application/json" -d '{"type": 1}' -u "$USERNAME:$PASSWORD" "$PORTAINER_URL/api/stacks/$STACK_ID/stop"
-        curl -X POST -H "Content-Type: application/json" -d '{"type": 2}' -u "$USERNAME:$PASSWORD" "$PORTAINER_URL/api/stacks/$STACK_ID/start"
-    done    
+    if ! "$(docker network ls | grep monitoring)"; then
+        docker network create monitoring
+        Check_Success $? "Creation of Docker network -monitoring-"
+    else
+        echo "Docker network already exists"
+    fi
+    # Start Portainer
+    echo "Starting Portainer"
+    docker compose --project-directory ~/docker/portainer/ up   
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
@@ -461,7 +448,7 @@ Remove_cloudinit(){
         Show 0 "cloud-init not installed."
     else
         apt-get autoremove -q -y --purge cloud-init 
-        Check_Success "Removing cloud-init"
+        Check_Success $? "Removing cloud-init"
         rm -rf /etc/cloud/
         rm -rf /var/lib/cloud/
     fi
@@ -498,12 +485,12 @@ Clean_Up(){
     Remove_cloudinit
     Remove_snap
     # Remove the line that we added in bashrc
-    sed -i "/curl -fsSL/d" "$WORK_DIR"/.bashrc
-    Check_Success "Start script at boot disabled"
+    sed -i "/curl -fsSL/d" ~/.bashrc
+    Check_Success $? "Start script at boot disabled"
     # remove the temporary file that we created to check for reboot
-    rm -f "$WORK_DIR"/resume-after-reboot
+    rm -f ~/resume-after-reboot
     # if all packages are installed ok we can remove the repo backup
-    rm -rf "$WORK_DIR"/repos
+    rm -rf ~/repos
     #leftovers of package install
     rm -r cockpit-sensors
     rm -f cockpit-sensors*.*
@@ -538,7 +525,7 @@ Setup(){
     trap 'onCtrlC' INT
     Welcome_Banner
     # check if the resume flag file exists. 
-    if [ ! -f "$WORK_DIR"/resume-after-reboot ]; then
+    if [ ! -f ~/resume-after-reboot ]; then
         Set_Timezone
         Update_System
         Reboot

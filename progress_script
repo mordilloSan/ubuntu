@@ -1,37 +1,15 @@
-#!/bin/bash
-
-packages=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
-
-# Function to check if a package is installed
-function is_package_installed {
-    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
-}
-
-# Loop through each package and install if not already installed
-for current_package in "${packages[@]}"; do
-    if ! is_package_installed "$current_package"; then
-        sudo apt-get install -y "$current_package" > /dev/null 2>&1
-    fi
-done
-
-HA_OVA_URL="https://github.com/home-assistant/operating-system/releases/download/11.3/haos_ova-11.3.qcow2.xz"
-HA_QCOW2_FILE="/var/lib/libvirt/images/homeassistant.qcow2"
-
-wget "$HA_OVA_URL" -O - | xzcat -d > "$HA_QCOW2_FILE"
-
-# Grant permissions to libvirt-qemu user
-chown libvirt-qemu:libvirt-qemu "$HA_QCOW2_FILE"
-chmod 644 "$HA_QCOW2_FILE"
-
-# Import Home Assistant VM with UEFI
+#!/usr/bin/bash
 virt-install \
-  --name homeassistant \
-  --ram 4096 \
-  --disk path="$HA_QCOW2_FILE",bus=sata \
+  --name hassos \
+  --ram 2048 \
+  --disk path="/var/lib/libvirt/images/homeassistant.qcow2",format=qcow2,bus=virtio \
   --vcpus 4 \
   --os-variant=generic  \
-  --network bridge=virbr0 \
+  --network bridge=br0 \
   --graphics none \
   --boot uefi \
   --noautoconsole \
   --import  # Specify import method
+
+  sudo virt-install --name hassos --graphics none --memory=2048 --vcpus=2 --disk=/var/lib/libvirt/images/homeassistant.qcow2,format=qcow2 --boot uefi --import --os-variant=debian9 --network bridge=br0,model=virtio
+sudo virt-install --name hassos --graphics vnc,listen=0.0.0.0 --memory=2048 --vcpus=2 --disk=/var/lib/libvirt/images/homeassistant.qcow2,format=qcow2 --boot uefi --import --os-variant=debian9 --network=bridge=br0
