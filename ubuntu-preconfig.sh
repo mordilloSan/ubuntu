@@ -439,7 +439,7 @@ Containers(){
     fi
     # Start Portainer
     echo "Starting Portainer"
-    docker compose -d --project-directory ~/docker/portainer/ up 
+    docker compose --project-directory ~/docker/portainer/ up -d
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
