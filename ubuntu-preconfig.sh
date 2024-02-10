@@ -509,12 +509,6 @@ Wrap_up_Banner() {
     echo -e " Portainer${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
     echo -e " https://$IP:9443 (${NIC_ON})"
-    echo -e ""   
-    echo -e " Open your browser and visit the above address."
-    echo -e ""
-    echo -e " ${aCOLOUR[2]}Credits goes to:"
-    echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
-    echo -e " ${aCOLOUR[2]}45Drives GitHub : https://github.com/45Drives"
     echo -e "${COLOUR_RESET}"
 }
 # Execute Everything
