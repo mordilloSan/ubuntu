@@ -405,10 +405,10 @@ NFS_Mount(){
     echo ""
     if ping -c 1 "$NAS_IP" &> /dev/null; then
         Show 4 "\e[1mSetting up the NFS mount\e[0m"
-        if [[ $(findmnt -M "$WORK_DIR/docker") ]]; then
+        if [[ $(findmnt -M ~/docker) ]]; then
             Show 2 "NFS already mounted"
         else
-            if [ ! -d "$WORK_DIR/docker" ]; then
+            if [ ! -d  ~/docker ]; then
                 Show 2 "Creating Directory"
                 mkdir ~/docker
             fi
