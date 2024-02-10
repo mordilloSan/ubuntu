@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-
 # Global Variables #
 Start (){
     # SYSTEM INFO
@@ -434,10 +433,9 @@ Containers(){
         docker network create monitoring
         Check_Success $? "Creation of Docker network -monitoring-"
     else
-        echo "Docker network already exists"
+        Show 2 "Docker network already exists"
     fi
     # Start Portainer
-    echo "Starting Portainer"
     docker compose --project-directory "$WORK_DIR"/docker/portainer/ up -d
 }
 Remove_cloudinit(){
