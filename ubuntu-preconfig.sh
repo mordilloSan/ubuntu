@@ -431,7 +431,7 @@ NFS_Mount(){
 Containers(){
     echo ""
     Show 4 "\e[1mStarting Portainer\e[0m"
-    if [ "$(docker network ls | grep monitoring)" -eq 0 ]; then
+    if [ "$(docker network ls | grep monitoring)" -eq "" ]; then
         docker network create monitoring
         Check_Success $? "Creation of Docker network -monitoring-"
     else
