@@ -13,7 +13,6 @@ Start (){
     UNAME_U="$(uname -s)"
     readonly UNAME_U
     WORK_DIR="/home/$(logname)"
-    readonly WORK_DIR
     if [[ ! -d "$WORK_DIR" ]]; then
         mkdir "$WORK_DIR"
     fi
@@ -440,7 +439,7 @@ Containers(){
     fi
     # Start Portainer
     echo "Starting Portainer"
-    docker compose --project-directory ~/docker/portainer/ up   
+    docker compose --project-directory ~/docker/portainer/ up -d
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
