@@ -387,7 +387,7 @@ Change_renderer() {
 }
 Pihole_DNS(){
     echo ""
-    Show 0 "\e[1mPreparing for Pihole\e[0m"
+    Show 4 "\e[1mPreparing for Pihole\e[0m"
     Show 2 "Disabling stub resolver"
     GreyStart
     sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
