@@ -426,7 +426,6 @@ NFS_Mount(){
     else
         Show 3 "$NAS_IP not available!"
     fi
-    sleep 2
 }
 Containers(){
     echo ""
