@@ -412,7 +412,7 @@ NFS_Mount(){
                 mkdir "$WORK_DIR"/docker
             fi
             Show 2 "NFS Mounting in progress"
-            mount -t nfs "$NAS_IP":/volume2/Server ~/docker
+            mount -t nfs "$NAS_IP":/volume2/Server "$WORK_DIR"/docker
             Check_Success $? "NAS NFS mount"
             Show 2 "Making the mount permanent"
             if ! grep ~/docker /etc/fstab; then
