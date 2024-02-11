@@ -463,7 +463,7 @@ Remove_snap(){
         
         SNAP_LIST=$(snap list | sed '1d' | grep -Eo '^[^ ]+')
         for i in $SNAP_LIST; do
-            if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core20" ]; then
+            if [ "${i}" != "core" ] && [ "${i}" != "snapd" ] && [ "${i}" != "core22" ]; then
                 snap remove --purge "$i"
             fi
         done
