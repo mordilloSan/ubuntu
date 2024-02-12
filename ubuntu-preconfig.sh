@@ -15,7 +15,7 @@ Start (){
     if [[ ! -d "$WORK_DIR" ]]; then
         mkdir "$WORK_DIR"
     fi
-    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp" "wireguard-tools" "iputils-ping")
+    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "net-tools" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp" "wireguard-tools" "unattended-upgrades")
     readonly NETWORK_PACKAGES=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
     readonly NETWORK_SERVICES=("networkd-dispatcher.service" "systemd-networkd.socket" "systemd-networkd.service" "systemd-networkd-wait-online.service")
@@ -225,14 +225,12 @@ Reboot(){
         echo "Reboot system now? [y/N]: "
         read -r response  </dev/tty # OR < /proc/$$/fd/0
         case "$response" in
-            [Yy]*) 
+            [yY]*) 
                 Show 4 "Preparing to reboot..."
                 # create a flag file to signal that we are resuming from reboot.
-                if [ -f ~/resume-after-reboot ]; then
+                if ! [ -f ~/resume-after-reboot ]; then
                     touch ~/resume-after-reboot
                     Check_Success $? "Flag file to resume after reboot"
-                else
-                    Show 0 "Flag file to resume after reboot success"
                 fi                
                 # add the link to bashrc to start the script on login
                 echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc
@@ -275,7 +273,7 @@ Install_Packages() {
         if [ "$(dpkg-query -W -f='${Status}' "$packagesNeeded" 2>/dev/null | grep -c "ok installed")" -eq 0 ]; then
             Show 2 "$packagesNeeded not installed. Installing..."
             GreyStart
-            apt-get install -y -q -t "$lsb_release_cs"-backports "$packagesNeeded"
+            apt-get install -y -qq -t "$lsb_release_cs"-backports "$packagesNeeded"
             Check_Success $? "$packagesNeeded installation"
         else
             Show 0 "$packagesNeeded already installed"
