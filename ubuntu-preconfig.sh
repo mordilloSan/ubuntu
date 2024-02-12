@@ -344,6 +344,15 @@ Change_renderer() {
     GreyStart
     Show 2 "Backing up current config to $NETWORK_CONFIG.backup"
     mv "$NETWORK_CONFIG" "$NETWORK_CONFIG.backup"
+    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
+        Show 2 "Backing up 10-globally-managed-devices.conf"
+        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
+    fi
+    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
+    systemctl restart NetworkManager
+    Check_Success $? "NetworkManager"
+    systemctl enable NetworkManager-wait-online.service
     Show 2 "Preparing the new network configuration."
     echo "network:
   version: 2
@@ -360,8 +369,7 @@ Change_renderer() {
         search: []" >> "$NETWORK_CONFIG"
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
-      dhcp4: yes
-      optional: true" >> "$NETWORK_CONFIG"
+      dhcp4: yes" >> "$NETWORK_CONFIG"
     done
     chmod 600 "$NETWORK_CONFIG"
     netplan try
@@ -372,15 +380,8 @@ Change_renderer() {
 	else
         Show 1 " Netplan failed!"
     fi
-    ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-    if [ -e /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
-        Show 2 "Backing up 10-globally-managed-devices.conf"
-        mv /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf  /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf.backup
-    fi
-    sed -i '/^managed/s/false/true/' /etc/NetworkManager/NetworkManager.conf
     systemctl restart NetworkManager
     Check_Success $? "NetworkManager"
-    systemctl enable NetworkManager-wait-online.service
 }
 Pihole_DNS(){
     echo ""
@@ -435,6 +436,7 @@ Containers(){
     fi
     # Start Portainer
     docker compose --project-directory "$WORK_DIR"/docker/portainer/ up -d
+    PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"HostPort": "//' | sed 's/"//')
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
@@ -506,7 +508,7 @@ Wrap_up_Banner() {
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo -e " Portainer${COLOUR_RESET} is running at:${COLOUR_RESET}"
     echo -e "${GREEN_LINE}"
-    echo -e " https://$IP:9443 (${NIC_ON})"
+    echo -e " https://$IP:$PORTAINER_PORT (${NIC_ON})"
     echo -e "${COLOUR_RESET}"
 }
 # Execute Everything
@@ -515,7 +517,7 @@ Setup(){
     trap 'onCtrlC' INT
     Welcome_Banner
     # check if the resume flag file exists. 
-    if [ ! -f ~/resume-after-reboot ]; then
+    if ! [ -f ~/resume-after-reboot ]; then
         Set_Timezone
         Update_System
         Reboot
@@ -526,10 +528,10 @@ Setup(){
     Reboot
     Initiate_Service
     Check_Service
+    Stop_Service
     Get_IPs
     Check_renderer
     Pihole_DNS
-    Stop_Service
     Clean_Up
     NFS_Mount
     Wrap_up_Banner

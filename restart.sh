@@ -10,13 +10,13 @@ containers(){
     do
         echo "Starting Docker Container - $container"
         docker start "$container" > /dev/null
-	res=$?
-	if [[ $res != 0 ]]; then
-	    echo "ERROR! Docker container $container not started"
-        return $res
-    else
-	    echo "Docker container $container successfully started!"
-	fi
+        res=$?
+        if [[ $res != 0 ]]; then
+            echo "ERROR! Docker container $container not started"
+            return $res
+        else
+            echo "Docker container $container successfully started!"
+        fi
     done
     echo "All containers started"
     return 0
