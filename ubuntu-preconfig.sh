@@ -38,7 +38,7 @@ Start (){
     fi    
 }
 # shellcheck disable=SC2317
-onCtrlC() {
+onCtrlC() { 
     echo -e "${COLOUR_RESET}"
     exit 1
 }
@@ -168,6 +168,17 @@ Welcome_Banner() {
     Show 2 "Current Working Directory - \e[33m$WORK_DIR\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
+    read -p "Are you sure you want to continue? [y/N]: " response
+	case $response in
+		[yY]|[yY][eE][sS])
+			echo
+			;;
+		*)
+			echo "Exiting..."
+			exit 0
+			;;
+	esac
+	return 0
 }
 Set_Timezone(){
     Show 2 "Setting Time Zone"
