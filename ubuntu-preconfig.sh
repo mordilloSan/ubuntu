@@ -168,7 +168,8 @@ Welcome_Banner() {
     Show 2 "Current Working Directory - \e[33m$WORK_DIR\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
-    read -p "Are you sure you want to continue? [y/N]: " response
+    echo "Are you sure you want to continue? [y/N]: "
+    read -r response  </dev/tty # OR < /proc/$$/fd/0
 	case $response in
 		[yY]|[yY][eE][sS])
 			echo
@@ -235,8 +236,8 @@ Reboot(){
         fi
         echo "Reboot system now? [y/N]: "
         read -r response  </dev/tty # OR < /proc/$$/fd/0
-        case "$response" in
-            [yY]*) 
+        case $response in
+            [yY]|[yY][eE][sS])
                 Show 4 "Preparing to reboot..."
                 # create a flag file to signal that we are resuming from reboot.
                 if ! [ -f ~/resume-after-reboot ]; then
@@ -247,7 +248,7 @@ Reboot(){
                 echo "curl -fsSL $SCRIPT_LINK | sudo bash" >> ~/.bashrc
                 Check_Success $? "Setting up run script on boot"
                 reboot </dev/tty
-            ;;
+                ;;
         esac
     else
         Show 0 "No reboot required"
