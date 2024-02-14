@@ -334,8 +334,8 @@ Stop_Service(){
     for NSERVICE in "${NETWORK_SERVICES[@]}"; do
         Show 2 "Stoping ${NSERVICE}..."
         GreyStart
-        systemctl disable --now "${NSERVICE}" || Show 2 "Service ${NSERVICE} does not exist."
-        Check_Success $? "Disabling ${NSERVICE}"
+        systemctl disable --now "${NSERVICE}" > /dev/null 2>&1 || Show 2 "Service ${NSERVICE} does not exist."
+        Check_Success $? "Disabling ${NSERVICE}" 
     done
 }
 # Network #
@@ -448,7 +448,7 @@ Containers(){
     fi
     # Start Portainer
     docker compose --project-directory "$WORK_DIR"/docker/portainer/ up -d
-    PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"//' | sed 's/HostPort: //' )
+    PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"//g' | sed 's/HostPort://' | sed 's/ //g')
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
