@@ -448,7 +448,7 @@ Containers(){
     fi
     # Start Portainer
     docker compose --project-directory "$WORK_DIR"/docker/portainer/ up -d
-    PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"HostPort": "//' | sed 's/"//')
+    PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"//' | sed 's/HostPort: //' )
 }
 Remove_cloudinit(){
     Show 2 "Removing cloud-init"
@@ -496,7 +496,7 @@ Clean_Up(){
     Remove_snap
     # Remove the line that we added in bashrc
     sed -i "/curl -fsSL/d" ~/.bashrc
-    Check_Success $? "Start script at boot disabled"
+    Check_Success $? "Disabling Start script at boot"
     # remove the temporary file that we created to check for reboot
     rm -f ~/resume-after-reboot
     # if all packages are installed ok we can remove the repo backup
