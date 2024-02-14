@@ -156,7 +156,7 @@ Welcome_Banner() {
 	echo " This will update the system, add 45Drives repository,
  install cockpit, install docker, install general tools,
  remove cloud-init and snapd, remove backup&temp files
- switch networkd to network-manager, install portainer, and start all stacks"
+ switch networkd to network-manager, install portainer"
 	echo ""
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
 	Check_Arch
