@@ -41,3 +41,21 @@ else
     echo "$NAS_IP not available!"
     exit 1
 fi
+
+#Part for Cloudflare
+
+sysctl -w net.core.rmem_max=2500000
+sysctl -w net.core.wmem_max=2500000
+
+#
+#[Unit]
+#Description=Docker Container Restart with NFS Mount
+#After=network.target nfs-server.service docker.service
+#
+#[Service]
+#ExecStart=/home/miguelmariz/restart.sh
+#Restart=on-failure
+#RestartSec=5min
+#
+#[Install]
+#WantedBy=default.target
