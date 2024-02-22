@@ -131,7 +131,7 @@ Check_Connection(){
     Show 0 "Internet : \e[33mOnline\e[0m"
     nas=$(wget --timeout=3 192.168.1.2 -q -t 1 --spider $NAS_IP ; echo $?)
     if [ "$nas" != 0 ]; then
-		Show 1 "No NAS present"
+		Show 3 "No NAS present"
     fi
         Show 0 "NAS ($NAS_IP): \e[33mOnline\e[0m"
 }
