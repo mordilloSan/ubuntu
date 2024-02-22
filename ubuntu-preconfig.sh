@@ -135,6 +135,14 @@ Check_Connection(){
 		exit 1
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
+
+    nas=$(wget -q --spider $NAS_IP ; echo $?)
+    if [ "$nas" != 0 ]; then
+		Show 1 "No Nas connection"
+    else
+        Show 0 "NAS IP - $NAS_IP"
+    fi
+
 }
 Check_Success(){
     if [[ $1 != 0 ]]; then
@@ -164,7 +172,6 @@ Welcome_Banner() {
 	Check_Distribution
 	Check_Permissions
     Check_Connection
-    Show 2 "NFS IP - $NAS_IP"
     Show 2 "Current Working Directory - \e[33m$WORK_DIR\e[0m"
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
     echo ""
