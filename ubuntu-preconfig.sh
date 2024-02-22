@@ -133,7 +133,7 @@ Check_Connection(){
     if [ "$nas" != 0 ]; then
 		Show 3 "No NAS present"
     else
-        Show 0 "NAS ($NAS_IP): \e[33mOnline\e[0m"
+		Show 0 "NAS ($NAS_IP): \e[33mOnline\e[0m"
     fi
 }
 Check_Success(){
