@@ -136,7 +136,7 @@ Check_Connection(){
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
 
-    nas=$(wget -q --spider $NAS_IP ; echo $?)
+    nas=$(wget -q -t 1 --spider $NAS_IP ; echo $?)
     if [ "$nas" != 0 ]; then
 		Show 1 "No Nas connection"
     else
