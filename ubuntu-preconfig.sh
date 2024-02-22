@@ -95,7 +95,6 @@ Check_Arch() {
         ;;
     *)
         Show 1 "Aborted, unsupported or unknown architecture: \e[33m$UNAME_M\e[0m"
-        exit 1
         ;;
     esac
 }
@@ -104,7 +103,6 @@ Check_OS() {
         Show 0 "Your OS is : \e[33m$UNAME_U\e[0m"
     else
         Show 1 "This script is only for Linux."
-        exit 1
     fi
 }
 Check_Distribution() {
@@ -112,7 +110,6 @@ Check_Distribution() {
         Show 0 "Your Linux Distribution is : \e[33m$DIST\e[0m"
     else
         Show 1 "Aborted, installation is only supported in linux ubuntu."
-        exit 1
     fi
 }
 Check_Permissions() {
@@ -120,11 +117,9 @@ Check_Permissions() {
 	if [ "$interpreter" != "bash" ]; then
 		Show 1 "Please run with bash. (./ubuntu-preconfig.sh or bash ubuntu-preconfig.sh)"
 		Show 1 "Current interpreter: \e[33m$interpreter\e[0m"
-		exit 1
 	fi
 	if [[ "$EUID" != 0 ]]; then
 		Show 1 "Please run as root or with sudo."
-		exit 1
 	fi
 	Show 0 "Current interpreter : \e[33m$interpreter\e[0m"
 }
@@ -132,14 +127,13 @@ Check_Connection(){
     internet=$(wget -q --spider http://google.com ; echo $?)
     if [ "$internet" != 0 ]; then
 		Show 1 "No internet connection"
-		exit 1
     fi
     Show 0 "Internet : \e[33mOnline\e[0m"
     nas=$(wget --timeout=3 192.168.1.2 -q -t 1 --spider $NAS_IP ; echo $?)
     if [ "$nas" != 0 ]; then
 		Show 1 "No NAS present"
     else
-		Show 0 "NAS ($NAS_IP): \e[33mOnline\e[0m"
+        Show 0 "NAS ($NAS_IP): \e[33mOnline\e[0m"
     fi
 }
 Check_Success(){
@@ -329,7 +323,6 @@ Check_Service() {
             Show 0 "${SERVICE} is running."
         else
             Show 1 "${SERVICE} is not running, Please reinstall."
-            exit 1
         fi
     done
 }
