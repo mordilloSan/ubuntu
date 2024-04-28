@@ -73,7 +73,6 @@ Show() {
     local log_message="[INFO] $2"
     local colour_start="${aCOLOUR[2]}"
     local colour_reset="$COLOUR_RESET"
-
     # OK
     if (($1 == 0)); then
         echo -e "${colour_start}[$COLOUR_RESET${aCOLOUR[0]}  OK  $colour_reset${colour_start}]$colour_reset $2"
@@ -91,9 +90,8 @@ Show() {
     elif (($1 == 4)); then
         echo -e "${colour_start}[$COLOUR_RESET${aCOLOUR[0]}      $colour_reset${colour_start}]$colour_reset $2"
     fi
-
     # Log the message
-    echo "$(date '+%Y-%m-%d %H:%M:%S') $log_message" >>"$LOG_FILE"
+    log_info "$log_message"
 }
 GreyStart() {
     echo -e "${aCOLOUR[2]}\c"
@@ -153,7 +151,6 @@ Check_Connection() {
 Check_Success() {
     if [[ $1 != 0 ]]; then
         Show 1 "$2 failed!"
-        exit "$1"
     else
         Show 0 "$2 success!"
     fi
@@ -624,21 +621,14 @@ Clean_Up() {
     Show 4 "\e[1mStarting Clean Up\e[0m"
     Remove_cloudinit
     Remove_snap
-    # Clean up repositories directory if it exists
-    if [ -d ~/repos ]; then
-        rm -rf ~/repos
-        Check_Success $? "Removed ~/repos directory"
-    else
-        Show 0 "$HOME/repos directory does not exist."
-    fi
     # Clean up cockpit-sensors files and directories
-    if [ -d ~/cockpit-sensors ]; then
-        rm -r ~/cockpit-sensors
-        Check_Success $? "Removed ~/cockpit-sensors directory"
+    if [ -d "$HOME"/cockpit-sensors ]; then
+        rm -r "$HOME"/cockpit-sensors
+        Check_Success $? "Removed cockpit-sensors directory"
     fi
     # Remove any remaining cockpit-sensors files if they exist
     if compgen -G "$HOME/cockpit-sensors*.*" >/dev/null; then
-        rm -f ~/cockpit-sensors*.*
+        rm -f "$HOME"/cockpit-sensors*.*
         Check_Success $? "Removed cockpit-sensors files"
     else
         Show 0 "No cockpit-sensors files to remove."
@@ -692,6 +682,5 @@ Setup() {
     NFS_Mount
     Wrap_up_Banner
 }
-
 Setup
 exit 0
