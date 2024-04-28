@@ -511,7 +511,7 @@ Containers() {
     # Check if the 'monitoring' network exists
     if ! docker network inspect monitoring &>/dev/null; then
         if docker network create monitoring &>/dev/null; then
-            Show 3 "Docker network 'monitoring' created successfully."
+            Show 0 "Docker network 'monitoring' created successfully."
         else
             Show 1 "Failed to create Docker network 'monitoring'."
         fi
@@ -528,8 +528,8 @@ Containers() {
     # Start Portainer
     docker_compose_file="$WORK_DIR/docker/portainer/docker-compose.yml"
     if [ -f "$docker_compose_file" ]; then
-        if docker compose --file "$docker_compose_file" up -d &>/dev/null; then
-            Show 3 "Portainer started successfully."
+        if docker compose --file "$docker_compose_file" up -d; then
+            Show 0 "Portainer started successfully."
             PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"//g' | sed 's/HostPort://' | sed 's/ //g')
         else
             Show 1 "Failed to start Portainer."
@@ -588,6 +588,7 @@ Remove_snap() {
         Show 2 "Snap directories exist, indicating snaps might still be installed."
         if command -v snap &>/dev/null; then
             local snap_list=$(timeout 5 snap list --all | awk '!/disabled/{if (NR!=1) print $1}' | uniq)
+            GreyStart
             for snap in $snap_list; do
                 if snap remove --purge "$snap"; then
                     Show 0 "Removed snap: $snap"
@@ -601,7 +602,7 @@ Remove_snap() {
     else
         Show 0 "No snap directories found, assuming no snaps are installed."
     fi
-
+    GreyStart
     if apt-get autoremove --purge -y snapd; then
         Show 0 "snapd and all snaps have been removed."
     else
