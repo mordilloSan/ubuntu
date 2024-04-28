@@ -388,8 +388,8 @@ Check_renderer() {
 Change_renderer() {
     # Backup current config
     GreyStart
-    Show 2 "Backing up current config to $NETWORK_CONFIG.backup"
-    mv "$NETWORK_CONFIG" "$NETWORK_CONFIG.backup"
+    Show 2 "Backing up current config to $NETPLAN_CONFIG_FILE.backup"
+    mv "$NETPLAN_CONFIG_FILE" "$NETPLAN_CONFIG_FILE.backup"
     Check_Success $? "Backup current config"
 
     # Backup globally-managed-devices.conf if exists
@@ -418,13 +418,13 @@ Change_renderer() {
         via: $ROUTER
       nameservers:
         addresses: [1.1.1.1]
-        search: []" >>"$NETWORK_CONFIG"
+        search: []" >>"$NETPLAN_CONFIG_FILE"
 
     for NICS in ${NIC_OFF}; do
         echo "    ${NICS}:
-      dhcp4: yes" >>"$NETWORK_CONFIG"
+      dhcp4: yes" >>"$NETPLAN_CONFIG_FILE"
     done
-    chmod 600 "$NETWORK_CONFIG"
+    chmod 600 "$NETPLAN_CONFIG_FILE"
 
     # Apply network configuration with Netplan
     netplan try
@@ -476,7 +476,7 @@ NFS_Mount() {
             if [ ! -d "$WORK_DIR"/docker ]; then
                 mkdir -p "$WORK_DIR"/docker
                 if [ $? -eq 0 ]; then
-                    Show 2 "Directory created: $WORK_DIR/docker"
+                    Show 0 "Directory created: $WORK_DIR/docker"
                 else
                     Show 1 "Failed to create directory: $WORK_DIR/docker"
                 fi
@@ -484,12 +484,12 @@ NFS_Mount() {
             Show 2 "Mounting NFS..."
             mount -t nfs "$NAS_IP":/volume2/Server "$WORK_DIR"/docker
             if [ $? -eq 0 ]; then
-                Show 2 "NFS mounted successfully."
+                Show 0 "NFS mounted successfully."
                 Show 2 "Making the mount permanent..."
                 if ! grep -q "$WORK_DIR/docker" /etc/fstab; then
                     echo "$NAS_IP:/volume2/Server $WORK_DIR/docker  nfs      defaults    0       0" >>/etc/fstab
                     if [ $? -eq 0 ]; then
-                        Show 3 "NFS mount added to /etc/fstab."
+                        Show 0 "NFS mount added to /etc/fstab."
                     else
                         Show 1 "Failed to add NFS mount to /etc/fstab."
                     fi
@@ -522,14 +522,13 @@ Containers() {
     # Check if Portainer is already running
     if docker ps --format "{{.Names}}" | grep -q "portainer"; then
         Show 2 "Portainer is already running."
-        # If Portainer is already running, no need to start it again
         return
     fi
 
     # Start Portainer
     docker_compose_file="$WORK_DIR/docker/portainer/docker-compose.yml"
     if [ -f "$docker_compose_file" ]; then
-        if docker-compose --file "$docker_compose_file" up -d &>/dev/null; then
+        if docker compose --file "$docker_compose_file" up -d &>/dev/null; then
             Show 3 "Portainer started successfully."
             PORTAINER_PORT=$(docker container inspect portainer | grep HostPort --m=1 | sed 's/"//g' | sed 's/HostPort://' | sed 's/ //g')
         else
@@ -584,9 +583,9 @@ Remove_snap() {
     else
         Show 1 "Failed to stop or disable snapd services."
     fi
-
+    GreyStart
     if [ -d "/var/snap" ] || [ -d "/snap" ] || [ -d "$WORK_DIR/snap" ]; then
-        Show 3 "Snap directories exist, indicating snaps might still be installed."
+        Show 2 "Snap directories exist, indicating snaps might still be installed."
         if command -v snap &>/dev/null; then
             local snap_list=$(timeout 5 snap list --all | awk '!/disabled/{if (NR!=1) print $1}' | uniq)
             for snap in $snap_list; do
@@ -610,12 +609,13 @@ Remove_snap() {
     fi
 
     # Cleanup snap directories
-    Check_Success $? "Failed to remove /var/cache/snapd/" && rm -rf /var/cache/snapd/
-    Check_Success $? "Failed to remove /var/snap" && rm -rf /var/snap
-    Check_Success $? "Failed to remove /snap" && rm -rf /snap
-    Check_Success $? "Failed to remove $WORK_DIR/snap" && rm -rf "$WORK_DIR/snap"
+    Check_Success $? "remove /var/cache/snapd/" && rm -rf /var/cache/snapd/
+    Check_Success $? "remove /var/snap" && rm -rf /var/snap
+    Check_Success $? "remove /snap" && rm -rf /snap
+    Check_Success $? "remove $WORK_DIR/snap" && rm -rf "$WORK_DIR/snap"
 }
 Clean_Up() {
+    GreyStart
     echo ""
     Show 4 "\e[1mStarting Clean Up\e[0m"
     Remove_cloudinit
@@ -623,14 +623,14 @@ Clean_Up() {
     # Clean up cockpit-sensors files and directories
     if [ -d "$WORK_DIR/cockpit-sensors" ]; then
         rm -r "$WORK_DIR/cockpit-sensors"
-        Check_Success $? "Removed cockpit-sensors directory"
+        Check_Success $? "Remove cockpit-sensors directory"
     fi
     # Remove any remaining cockpit-sensors files if they exist
     shopt -s nullglob
     for file in "$WORK_DIR"/cockpit-sensors*; do
         if [ -f "$file" ]; then
             rm -f "$file"
-            Check_Success $? "Removed $file"
+            Check_Success $? "Remove $file"
         fi
     done
     if [ -z "$(find "$WORK_DIR" -maxdepth 1 -name 'cockpit-sensors*' -print -quit)" ]; then
@@ -638,11 +638,11 @@ Clean_Up() {
     fi
 
     # Remove network configuration backup if it exists
-    if [ -f "$NETWORK_CONFIG.backup" ]; then
-        rm -f "$NETWORK_CONFIG.backup"
-        Check_Success $? "Removed $NETWORK_CONFIG.backup"
+    if [ -f "$NETPLAN_CONFIG_FILE.backup" ]; then
+        rm -f "$NETPLAN_CONFIG_FILE.backup"
+        Check_Success $? "Removed $NETPLAN_CONFIG_FILE.backup"
     else
-        Show 0 "$NETWORK_CONFIG.backup does not exist."
+        Show 0 "$NETPLAN_CONFIG_FILE.backup does not exist."
     fi
     Show 0 "Temp files removed"
 }
