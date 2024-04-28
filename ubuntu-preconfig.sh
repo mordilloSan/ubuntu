@@ -23,7 +23,7 @@ Start() {
     if [[ ! -d "$WORK_DIR" ]]; then
         mkdir "$WORK_DIR" || log_error "Failed to create directory $WORK_DIR"
     fi
-    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp" "wireguard-tools" "unattended-upgrades")
+    readonly PACKAGES=("lm-sensors" "htop" "network-manager" "cockpit" "cockpit-navigator" "realmd" "tuned" "udisks2-lvm2" "samba" "winbind" "nfs-kernel-server" "nfs-common" "cockpit-file-sharing" "cockpit-pcp" "wireguard-tools")
     readonly NETWORK_PACKAGES=("qemu-kvm" "libvirt-daemon-system" "libvirt-clients" "bridge-utils" "ovmf" "virt-manager" "cockpit-machines")
     readonly SERVICES=("cockpit.socket" "NetworkManager" "NetworkManager-wait-online.service")
     readonly NETWORK_SERVICES=("networkd-dispatcher.service" "systemd-networkd.socket" "systemd-networkd.service" "systemd-networkd-wait-online.service")
@@ -243,11 +243,15 @@ Reboot() {
         general_update_required=1
     fi
     # Specifically check for kernel updates
-    if grep -q "linux-image" /var/run/reboot-required.pkgs; then
-        local current_kernel=$(uname -r)
-        local new_kernel=$(grep "linux-image" /var/run/reboot-required.pkgs | sed -e "s/^linux-image-//")
-        Show 3 "System needs to be restarted for new kernel update from $current_kernel to $new_kernel."
-        kernel_update_required=1
+    if [[ -f "/var/run/reboot-required.pkgs" ]]; then
+        if grep -q "^linux-image-[0-9]" /var/run/reboot-required.pkgs; then
+            local current_kernel=$(uname -r)
+            local new_kernel=$(grep "^linux-image-[0-9]" /var/run/reboot-required.pkgs | sed -e "s/^linux-image-//")
+            Show 3 "System needs to be restarted for new kernel update from $current_kernel to $new_kernel."
+            kernel_update_required=1
+        fi
+    else
+        Show 0 "No kernel updates requiring a reboot found."
     fi
     # Decide to reboot based on the update checks
     if [[ $kernel_update_required -eq 1 || $general_update_required -eq 1 ]]; then
@@ -304,8 +308,7 @@ Install_Packages() {
         else
             Show 2 "Installing $packageNeeded..."
             GreyStart
-            if apt-get install -y -qq -t "${lsb_release}-backports" "$packageNeeded"; then
-
+            if apt-get install -y -qq -t "${lsb_release}" "$packageNeeded"; then
                 Show 0 "$packageNeeded installed successfully."
             else
                 Show 1 "Failed to install $packageNeeded."
