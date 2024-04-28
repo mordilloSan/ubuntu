@@ -256,8 +256,8 @@ Reboot() {
         case "$response" in
         [yY] | [yY][eE][sS])
             Show 4 "Preparing to reboot..."
-            touch "$HOME/resume-after-reboot" || { Show 1 "Failed to create flag file for resume after reboot."; }
-            echo "curl -fsSL $SCRIPT_LINK | sudo bash" >>"$HOME/.bashrc" || { Show 1 "Failed to add script to .bashrc."; }
+            touch "$WORK_DIR/resume-after-reboot" || { Show 1 "Failed to create flag file for resume after reboot."; }
+            echo "curl -fsSL $SCRIPT_LINK | sudo bash" >>"$WORK_DIR/.bashrc" || { Show 1 "Failed to add script to .bashrc."; }
             Show 4 "Rebooting now..."
             reboot
             ;;
@@ -571,7 +571,6 @@ Remove_cloudinit() {
 }
 Remove_snap() {
     Show 2 "Removing snap"
-
     local snap_installed=$(dpkg-query -W -f='${Status}' "snapd" 2>/dev/null | grep -c "ok installed")
     if [ "$snap_installed" -eq 0 ]; then
         Show 0 "snapd is not installed."
@@ -586,7 +585,7 @@ Remove_snap() {
         Show 1 "Failed to stop or disable snapd services."
     fi
 
-    if [ -d "/var/snap" ] || [ -d "/snap" ] || [ -d "$HOME/snap" ]; then
+    if [ -d "/var/snap" ] || [ -d "/snap" ] || [ -d "$WORK_DIR/snap" ]; then
         Show 3 "Snap directories exist, indicating snaps might still be installed."
         if command -v snap &>/dev/null; then
             local snap_list=$(timeout 5 snap list --all | awk '!/disabled/{if (NR!=1) print $1}' | uniq)
@@ -614,7 +613,7 @@ Remove_snap() {
     Check_Success $? "Failed to remove /var/cache/snapd/" && rm -rf /var/cache/snapd/
     Check_Success $? "Failed to remove /var/snap" && rm -rf /var/snap
     Check_Success $? "Failed to remove /snap" && rm -rf /snap
-    Check_Success $? "Failed to remove $HOME/snap" && rm -rf "$HOME/snap"
+    Check_Success $? "Failed to remove $WORK_DIR/snap" && rm -rf "$WORK_DIR/snap"
 }
 Clean_Up() {
     echo ""
@@ -622,17 +621,22 @@ Clean_Up() {
     Remove_cloudinit
     Remove_snap
     # Clean up cockpit-sensors files and directories
-    if [ -d "$HOME"/cockpit-sensors ]; then
-        rm -r "$HOME"/cockpit-sensors
+    if [ -d "$WORK_DIR/cockpit-sensors" ]; then
+        rm -r "$WORK_DIR/cockpit-sensors"
         Check_Success $? "Removed cockpit-sensors directory"
     fi
     # Remove any remaining cockpit-sensors files if they exist
-    if compgen -G "$HOME/cockpit-sensors*.*" >/dev/null; then
-        rm -f "$HOME"/cockpit-sensors*.*
-        Check_Success $? "Removed cockpit-sensors files"
-    else
+    shopt -s nullglob
+    for file in "$WORK_DIR"/cockpit-sensors*; do
+        if [ -f "$file" ]; then
+            rm -f "$file"
+            Check_Success $? "Removed $file"
+        fi
+    done
+    if [ -z "$(find "$WORK_DIR" -maxdepth 1 -name 'cockpit-sensors*' -print -quit)" ]; then
         Show 0 "No cockpit-sensors files to remove."
     fi
+
     # Remove network configuration backup if it exists
     if [ -f "$NETWORK_CONFIG.backup" ]; then
         rm -f "$NETWORK_CONFIG.backup"
